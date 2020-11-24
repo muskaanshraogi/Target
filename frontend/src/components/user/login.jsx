@@ -36,7 +36,7 @@ const useStyles = makeStyles((theme) => ({
     backgroundSize: 'cover',
     backgroundPosition: '30%'
   },
-  ocean: {
+  target: {
     fontFamily: "'Open Sans', sans-serif",
     height: '90%',
     display: 'flex',
@@ -90,25 +90,26 @@ export default function Login() {
       enqueueSnackbar("Please fill all fields to login",  { variant: 'error' })
       return
     }
-    Axios.post(
-      "http://localhost:8000/api/user/login/",
-      details,
-      {
-        headers: {
-          'Content-Type': 'application/json'
-        }
-      }
-    )
-    .then(res => {
-      setUserTokenCookie(res.data.token);
-      enqueueSnackbar('Login Successful', { variant: 'success'});
-      history.push('/home');
-    })
-    .catch(err => {
-      enqueueSnackbar('Invalid credentials', {
-        variant: 'error'
-      })
-    })
+    console.log(details);
+    // Axios.post(
+    //   "http://localhost:8000/login/",
+    //   details,
+    //   {
+    //     headers: {
+    //       'Content-Type': 'application/json'
+    //     }
+    //   }
+    // )
+    // .then(res => {
+    //   setUserTokenCookie(res.data.token);
+    //   enqueueSnackbar('Login Successful', { variant: 'success'});
+    //   history.push('/home');
+    // })
+    // .catch(err => {
+    //   enqueueSnackbar('Invalid credentials', {
+    //     variant: 'error'
+    //   })
+    // })
   }
 
   return (
@@ -119,9 +120,9 @@ export default function Login() {
           <Typography 
             component="h1" 
             variant="h1" 
-            className={classes.ocean}          
+            className={classes.target}          
           >
-            Ocean
+            Target
           </Typography>
         </Hidden>
       </Grid>
@@ -130,7 +131,7 @@ export default function Login() {
           <Hidden smUp>
             <WavesIcon fontSize="large"/>
             <Typography variant="h3">
-              Ocean
+              Target
             </Typography>
           </Hidden>
           <Hidden smDown>
@@ -177,11 +178,6 @@ export default function Login() {
               <Grid item xs>
                 <Link component={RRDLink} to='/register'>
                   Don't have an account? Sign Up
-                </Link>
-              </Grid>
-              <Grid item>
-                <Link component={RRDLink} to='/forgot'>
-                  Forgot Password?
                 </Link>
               </Grid>
             </Grid>
