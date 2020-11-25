@@ -10,6 +10,7 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
 app.use('/api/staff', require('./routes/staffRoute'))
+app.use('/api/subject', require('./routes/subjectRoute'))
 
 const PORT = process.env.PORT || 8000
 app.listen(PORT, () => {

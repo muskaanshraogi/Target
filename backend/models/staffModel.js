@@ -39,7 +39,7 @@ const registerTeacher = (teacher, callback) => {
                                                         return callback(err, 500, null)
                                                     }
                                                     else {
-                                                        return callback(null, 200, generateToken(user[0]))
+                                                        return callback(null, 201, generateToken(user[0]))
                                                     }
                                                 }
                                             )
@@ -81,10 +81,10 @@ const loginTeacher = (teacher, callback) => {
     )
 }
 
-const updateTeacher = (teacher, callback) => {
+const updateTeacher = (teacher, reg_id, callback) => {
     db.query(
         "UPDATE staff SET firstName=?, lastName=?, email=? WHERE reg_id=?",
-        [teacher.firstName, teacher.lastName, teacher.email, teacher.reg_id],
+        [teacher.firstName, teacher.lastName, teacher.email, reg_id],
         (err, user) => {
             if(err) {
                 return callback(err, 500, null)
@@ -92,7 +92,7 @@ const updateTeacher = (teacher, callback) => {
             else {
                 db.query(
                     "DELETE FROM mobile WHERE reg_id=?",
-                    [teacher.reg_id]
+                    [reg_id]
                 )
                 if(err) {
                     return callback(err, 500, null)
@@ -120,8 +120,39 @@ const updateTeacher = (teacher, callback) => {
     )
 }
 
+const deleteTeacher = (teacher, callback) => {
+    db.query(
+        "DELETE FROM staff WHERE reg_id=?",
+        [teacher],
+        (err, res) => {
+            if(err) {
+                return callback(err, 500, null)
+            }
+            else {
+                return callback(null, 200, res)
+            }
+        }
+    )
+}
+
+const getAllTeachers = (callback) => {
+    db.query(
+        "SELECT firstName, lastName, email, reg_id, is_admin FROM staff",
+        (err, res) => {
+            if(err) {
+                return callback(err, 500, null)
+            }
+            else {
+                return callback(null, 200, res)
+            }
+        }
+    )
+}
+
 module.exports = {
     registerTeacher,
     loginTeacher,
-    updateTeacher
+    updateTeacher,
+    deleteTeacher,
+    getAllTeachers
 }

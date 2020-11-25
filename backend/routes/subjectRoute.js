@@ -1,6 +1,6 @@
 const express = require('express')
 const router = express.Router()
-const staffModel = require('./../models/staffModel');
+const subjectModel = require('./../models/subjectModel');
 const { authenticate, authenticateAdmin } = require('../globals');
 
 router.use(function (req, res, next) {
@@ -13,8 +13,8 @@ router.use(function (req, res, next) {
     next();
 });
 
-router.post('/register', (req, res, next) => {
-    staffModel.registerTeacher(req.body, (err, status, data) => {
+router.post('/add', authenticateAdmin, (req, res, next) => {
+    subjectModel.addSubject(req.body, (err, status, data) => {
         if(err) {
             delete err.sql
             res.status(status).send({ err: err, data: null })
@@ -25,8 +25,8 @@ router.post('/register', (req, res, next) => {
     })
 })
 
-router.post('/login', (req, res, next) => {
-    staffModel.loginTeacher(req.body, (err, status, data) => {
+router.post('/add/multiple', authenticateAdmin, (req, res, next) => {
+    subjectModel.addMultipleSubjects(req.body, (err, status, data) => {
         if(err) {
             delete err.sql
             res.status(status).send({ err: err, data: null })
@@ -37,8 +37,8 @@ router.post('/login', (req, res, next) => {
     })
 })
 
-router.post('/update/:reg_id', authenticate, (req, res, next) => {
-    staffModel.updateTeacher(req.body, req.params.reg_id, (err, status, data) => {
+router.post('/update/:subId', authenticateAdmin, (req, res, next) => {
+    subjectModel.updateSubject(req.body, req.params.subId, (err, status, data) => {
         if(err) {
             delete err.sql
             res.status(status).send({ err: err, data: null })
@@ -49,8 +49,8 @@ router.post('/update/:reg_id', authenticate, (req, res, next) => {
     })
 })
 
-router.delete('/delete/:teacher', authenticateAdmin, (req, res, next) => {
-    staffModel.deleteTeacher(req.params.teacher, (err, status, data) => {
+router.delete('/delete/:subId', authenticateAdmin, (req, res, next) => {
+    subjectModel.deleteSubject(req.params.subId, (err, status, data) => {
         if(err) {
             delete err.sql
             res.status(status).send({ err: err, data: null })
@@ -61,8 +61,8 @@ router.delete('/delete/:teacher', authenticateAdmin, (req, res, next) => {
     })
 })
 
-router.get('/all', authenticateAdmin, (req, res, next) => {
-    staffModel.getAllTeachers((err, status, data) => {
+router.get('/all', authenticate, (req, res, next) => {
+    subjectModel.getAllSubjects((err, status, data) => {
         if(err) {
             delete err.sql
             res.status(status).send({ err: err, data: null })
