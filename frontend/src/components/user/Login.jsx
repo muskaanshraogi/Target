@@ -91,6 +91,7 @@ export default function Login() {
       return
     }
     console.log(details);
+    history.push('/home');
     // Axios.post(
     //   "http://localhost:8000/login/",
     //   details,

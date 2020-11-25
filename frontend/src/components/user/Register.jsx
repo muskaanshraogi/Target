@@ -123,6 +123,7 @@ export default function Register() {
         return;
       }
       console.log(details);
+      history.push('/home');
       // Axios.post(
       //   "http://localhost:8000/register/",
       //   details,
