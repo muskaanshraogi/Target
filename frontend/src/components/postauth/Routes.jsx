@@ -7,6 +7,6 @@ import Upload from './Upload/Upload'
 export default () => 
     <Switch>
         <Route exact path='/home/upload' component={Upload}/>
-        <Route path='home/profile' component={Profile}/>
+        <Route path='/home/profile' component={Profile}/>
         <Redirect from='/home' to='/home/upload' />
     </Switch>

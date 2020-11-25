@@ -52,6 +52,9 @@ const useStyles = makeStyles((theme) => ({
     margin: theme.spacing(3, 0, 2),
     fontSize: '18px'
   },
+  button: {
+    margin : theme.spacing(2,1,1,0)
+  },
   fab: {
     position: 'absolute',
     top: theme.spacing(2),
@@ -86,8 +89,8 @@ export default function Register() {
       "email": "",
       "password": "",
       "confpass": "",
+      "mobile": [''],
       "is_admin": false
-      
   });
 
   const handleChange = e => {
@@ -107,6 +110,12 @@ export default function Register() {
       setDetails({...details, [et.name]: et.checked});
     }
   }
+
+  const handleMobile = () => {}
+
+  const handleAdd = () => setDetails({...details, mobile: [...details.mobile, ['']]});
+
+  const handleRemove = () => setDetails({...details, mobile: details.mobile.slice(0, details.mobile.length - 1)});
 
   const handleSubmit = e => {
       e.preventDefault();
@@ -247,6 +256,37 @@ export default function Register() {
               autoComplete="confirm-password"
               onChange={handleChange}
             />
+            {
+              details.mobile.map((m, index) => (
+                  <TextField
+                    variant="outlined"
+                    margin="normal"
+                    fullWidth
+                    required={ index === 0 ? true : false}
+                    name={index+1}
+                    label={`Enter mobile number ${index+1}`}
+                    type="password"
+                    id={index+1}
+                    value={m}
+                    autoComplete="mobile"
+                    onChange={handleMobile}
+                  />
+              ))
+            }
+            <Button 
+              className={classes.button}
+              color="secondary"
+              variant="contained"
+              onClick={handleAdd}>Add Mobile Number
+            </Button>
+            { details.mobile.length > 1 && <Button 
+                  className={classes.button}
+                  color="secondary"
+                  variant="contained"
+                  onClick={handleRemove}>Remove Mobile Number
+                </Button>
+            }
+            <br/>
             <FormControlLabel
               control={<Checkbox onChange={handleAdmin} name="is_admin" color="primary" />}
               label="Admin Account?"

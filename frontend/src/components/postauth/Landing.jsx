@@ -132,7 +132,7 @@ export default function ClippedDrawer() {
   const [open, setOpen] = useState(true);
 
   const toggleDrawer = () => setOpen(!open);
-  const handleLogout = () => {}
+  const handleLogout = () => history.push('');
 
   return (
     <div className={classes.root}>
