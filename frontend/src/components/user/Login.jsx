@@ -1,4 +1,4 @@
-import React, { useState, useContext } from 'react';
+import React, { useState, useContext, useEffect } from 'react';
 import { Fab, Hidden, Typography, Button, CssBaseline, TextField, Link, Paper, Grid } from '@material-ui/core';
 import { Brightness4, Brightness7 } from '@material-ui/icons';
 import WavesIcon from '@material-ui/icons/Waves';
@@ -9,7 +9,6 @@ import Axios from 'axios';
 
 
 import { ThemeContext } from '../../context/useTheme';
-import { setUserTokenCookie } from '../../cookie/cookie';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -100,8 +99,7 @@ export default function Login() {
       }
     )
     .then(res => {
-      let cookie = res.data.data.token;
-      setUserTokenCookie(cookie);
+      sessionStorage.setItem("usertoken", res.data.data.token);
       sessionStorage.setItem("user", JSON.stringify(res.data.data.user));
       enqueueSnackbar('Login Successful', { variant: 'success'});
       history.push('/home');

@@ -9,7 +9,6 @@ import WavesIcon from '@material-ui/icons/Waves';
 import { useSnackbar } from 'notistack';
 import Axios from 'axios';
 
-import { setUserTokenCookie } from '../../cookie/cookie';
 import { ThemeContext } from '../../context/useTheme';
 
 const useStyles = makeStyles((theme) => ({
@@ -150,8 +149,7 @@ export default function Register() {
         }
       )
       .then(res => {
-        let cookie = res.data.data.token;
-        setUserTokenCookie(cookie);
+        sessionStorage.setItem("usertoken", res.data.data.token);
         sessionStorage.setItem("user", JSON.stringify(res.data.data.user));
         enqueueSnackbar('Login Successful', { variant: 'success'});
         history.push('/home');

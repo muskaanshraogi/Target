@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   makeStyles,
   fade,
@@ -22,7 +22,6 @@ import {
   Menu,
   Brightness7,
   Brightness4,
-  Home,
   AccountCircle,
   ExitToApp,
 } from "@material-ui/icons";
@@ -30,7 +29,7 @@ import { ThemeContext } from "../../context/useTheme";
 import Routes from "./Routes";
 import clsx from "clsx";
 import { useHistory, useLocation } from "react-router-dom";
-import { useSnackbar } from "notistack";
+import Axios from "axios";
 
 const drawerWidth = 400;
 
@@ -149,16 +148,49 @@ export default function ClippedDrawer() {
 
   const { dark, toggleTheme } = React.useContext(ThemeContext);
 
-  const { enqueueSnackbar } = useSnackbar();
-
+  const [token, setToken] = useState(null);
+  const [user, setUser] = useState({
+    "firstName": "",
+    "lastName": "",
+    "email": "",
+    "is_admin": 1,
+    "reg_id": "",
+    "division": null,
+    "roleName": null,
+    "subName": null,
+    "year": null
+  });
   const [open, setOpen] = useState(true);
+  const [isAdmin, setIsAdmin] = useState(false);
 
   const toggleDrawer = () => setOpen(!open);
   const handleLogout = () => {
-    document.cookie = "usertoken=;"
+    sessionStorage.removeItem("usertoken");
     sessionStorage.removeItem("user");
     history.push("");
   }
+
+  useEffect(() => {
+    setToken(sessionStorage.getItem("usertoken"))
+  }, [])
+  
+  useEffect(() => {
+    if(token) {
+      Axios.get(
+      `http://localhost:8000/api/staff/${JSON.parse(sessionStorage.getItem("user")).reg_id}`,
+      {
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${token}`
+          }
+        }
+      )
+      .then(res => {
+        setUser(res.data.data[0])
+        setIsAdmin(() => res.data.data[0].is_admin === 0 ? false : true)
+      })
+    }
+  }, [token])
 
   return (
     <div className={classes.root}>
@@ -200,32 +232,50 @@ export default function ClippedDrawer() {
         <Toolbar />
         <div className={classes.drawerContainer}>
           <Card>
-            <CardHeader
-              title="Tanmay Pardeshi"
-              subheader="tanmaypardeshi@gmail.com"
-              avatar={<Avatar>TP</Avatar>}
-              titleTypographyProps={{ variant: "h4" }}
-              subheaderTypographyProps={{ variant: "h6" }}
-            />
+            { user && 
+              <CardHeader
+                title={`${user.firstName} ${user.lastName}`}
+                subheader={user.email}
+                avatar={<Avatar>{`${user.firstName.charAt(0)}${user.lastName.charAt(0)}`}</Avatar>}
+                titleTypographyProps={{ variant: "h4" }}
+                subheaderTypographyProps={{ variant: "h6" }}
+              />
+            }
           </Card>
           <List>
-            {drawerItems.map((item, index) => (
               <ListItem
-                key={index}
+                key={0}
                 selected={location.pathname.includes(
-                  item.name.split(" ")[0].toLowerCase()
+                  drawerItems[0].name.split(" ")[0].toLowerCase()
                 )}
                 onClick={() =>
-                  history.push(`/home/${item.name.split(" ")[0].toLowerCase()}`)
+                  history.push(`/home/${drawerItems[0].name.split(" ")[0].toLowerCase()}`)
                 }
                 button
               >
                 <ListItemIcon className={classes.list}>
-                  {item.icon}
+                  {drawerItems[0].icon}
                 </ListItemIcon>
-                <ListItemText primary={item.name} />
+                <ListItemText primary={drawerItems[0].name} />
               </ListItem>
-            ))}
+              {
+                isAdmin && 
+                <ListItem
+                  key={1}
+                  selected={location.pathname.includes(
+                    drawerItems[1].name.split(" ")[1].toLowerCase()
+                  )}
+                  onClick={() =>
+                    history.push(`/home/${drawerItems[1].name.split(" ")[0].toLowerCase()}`)
+                  }
+                  button
+                >
+                  <ListItemIcon className={classes.list}>
+                    {drawerItems[1].icon}
+                  </ListItemIcon>
+                  <ListItemText primary={drawerItems[1].name} />
+                </ListItem>
+              }
           </List>
         </div>
       </Drawer>
