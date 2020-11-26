@@ -49,4 +49,16 @@ router.delete('/delete/:reg_id', authenticate, (req, res, next) => {
     })
 })
 
+router.get('/subject/teacher/:reg_id', authenticate, (req, res, next) => {
+    facultyModel.getSubjectTeacherDetails(req.params.reg_id, (err, status, data) => {
+        if(err) {
+            delete err.sql
+            res.status(status).send({ err: err, data: null })
+        }
+        else {
+            res.status(200).send({ err: null, data: data })
+        }
+    })
+})
+
 module.exports = router;

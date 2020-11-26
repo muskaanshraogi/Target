@@ -149,10 +149,26 @@ const getAllTeachers = (callback) => {
     )
 }
 
+const getTeacherDetails = (reg_id, callback) => {
+    db.query(
+        "SELECT staff.firstName, staff.lastName, staff.email, staff.is_admin, staff.reg_id, faculty.division, role.roleName, subject.subName, subject.year FROM staff JOIN faculty JOIN role JOIN subject ON staff.reg_id=faculty.reg_id AND faculty.role_id=role.role_id AND faculty.subId=subject.subId WHERE staff.reg_id=?",
+        [reg_id],
+        (err, res) => {
+            if(err) {
+                return callback(err, 500, null)
+            }
+            else {
+                return callback(null, 200, res)
+            }
+        }
+    )
+}
+
 module.exports = {
     registerTeacher,
     loginTeacher,
     updateTeacher,
     deleteTeacher,
-    getAllTeachers
+    getAllTeachers,
+    getTeacherDetails
 }
