@@ -151,7 +151,7 @@ const getAllTeachers = (callback) => {
 
 const getTeacherDetails = (reg_id, callback) => {
     db.query(
-        "SELECT staff.firstName, staff.lastName, staff.email, staff.is_admin, staff.reg_id, faculty.division, role.roleName, subject.subName, subject.year FROM staff JOIN faculty JOIN role JOIN subject ON staff.reg_id=faculty.reg_id AND faculty.role_id=role.role_id AND faculty.subId=subject.subId WHERE staff.reg_id=?",
+        "SELECT staff.firstName, staff.lastName, staff.email, staff.is_admin, staff.reg_id, faculty.division, role.roleName, subject.subName, subject.year FROM staff LEFT OUTER JOIN faculty ON staff.reg_id=faculty.reg_id LEFT OUTER JOIN role  ON faculty.role_id=role.role_id LEFT OUTER JOIN subject ON faculty.subId=subject.subId WHERE staff.reg_id=?",
         [reg_id],
         (err, res) => {
             if(err) {
