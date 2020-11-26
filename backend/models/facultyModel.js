@@ -37,7 +37,23 @@ const addMultipleRelations = (data, teacher, callback) => {
     })
 }
 
+const deleteRelation = (relation, teacher, callback) => {
+    db.query(
+        "CALL relation_delete(?, ?, ?)",
+        [teacher, relation.subject, relation.division],
+        (err, res) => {
+            if(err) {
+                return callback(err, 500, null)
+            }
+            else {
+                return callback(null, 200, res)
+            }
+        }
+    )
+}
+
 module.exports = {
     addRelation,
-    addMultipleRelations
+    addMultipleRelations,
+    deleteRelation
 }
