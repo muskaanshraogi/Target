@@ -90,27 +90,27 @@ export default function Login() {
       enqueueSnackbar("Please fill all fields to login",  { variant: 'error' })
       return
     }
-    console.log(details);
-    history.push('/home');
-    // Axios.post(
-    //   "http://localhost:8000/login/",
-    //   details,
-    //   {
-    //     headers: {
-    //       'Content-Type': 'application/json'
-    //     }
-    //   }
-    // )
-    // .then(res => {
-    //   setUserTokenCookie(res.data.token);
-    //   enqueueSnackbar('Login Successful', { variant: 'success'});
-    //   history.push('/home');
-    // })
-    // .catch(err => {
-    //   enqueueSnackbar('Invalid credentials', {
-    //     variant: 'error'
-    //   })
-    // })
+    Axios.post(
+      "http://localhost:8000/api/staff/login",
+      details,
+      {
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      }
+    )
+    .then(res => {
+      let cookie = res.data.data.token;
+      setUserTokenCookie(cookie);
+      sessionStorage.setItem("user", JSON.stringify(res.data.data.user));
+      enqueueSnackbar('Login Successful', { variant: 'success'});
+      history.push('/home');
+    })
+    .catch(err => {
+      enqueueSnackbar('Invalid credentials', {
+        variant: 'error'
+      })
+    })
   }
 
   return (

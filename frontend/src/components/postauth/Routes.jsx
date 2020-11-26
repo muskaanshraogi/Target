@@ -1,12 +1,12 @@
 import React from 'react'
 import { Switch, Route, Redirect } from 'react-router-dom'
-import Profile from './Profile/Profile'
-import Upload from './Upload/Upload'
+import Teacher from './Teacher/Teacher';
+import Admin from './Admin/Admin';
 
 // eslint-disable-next-line import/no-anonymous-default-export
 export default () => 
     <Switch>
-        <Route exact path='/home/upload' component={Upload}/>
-        <Route path='/home/profile' component={Profile}/>
-        <Redirect from='/home' to='/home/upload' />
+        <Route exact path='/home/teacher' component={Teacher}/>
+        <Route path='/home/admin' component={Admin}/>
+        <Redirect from='/home' to='/home/teacher' />
     </Switch>

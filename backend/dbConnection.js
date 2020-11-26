@@ -6,7 +6,7 @@ dotenv.config()
 let PASSWORD = process.env.PASSWORD || ''
 const connection = mysql.createConnection({
     host: 'localhost',
-    user: process.env.USER,
+    user: "root",
     password: PASSWORD,
     database: 'target'
 })

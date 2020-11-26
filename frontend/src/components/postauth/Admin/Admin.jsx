@@ -1,9 +1,9 @@
 import React from 'react';
 
-export default function Upload() {
+export default function Admin() {
     return (
         <div>
-            Upload
+            Admin
         </div>
     )
 }

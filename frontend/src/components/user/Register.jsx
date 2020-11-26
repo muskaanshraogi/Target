@@ -83,8 +83,8 @@ export default function Register() {
   const history = useHistory();
 
   const [details, setDetails] = useState({
-      "first_name": "",
-      "last_name": "",
+      "firstName": "",
+      "lastName": "",
       "reg_id": "",
       "email": "",
       "password": "",
@@ -111,7 +111,11 @@ export default function Register() {
     }
   }
 
-  const handleMobile = () => {}
+  const handleMobile = (event) => {
+    let newMobile = [...details.mobile];
+    newMobile[parseInt(event.target.id)] = parseInt(event.target.value);
+    setDetails({...details, mobile: newMobile});
+  }
 
   const handleAdd = () => setDetails({...details, mobile: [...details.mobile, ['']]});
 
@@ -119,7 +123,7 @@ export default function Register() {
 
   const handleSubmit = e => {
       e.preventDefault();
-      if(!details.first_name || !details.last_name || !details.email || !details.password || !details.confpass || !details.reg_id) {
+      if(!details.firstName || !details.lastName || !details.email || !details.password || !details.confpass || !details.reg_id) {
         enqueueSnackbar('All fields must be filled!', { variant: 'error' })
         return;
       }
@@ -131,26 +135,30 @@ export default function Register() {
         enqueueSnackbar('Password mismatch!', { variant: 'error' })
         return;
       }
-      console.log(details);
-      history.push('/home');
-      // Axios.post(
-      //   "http://localhost:8000/register/",
-      //   details,
-      //   { 
-      //     headers: 
-      //     { 
-      //       'Content-Type': 'application/json' 
-      //     } 
-      //   }
-      // )
-      // .then(res => {
-      //   setUserTokenCookie(res.data.token);
-      //   enqueueSnackbar('Registration successful!', { variant: 'success' })
-      //   history.push('/home');
-      // })
-      // .catch(err => {
-      //   enqueueSnackbar(err.message, { variant: 'error' });
-      // })
+      if(details.mobile[0] === '') {
+        enqueueSnackbar('1 Phone numer is mandatory!', {variant: 'error'})
+        return;
+      }
+      Axios.post(
+        "http://localhost:8000/api/staff/register",
+        details,
+        { 
+          headers: 
+          { 
+            'Content-Type': 'application/json' 
+          } 
+        }
+      )
+      .then(res => {
+        let cookie = res.data.data.token;
+        setUserTokenCookie(cookie);
+        sessionStorage.setItem("user", JSON.stringify(res.data.data.user));
+        enqueueSnackbar('Login Successful', { variant: 'success'});
+        history.push('/home');
+      })
+      .catch(err => {
+        enqueueSnackbar('Already Registered!', { variant: 'error' });
+      })
   }
 
   return (
@@ -186,11 +194,11 @@ export default function Register() {
               margin="normal"
               required
               fullWidth
-              id="first_name"
+              id="firstName"
               label="First name"
-              name="first_name"
-              autoComplete="first_name"
-              value={details.first_name}
+              name="firstName"
+              autoComplete="firstName"
+              value={details.firstName}
               autoFocus
               onChange={handleChange}
             /> 
@@ -199,11 +207,11 @@ export default function Register() {
               margin="normal"
               required
               fullWidth
-              id="last_name"
+              id="lastName"
               label="Last name"
-              name="last_name"
-              autoComplete="last_name"
-              value={details.last_name}
+              name="lastName"
+              autoComplete="lastName"
+              value={details.lastName}
               onChange={handleChange}
             />
             <TextField
@@ -263,23 +271,26 @@ export default function Register() {
                     margin="normal"
                     fullWidth
                     required={ index === 0 ? true : false}
-                    name={index+1}
+                    name={index}
                     label={`Enter mobile number ${index+1}`}
-                    type="password"
-                    id={index+1}
-                    value={m}
+                    type="text"
+                    id={index}
+                    defaultValue={m}
                     autoComplete="mobile"
                     onChange={handleMobile}
                   />
               ))
             }
-            <Button 
-              className={classes.button}
-              color="secondary"
-              variant="contained"
-              onClick={handleAdd}>Add Mobile Number
-            </Button>
-            { details.mobile.length > 1 && <Button 
+            { details.mobile.length < 3 &&
+              <Button 
+                className={classes.button}
+                color="secondary"
+                variant="contained"
+                onClick={handleAdd}>Add Mobile Number
+              </Button>
+            }
+            { details.mobile.length > 1 &&
+                <Button 
                   className={classes.button}
                   color="secondary"
                   variant="contained"
