@@ -24,8 +24,22 @@ export default function Admin() {
 
 	const handleEdit = () => {}
 
-	const handleDeleteUser = (event) => {
-		console.log(event.target.id);
+	const handleDeleteUser = (reg_id) => {
+		Axios.delete(
+			`http://localhost:8000/api/staff/delete/${reg_id}`,
+			{
+				headers: {
+					'Content-Type': 'application/json',
+					'Authorization': `Bearer ${token}`
+				}
+			}
+		)
+		.then(res => {
+			let newAllUsers = [...allUsers]
+			newAllUsers = allUsers.filter((user) => user.reg_id !== reg_id)
+			setAllUsers(newAllUsers);
+			enqueueSnackbar('Deleted!', {variant: 'success'})
+		})
 	}
 	
 	useEffect(() => {
@@ -95,7 +109,7 @@ export default function Admin() {
 										}
 									/>
 									<ListItemSecondaryAction>
-										<IconButton edge="end" aria-label="delete" onClick={handleDeleteUser}>
+										<IconButton edge="end" aria-label="delete" onClick={() => handleDeleteUser(user.reg_id)}>
 											<DeleteIcon />
 										</IconButton>
 									</ListItemSecondaryAction>
