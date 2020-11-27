@@ -66,7 +66,17 @@ export default function Admin() {
 
   const handleSubmit = event => {
     event.preventDefault();
+    addSubjects.forEach((subject) => {
+      if(!subject.subId || !subject.subName) {
+        enqueueSnackbar('Please fill all fields', {variant: 'error'});
+        return;
+      }
+    })
     if(addSubjects.length === 1) {
+      if(!addSubjects[0].subId || !addSubjects[0].subName) {
+        enqueueSnackbar('Please fill all fields', {variant: 'error'});
+        return;
+      }
       Axios.post(
         'http://localhost:8000/api/subject/add',
         addSubjects[0],
@@ -87,7 +97,9 @@ export default function Admin() {
     } else {
       Axios.post(
         'http://localhost:8000/api/subject/add/multiple',
-        addSubjects,
+        {
+          subjects: addSubjects
+        },
         {
           headers: {
             'Content-Type': 'application/json',
@@ -95,11 +107,16 @@ export default function Admin() {
           }
         }
       )
-      .then(res => console.log(res))
+      .then(res => {
+        enqueueSnackbar('Added subject', {variant:'success'})
+        let newAllSubjects = [...allSubjects]
+        addSubjects.forEach(subject => newAllSubjects.push(subject));
+        setAllSubjects(newAllSubjects);
+      })
       .catch(err => enqueueSnackbar('Invalid', {variant: 'error'}))
     }
   }
-  
+
   useEffect(() => {
     Axios.get("http://localhost:8000/api/staff/all", {
       headers: {
@@ -257,7 +274,7 @@ export default function Admin() {
             />
             <List dense>
               {allSubjects.map((subject, index) => (
-                <ListItem>
+                <ListItem id={subject.subId} key={index}>
                   <ListItemAvatar>
                     <Avatar>{subject.subName.charAt(0)}</Avatar>
                   </ListItemAvatar>
