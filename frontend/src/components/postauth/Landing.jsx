@@ -148,7 +148,6 @@ export default function ClippedDrawer() {
 
   const { dark, toggleTheme } = React.useContext(ThemeContext);
 
-  const [token, setToken] = useState(null);
   const [user, setUser] = useState({
     "firstName": "",
     "lastName": "",
@@ -169,19 +168,14 @@ export default function ClippedDrawer() {
     sessionStorage.removeItem("user");
     history.push("");
   }
-
-  useEffect(() => {
-    setToken(sessionStorage.getItem("usertoken"))
-  }, [])
   
   useEffect(() => {
-    if(token) {
       Axios.get(
       `http://localhost:8000/api/staff/${JSON.parse(sessionStorage.getItem("user")).reg_id}`,
       {
         headers: {
           "Content-Type": "application/json",
-          "Authorization": `Bearer ${token}`
+          "Authorization": `Bearer ${sessionStorage.getItem("usertoken")}`
           }
         }
       )
@@ -189,8 +183,7 @@ export default function ClippedDrawer() {
         setUser(res.data.data[0])
         setIsAdmin(() => res.data.data[0].is_admin === 0 ? false : true)
       })
-    }
-  }, [token])
+  }, [])
 
   return (
     <div className={classes.root}>

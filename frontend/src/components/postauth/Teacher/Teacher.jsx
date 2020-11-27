@@ -1,8 +1,10 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
     Grid, 
     Card,
     CardHeader,
+    CardContent,
+    Typography,
     Button,
     Avatar,
     List,
@@ -12,13 +14,46 @@ import {
 } from '@material-ui/core';
 import {
     VpnKey,
-    Phone
 } from '@material-ui/icons';
+import Axios from 'axios';
 
 export default function Teacher() {
 
-    const [mobile, setMobile] = useState([9922704483, 9922704483, 9922704483]);
+    const [token, setToken] = useState(null);
+    const [user, setUser] = useState({
+      "firstName": "",
+      "lastName": "",
+      "email": "",
+      "is_admin": false,
+      "reg_id": "",
+      "division": null,
+      "roleName": null,
+      "subName": null,
+      "year": null
+    });
+
     const handleEdit = () => {}
+
+    useEffect(() => {
+      setToken(sessionStorage.getItem("usertoken"))
+    }, [])
+    
+    useEffect(() => {
+      if(token) {
+        Axios.get(
+        `http://localhost:8000/api/staff/${JSON.parse(sessionStorage.getItem("user")).reg_id}`,
+        {
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${token}`
+            }
+          }
+        )
+        .then(res => {
+          setUser(res.data.data[0])
+        })
+      }
+    }, [token])
 
     return (
     <Grid container item spacing={1}>
@@ -26,9 +61,9 @@ export default function Teacher() {
         <Grid item>
           <Card>
             <CardHeader
-              title="Tanmay Pardeshi"
-              subheader="tanmaypardeshi@gmail.com"
-              avatar={<Avatar>TP</Avatar>}
+              title={`${user.firstName} ${user.lastName}`}
+              subheader={user.email}
+              avatar={<Avatar>{user.firstName.charAt(0)}{user.lastName.charAt(0)}</Avatar>}
               titleTypographyProps={{ variant: "h4" }}
               subheaderTypographyProps={{ variant: "h6" }}
             />
@@ -36,6 +71,11 @@ export default function Teacher() {
         </Grid>
         <Grid item>
             <Card>
+            <CardContent>
+              <Typography gutterBottom variant="h6">
+                Registration ID
+              </Typography>
+            </CardContent>
                 <List dense>
                     <ListItem>
                         <ListItemAvatar>
@@ -44,23 +84,9 @@ export default function Teacher() {
                             </Avatar>
                         </ListItemAvatar>
                         <ListItemText
-                            primary="I2K18102554"
+                            primary={user.reg_id}
                         />
-                    </ListItem>
-                    {
-                        mobile.map((m, index) => (
-                            <ListItem key={index}>
-                                <ListItemAvatar>
-                                    <Avatar>
-                                        <Phone/>
-                                    </Avatar>
-                                </ListItemAvatar>
-                                <ListItemText 
-                                    primary={m}
-                                />
-                            </ListItem>
-                        ))
-                    }
+                      </ListItem>
                 </List>
             </Card>
         </Grid>
