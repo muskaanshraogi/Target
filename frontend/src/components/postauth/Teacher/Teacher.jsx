@@ -56,51 +56,83 @@ export default function Teacher() {
     }, [token])
 
     return (
-    <Grid container item spacing={1}>
-      <Grid container item direction="column" xs={12} md={4} spacing={1}>
-        <Grid item>
-          <Card>
-            <CardHeader
-              title={`${user.firstName} ${user.lastName}`}
-              subheader={user.email}
-              avatar={<Avatar>{user.firstName.charAt(0)}{user.lastName.charAt(0)}</Avatar>}
-              titleTypographyProps={{ variant: "h4" }}
-              subheaderTypographyProps={{ variant: "h6" }}
-            />
-          </Card>
-        </Grid>
-        <Grid item>
+      <Grid container item spacing={1}>
+        <Grid container item direction="column" xs={12} md={4} spacing={1}>
+          <Grid item>
             <Card>
-            <CardContent>
-              <Typography gutterBottom variant="h6">
-                Registration ID
-              </Typography>
-            </CardContent>
-                <List dense>
-                    <ListItem>
-                        <ListItemAvatar>
-                            <Avatar>
-                                <VpnKey />
-                            </Avatar>
-                        </ListItemAvatar>
-                        <ListItemText
-                            primary={user.reg_id}
-                        />
-                      </ListItem>
-                </List>
+              <CardHeader
+                title={`${user.firstName} ${user.lastName}`}
+                subheader={user.email}
+                avatar={<Avatar>{user.firstName.charAt(0)}{user.lastName.charAt(0)}</Avatar>}
+                titleTypographyProps={{ variant: "h4" }}
+                subheaderTypographyProps={{ variant: "h6" }}
+              />
             </Card>
+          </Grid>
+          <Grid item>
+              <Card>
+              <CardContent>
+                <Typography gutterBottom variant="h6">
+                  Registration ID
+                </Typography>
+              </CardContent>
+                  <List dense>
+                      <ListItem>
+                          <ListItemAvatar>
+                              <Avatar>
+                                  <VpnKey />
+                              </Avatar>
+                          </ListItemAvatar>
+                          <ListItemText
+                              primary={user.reg_id}
+                          />
+                        </ListItem>
+                  </List>
+              </Card>
+          </Grid>
+          <Grid item>
+            <Button
+              onClick={handleEdit}
+              fullWidth
+              variant="contained"
+              color="primary"
+            >
+              Edit Profile
+            </Button>
+          </Grid>
         </Grid>
-        <Grid item>
-          <Button
-            onClick={handleEdit}
-            fullWidth
-            variant="contained"
-            color="primary"
-          >
-            Edit Profile
-          </Button>
+        <Grid container item direction="column" xs={12} md={8} spacing={1}>
+          <Grid item>
+            <Card>
+              <CardHeader
+                title="Add Subjects you are teaching"
+                titleTypographyProps={{ variant: "h4" }}
+              />
+            </Card>
+          </Grid>
+          
+          <Grid item>
+              <Card>
+              <CardContent>
+                <Typography gutterBottom variant="h6">
+                  Registration ID
+                </Typography>
+              </CardContent>
+                  <List dense>
+                      <ListItem>
+                          <ListItemAvatar>
+                              <Avatar>
+                                  <VpnKey />
+                              </Avatar>
+                          </ListItemAvatar>
+                          <ListItemText
+                              primary={user.reg_id}
+                          />
+                        </ListItem>
+                  </List>
+              </Card>
+          </Grid>
         </Grid>
       </Grid>
-    </Grid>
     )
 }
