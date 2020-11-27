@@ -80,10 +80,26 @@ const getAllSubjects = (callback) => {
     )
 }
 
+const getTeacherSubjects = (reg_id, callback) => {
+    db.query(
+        "SELECT * FROM subject WHERE subId IN (SELECT subId FROM faculty WHERE reg_id=?)",
+        [reg_id],
+        (err, res) => {
+            if(err) {
+                return callback(err, 500, null)
+            }
+            else {
+                return callback(null, 200, res)
+            }
+        }
+    )
+}
+
 module.exports = {
     addSubject,
     addMultipleSubjects,
     updateSubject,
     deleteSubject,
-    getAllSubjects
+    getAllSubjects,
+    getTeacherSubjects
 }

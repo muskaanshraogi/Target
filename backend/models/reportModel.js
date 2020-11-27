@@ -49,11 +49,42 @@ const deleteReport = (reg_id, subject, acadYear, callback) => {
                 )
             }
         }
+    )   
+}
+
+const getSubjectReports = (reg_id, callback) => {
+    db.query(
+        "SELECT * FROM report WHERE subId IN (SELECT subId FROM FACULTY WHERE reg_id=? AND role_id=2)",
+        [reg_id],
+        (err, res) => {
+            if(err) {
+                return callback(err, 500, null)
+            }
+            else {
+                return callback(null, 200, res)
+            }
+        }
     )
-    
+}
+
+const getTeacherReports = (reg_id, callback) => {
+    db.query(
+        "SELECT * FROM report WHERE reg_id=?",
+        [reg_id],
+        (err, res) => {
+            if(err) {
+                return callback(err, 500, null)
+            }
+            else {
+                return callback(null, 200, res)
+            }
+        }
+    )
 }
 
 module.exports = {
     addReport,
-    deleteReport
+    deleteReport,
+    getSubjectReports,
+    getTeacherReports
 }

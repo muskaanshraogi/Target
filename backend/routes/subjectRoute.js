@@ -73,4 +73,16 @@ router.get('/all', authenticate, (req, res, next) => {
     })
 })
 
+router.get('/teacher/:reg_id', authenticate, (req, res, next) => {
+    subjectModel.getTeacherSubjects(req.params.reg_id, (err, status, data) => {
+        if(err) {
+            delete err.sql
+            res.status(status).send({ err: err, data: null })
+        }
+        else {
+            res.status(200).send({ err: null, data: data })
+        }
+    })
+})
+
 module.exports = router

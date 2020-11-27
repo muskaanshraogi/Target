@@ -37,4 +37,28 @@ router.delete('/delete/:subject/:acadYear/:reg_id', authenticate, (req, res, nex
     })
 })
 
+router.get('/get/subject/:reg_id', authenticate, (req, res, next) => {
+    reportModel.getSubjectReports(req.params.reg_id, (err, status, data) => {
+        if(err) {
+            delete err.sql
+            res.status(status).send({ err: err, data: null })
+        }
+        else {
+            res.status(200).send({ err: null, data: data })
+        }
+    })
+})
+
+router.get('/get/teacher/:reg_id', authenticate, (req, res, next) => {
+    reportModel.getTeacherReports(req.params.reg_id, (err, status, data) => {
+        if(err) {
+            delete err.sql
+            res.status(status).send({ err: err, data: null })
+        }
+        else {
+            res.status(200).send({ err: null, data: data })
+        }
+    })
+})
+
 module.exports = router
