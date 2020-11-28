@@ -6,9 +6,14 @@ BEFORE DELETE ON staff
 FOR EACH ROW
 BEGIN
     DECLARE sub VARCHAR(200);
-    DECLARE teacher VARCHAR(50);
-    SELECT subName INTO sub FROM subject WHERE 
-    INSERT INTO backup VALUES(teacher, sub, old.submittedOn, old.acadYear, old.path)
+    DECLARE subjectId INT DEFAULT 0;
+    DECLARE submitted DATE;
+    DECLARE acad VARCHAR(7);
+    DECLARE p VARCHAR(300);
+
+    SELECT subId, submittedOn, acadYear, pathName INTO subjectId, submitted, acad, p FROM report WHERE reg_id=old.reg_id;
+    SELECT subName INTO sub FROM subject WHERE subId=subjectId;
+    INSERT INTO backup VALUES(subName, submitted, acad, old.firstName, old.lastName, p);
 END$
 
 DELIMITER ;

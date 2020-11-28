@@ -27,7 +27,6 @@ const addMultipleRelations = (data, teacher, callback) => {
                 }
                 else {
                     count++
-                    
                     if(count === data.relations.length) {
                         return callback(null, 201, res)
                     }
