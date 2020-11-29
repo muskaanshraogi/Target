@@ -15,12 +15,16 @@ import {
 	IconButton
 } from '@material-ui/core';
 import DeleteIcon from '@material-ui/icons/Delete';
+import EditIcon from '@material-ui/icons/Edit';
 import { useSnackbar } from "notistack";
 import Axios from 'axios';
+
+import EditSubject from './EditSubject';
 
 export default function Subjects() {
 	const { enqueueSnackbar } = useSnackbar();
 
+	const [editSubject, setEditSubject] = useState(-1);
 	const [allSubjects, setAllSubjects] = useState([]);
 	const [addSubjects, setAddSubjects] = useState([{
 		subId: '',
@@ -101,6 +105,10 @@ export default function Subjects() {
 		}
 	}
 
+	const handleEditSubject = (ind) => {
+		setEditSubject(ind)
+	}
+
 	const handleDeleteSubject = (subId) => {
 		Axios.delete(`http://localhost:8000/api/subject/delete/${subId}`, {
       headers: {
@@ -127,6 +135,7 @@ export default function Subjects() {
 
 	return (
 		<Grid item>
+			<EditSubject editSubject={editSubject} setEditSubject={setEditSubject}  allSubject={allSubjects} setAllSubjects={setAllSubjects} />
 			<Card>
 				<CardHeader
 					title="Add Subjects"
@@ -239,6 +248,13 @@ export default function Subjects() {
 							<ListItemSecondaryAction>
 								<IconButton
 									edge="end"
+									aria-label="edit"
+									onClick={() => handleEditSubject(index)}
+								>
+									<EditIcon />
+								</IconButton>
+								<IconButton
+									edge="end"
 									aria-label="delete"
 									onClick={() => handleDeleteSubject(subject.subId)}
 								>
@@ -250,6 +266,7 @@ export default function Subjects() {
 				</List>
 			</Card>
 		</Grid>
+		
 	)
 
 }
