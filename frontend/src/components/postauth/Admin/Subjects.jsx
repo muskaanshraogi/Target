@@ -80,6 +80,11 @@ export default function Subjects() {
 					let newAllSubjects = [...allSubjects]
 					newAllSubjects.push(addSubjects[0])
 					setAllSubjects(newAllSubjects);
+					setAddSubjects([{
+						subId: '',
+						subName: '',
+						year: 2
+					}]);
 				})
 				.catch(err => enqueueSnackbar('This subject already exists', { variant: 'error' }))
 		} else {
@@ -100,6 +105,11 @@ export default function Subjects() {
 					let newAllSubjects = [...allSubjects]
 					addSubjects.forEach(subject => newAllSubjects.push(subject));
 					setAllSubjects(newAllSubjects);
+					setAddSubjects([{
+						subId: '',
+						subName: '',
+						year: 2
+					}]);
 				})
 				.catch(err => enqueueSnackbar('Invalid', { variant: 'error' }))
 		}
@@ -110,7 +120,8 @@ export default function Subjects() {
 	}
 
 	const handleDeleteSubject = (subId) => {
-		Axios.delete(`http://localhost:8000/api/subject/delete/${subId}`, {
+		console.log(subId);
+	Axios.delete(`http://localhost:8000/api/subject/delete/${subId}`, {
       headers: {
         "Content-Type": "application/json",
         Authorization: `Bearer ${sessionStorage.getItem("usertoken")}`,

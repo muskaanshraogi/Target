@@ -14,8 +14,12 @@ import {
 } from '@material-ui/core';
 import {
     VpnKey,
+    AccessibilityNew,
 } from '@material-ui/icons';
 import Axios from 'axios';
+
+import Basic from './Basic';
+import OtherDetails from './OtherDetails';
 
 export default function Teacher() {
 
@@ -58,38 +62,8 @@ export default function Teacher() {
     return (
       <Grid container item spacing={1}>
         <Grid container item direction="column" xs={12} md={4} spacing={1}>
-          <Grid item>
-            <Card>
-              <CardHeader
-                title={`${user.firstName} ${user.lastName}`}
-                subheader={user.email}
-                avatar={<Avatar>{user.firstName.charAt(0)}{user.lastName.charAt(0)}</Avatar>}
-                titleTypographyProps={{ variant: "h4" }}
-                subheaderTypographyProps={{ variant: "h6" }}
-              />
-            </Card>
-          </Grid>
-          <Grid item>
-              <Card>
-              <CardContent>
-                <Typography gutterBottom variant="h6">
-                  Registration ID
-                </Typography>
-              </CardContent>
-                  <List dense>
-                      <ListItem>
-                          <ListItemAvatar>
-                              <Avatar>
-                                  <VpnKey />
-                              </Avatar>
-                          </ListItemAvatar>
-                          <ListItemText
-                              primary={user.reg_id}
-                          />
-                        </ListItem>
-                  </List>
-              </Card>
-          </Grid>
+          <Basic user={user} />
+          <OtherDetails user={user} />
           <Grid item>
             <Button
               onClick={handleEdit}
