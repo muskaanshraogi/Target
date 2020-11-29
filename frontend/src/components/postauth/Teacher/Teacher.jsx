@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import {
     Grid, 
     Card,
-    CardHeader,
     CardContent,
     Typography,
     Button,
@@ -14,12 +13,12 @@ import {
 } from '@material-ui/core';
 import {
     VpnKey,
-    AccessibilityNew,
 } from '@material-ui/icons';
 import Axios from 'axios';
 
 import Basic from './Basic';
-import OtherDetails from './OtherDetails';
+import OtherDetails from './OtherDetails';  
+import Subjects from './Subjects';
 
 export default function Teacher() {
 
@@ -75,37 +74,8 @@ export default function Teacher() {
             </Button>
           </Grid>
         </Grid>
-        <Grid container item direction="column" xs={12} md={8} spacing={1}>
-          <Grid item>
-            <Card>
-              <CardHeader
-                title="Add Subjects you are teaching"
-                titleTypographyProps={{ variant: "h4" }}
-              />
-            </Card>
-          </Grid>
-          
-          <Grid item>
-              <Card>
-              <CardContent>
-                <Typography gutterBottom variant="h6">
-                  Registration ID
-                </Typography>
-              </CardContent>
-                  <List dense>
-                      <ListItem>
-                          <ListItemAvatar>
-                              <Avatar>
-                                  <VpnKey />
-                              </Avatar>
-                          </ListItemAvatar>
-                          <ListItemText
-                              primary={user.reg_id}
-                          />
-                        </ListItem>
-                  </List>
-              </Card>
-          </Grid>
+        <Grid container item direction="column" xs={12} md={8} spacing={1}>  
+          <Subjects user={user}/>
         </Grid>
       </Grid>
     )
