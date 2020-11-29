@@ -261,13 +261,13 @@ export default function Subjects() {
                 }
               />
               <ListItemSecondaryAction>
-                <IconButton
+                {/* <IconButton
                   edge="end"
                   aria-label="edit"
                   onClick={() => handleEditSubject(index)}
                 >
                   <EditIcon />
-                </IconButton>
+                </IconButton> */}
                 <IconButton
                   edge="end"
                   aria-label="delete"

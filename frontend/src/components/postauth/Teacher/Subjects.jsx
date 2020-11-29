@@ -15,12 +15,22 @@ import {
   TableContainer,
   TableHead,
   Paper,
-
+  IconButton,
 } from "@material-ui/core";
+import DeleteIcon from "@material-ui/icons/Delete";
 import Axios from "axios";
 import { useSnackbar } from "notistack";
 
 const division = [9, 10, 11];
+
+const styles = {
+  hidden: {
+    display: "none",
+  },
+  importLabel: {
+    color: "black",
+  },
+};
 
 export default function Subjects({ user }) {
   const { enqueueSnackbar } = useSnackbar();
@@ -133,11 +143,66 @@ export default function Subjects({ user }) {
     ]);
   };
 
+  const handleDeleteSubject = (subject) => {
+    // `http://localhost:8000/api/faculty/delete/${subject.reg_id}`,
+  };
+
   const handleRemoveSubject = () => {
     const newAddSubjects = [...addSubjects];
     newAddSubjects.pop();
     setAddSubjects(newAddSubjects);
   };
+
+  const handleFileChange = (subject) => e => {
+    let date =  new Date().toLocaleDateString();
+    date = formatDate(date);
+    let acadYear = formatAcadYear(date); 
+    const fileType = e.target.value.split('.').pop();
+    const fileName = e.target.value.split('\\').pop();
+    enqueueSnackbar('Uploading...', {
+      variant: 'info',
+      persist: true
+  })
+    if(fileType === '.xlsx') {
+      const data = new FormData();
+      data.append('file', e.target.files[0])
+      data.append('filename', fileName);
+      Axios.post(
+        `http://localhost:8000/api/report/add/${subject.subName}/${JSON.parse(sessionStorage.getItem("user")).reg_id}`,
+        {
+          "submittedOn": date,
+          "acadYear": acadYear,
+          "file": data
+        },
+        {
+          headers: {
+            "Content-Type" : "multipart/form-data",
+            Authorization: `Bearer ${sessionStorage.getItem("usertoken")}`
+          }
+        }
+      )
+      .then(res => {
+        enqueueSnackbar('Uploaded file', {variant: 'success', persist:false})
+        console.log(res);
+      })
+      .catch(err => {
+        enqueueSnackbar('Could not upload file', {variant: 'error', persist: false});
+      })
+    }
+  };
+
+  const formatDate = (date) => {
+    date = date.replace('/', '-')
+    date = date.replace('/', '-')
+    return date;
+  }
+
+  const formatAcadYear = (date) => {
+    let year = date.split('-').pop();
+    let next = parseInt(year) + 1;
+    let last = next.toString().slice(2,4)
+    return `${year}-${last}`
+  }
 
   useEffect(() => {
     Axios.get("http://localhost:8000/api/subject/all", {
@@ -153,19 +218,22 @@ export default function Subjects({ user }) {
         enqueueSnackbar("Could not fetch subjects", { variant: "error" });
       });
     Axios.get(
-        `http://localhost:8000/api/subject/teacher/${JSON.parse(sessionStorage.getItem("user")).reg_id}`,
-        {
-            headers: {
-              "Content-Type": "application/json",
-              Authorization: `Beaer ${sessionStorage.getItem("usertoken")}`,
-            }
-        }
-    ).then(res => {
+      `http://localhost:8000/api/subject/teacher/${
+        JSON.parse(sessionStorage.getItem("user")).reg_id
+      }`,
+      {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Beaer ${sessionStorage.getItem("usertoken")}`,
+        },
+      }
+    )
+      .then((res) => {
         setMySubjects(res.data.data);
-    })
-    .catch(err=> {
-        enqueueSnackbar("Could not fetch my subjects", { variant: "error"})
-    })
+      })
+      .catch((err) => {
+        enqueueSnackbar("Could not fetch my subjects", { variant: "error" });
+      });
   }, [enqueueSnackbar]);
 
   return (
@@ -284,25 +352,57 @@ export default function Subjects({ user }) {
             titleTypographyProps={{ variant: "h4" }}
           />
           <TableContainer component={Paper}>
-      <Table aria-label="caption table" >
-        <TableHead>
-          <TableRow>
-            <TableCell align="center">Subject ID</TableCell>
-            <TableCell align="center">Subject Name</TableCell>
-            <TableCell align="center">Year</TableCell>
-          </TableRow>
-        </TableHead>
-        <TableBody>
-          {mySubjects.map((subject) => (
-            <TableRow key={subject.subId}>
-              <TableCell align="center">{subject.subId}</TableCell>
-              <TableCell align="center">{subject.subName}</TableCell>
-              <TableCell align="center">{subject.year}</TableCell>
-            </TableRow>
-          ))}
-        </TableBody>
-      </Table>
-    </TableContainer>
+            <Table aria-label="caption table">
+              <TableHead>
+                <TableRow>
+                  <TableCell align="center">Subject ID</TableCell>
+                  <TableCell align="center">Subject Name</TableCell>
+                  <TableCell align="center">Year</TableCell>
+                  <TableCell align="center">Role</TableCell>
+                  <TableCell align="center">Upload</TableCell>
+                  <TableCell align="center">Delete</TableCell>
+                </TableRow>
+              </TableHead>
+              <TableBody>
+                {mySubjects.map((subject) => (
+                  <TableRow key={subject.subId}>
+                    <TableCell align="center">{subject.subId}</TableCell>
+                    <TableCell align="center">{subject.subName}</TableCell>
+                    <TableCell align="center">{subject.year}</TableCell>
+                    <TableCell align="center">
+                      {subject.role_id === 1 ? "Teacher" : "Coordinator"}
+                    </TableCell>
+                    <TableCell align="center">
+                      <input
+                        type="file"
+                        id="fileUploadButton"
+                        style={{ display: "none" }}
+                        onChange={handleFileChange(subject)}
+                      />
+                      <label htmlFor={"fileUploadButton"}>
+                        <Button
+                          color="secondary"
+                          variant="outlined"
+                          component="span"
+                        >
+                          Upload worksheet
+                        </Button>
+                      </label>
+                    </TableCell>
+                    <TableCell align="center">
+                      <IconButton
+                        edge="end"
+                        aria-label="delete"
+                        onClick={() => handleDeleteSubject(subject)}
+                      >
+                        <DeleteIcon />
+                      </IconButton>
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </TableContainer>
         </Card>
       </Grid>
     </>

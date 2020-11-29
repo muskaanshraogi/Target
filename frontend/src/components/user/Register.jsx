@@ -60,14 +60,6 @@ const useStyles = makeStyles((theme) => ({
     left: theme.spacing(2),
     backgroundColor: theme.palette.background.paper,
     color: theme.palette.text.primary,
-  },
-  chip: {
-    display: 'flex',
-    justifyContent: 'center',
-    flexWrap: 'wrap',
-    '& > *': {
-      margin: theme.spacing(0.5),
-    }
   }
 }));
 
