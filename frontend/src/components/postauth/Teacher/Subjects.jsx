@@ -70,9 +70,19 @@ export default function Subjects({ user }) {
         }
       )
         .then((res) => {
-            enqueueSnackbar("Added subject", { variant: "sucess" });
+            setAddSubjects([{
+                subject: "",
+                role: "Subject Teacher",
+                division: 9,
+              }])
+            enqueueSnackbar("Added subject", { variant: "success" });
         })
         .catch((err) => {
+            setAddSubjects([{
+                subject: "",
+                role: "Subject Teacher",
+                division: 9,
+              }])
           enqueueSnackbar("Could not add subject", { variant: "error" });
         });
     } else {
@@ -89,6 +99,11 @@ export default function Subjects({ user }) {
         }
       )
         .then((res) => {
+            setAddSubjects([{
+                subject: "",
+                role: "Subject Teacher",
+                division: 9,
+              }])
             enqueueSnackbar("Added subjects", { variant: "success" });
         })
         .catch((err) => {
