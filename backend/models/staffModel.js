@@ -89,32 +89,8 @@ const updateTeacher = (teacher, reg_id, callback) => {
             if(err) {
                 return callback(err, 500, null)
             }
-            else {
-                db.query(
-                    "DELETE FROM mobile WHERE reg_id=?",
-                    [reg_id]
-                )
-                if(err) {
-                    return callback(err, 500, null)
-                }
-                else {
-                    let count = 0
-                    teacher.mobile.forEach((num) => {
-                        db.query(
-                            "INSERT INTO mobile VALUES(?, ?)",
-                            [teacher.reg_id, num]
-                        )
-                        if(err) {
-                            return callback(err, 500, null)
-                        }
-                        else {
-                            count++
-                            if(count === teacher.mobile.length) {
-                                return callback(null, 200, true)
-                            }
-                        }
-                    })
-                }
+            else {   
+                return callback(null, 200, true)        
             }
         }
     )
