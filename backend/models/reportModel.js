@@ -10,7 +10,7 @@ const addReport = (reg_id, subject, report, callback) => {
             }
             else {
                 db.query(
-                    "INSERT INTO report VALUES (?, ?, ?, ?, ?)",
+                    "INSERT INTO report(reg_id, subId, submittedOn, acadYear, pathName) VALUES (?, ?, ?, ?, ?)",
                     [reg_id, res[0].subId, report.submittedOn, report.acadYear, report.path],
                     (err, res) => {
                         if(err) {
