@@ -23,15 +23,6 @@ import { useSnackbar } from "notistack";
 
 const division = [9, 10, 11];
 
-const styles = {
-  hidden: {
-    display: "none",
-  },
-  importLabel: {
-    color: "black",
-  },
-};
-
 export default function Subjects({ user }) {
   const { enqueueSnackbar } = useSnackbar();
   const [subjects, setSubjects] = useState([]);
@@ -118,6 +109,10 @@ export default function Subjects({ user }) {
         }
       )
         .then((res) => {
+          enqueueSnackbar("Added subjects", { variant: "success" });
+          let newAllSubjects = [...mySubjects];
+          mySubjects.forEach((subject) => newAllSubjects.push(subject));
+          setMySubjects(newAllSubjects);
           setAddSubjects([
             {
               subject: "",
@@ -125,10 +120,6 @@ export default function Subjects({ user }) {
               division: 9,
             },
           ]);
-          let newAllSubjects = [...mySubjects];
-          mySubjects.forEach((subject) => mySubjects.push(subject));
-          setMySubjects(newAllSubjects);
-          enqueueSnackbar("Added subjects", { variant: "success" });
         })
         .catch((err) => {
           enqueueSnackbar("Could not add subjects", { variant: "error" });
@@ -143,8 +134,33 @@ export default function Subjects({ user }) {
     ]);
   };
 
-  const handleDeleteSubject = (subject) => {
-    // `http://localhost:8000/api/faculty/delete/${subject.reg_id}`,
+  const handleDeleteSubject = (subject) => {  
+    let reg_id = JSON.parse(sessionStorage.getItem("user")).reg_id;
+    let token = sessionStorage.getItem("usertoken");
+    Axios.delete(
+      `http://localhost:8000/api/faculty/delete/${reg_id}`,
+      {
+        "subject":  subject.subName,
+        "division": subject.division
+      },
+      {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    )
+    .then(res => {
+      let newAllSubjects = [...mySubjects];
+      newAllSubjects = mySubjects.filter((s) => s.subId !== subject.subId);
+      setMySubjects(newAllSubjects);
+      enqueueSnackbar('Deleted entry', {variant:'success'})
+    })
+    .catch(err => {
+      console.log(err.response)
+      enqueueSnackbar('Could not delete entry', {variant: 'error'})
+    })
+    
   };
 
   const handleRemoveSubject = () => {
@@ -153,56 +169,65 @@ export default function Subjects({ user }) {
     setAddSubjects(newAddSubjects);
   };
 
-  const handleFileChange = (subject) => e => {
-    let date =  new Date().toLocaleDateString();
+  const handleFileChange = (subject) => (e) => {
+    let date = new Date().toLocaleDateString();
     date = formatDate(date);
-    let acadYear = formatAcadYear(date); 
-    const fileType = e.target.value.split('.').pop();
-    const fileName = e.target.value.split('\\').pop();
-    enqueueSnackbar('Uploading...', {
-      variant: 'info',
-      persist: true
-  })
-    if(fileType === '.xlsx') {
+    let acadYear = formatAcadYear(date);
+    const fileType = e.target.value.split(".").pop();
+    const fileName = e.target.value.split("\\").pop();
+
+    if (fileType === ".xlsx") {
+      enqueueSnackbar("Uploading...", {
+        variant: "info",
+        persist: true,
+      });
       const data = new FormData();
-      data.append('file', e.target.files[0])
-      data.append('filename', fileName);
+      data.append("file", e.target.files[0]);
+      data.append("filename", fileName);
+      data.append("submittedOn", date);
+      data.append("acadYear", acadYear);
       Axios.post(
-        `http://localhost:8000/api/report/add/${subject.subName}/${JSON.parse(sessionStorage.getItem("user")).reg_id}`,
-        {
-          "submittedOn": date,
-          "acadYear": acadYear,
-          "file": data
-        },
+        `http://localhost:8000/api/report/add/${subject.subName}/${
+          JSON.parse(sessionStorage.getItem("user")).reg_id
+        }`,
+        data,
         {
           headers: {
-            "Content-Type" : "multipart/form-data",
-            Authorization: `Bearer ${sessionStorage.getItem("usertoken")}`
-          }
+            "Content-Type": "multipart/form-data",
+            Authorization: `Bearer ${sessionStorage.getItem("usertoken")}`,
+          },
         }
       )
-      .then(res => {
-        enqueueSnackbar('Uploaded file', {variant: 'success', persist:false})
-        console.log(res);
-      })
-      .catch(err => {
-        enqueueSnackbar('Could not upload file', {variant: 'error', persist: false});
-      })
+        .then((res) => {
+          enqueueSnackbar("Uploaded file", {
+            variant: "success",
+            persist: false,
+          });
+        })
+        .catch((err) => {
+          enqueueSnackbar("Could not upload file", {
+            variant: "error",
+            persist: false,
+          });
+        });
+    } else {
+      enqueueSnackbar("Only .xlsx format is allowed", { variant: "warning" });
+      return;
     }
   };
 
   const formatDate = (date) => {
-    date = date.replace('/', '-')
-    date = date.replace('/', '-')
+    date = date.replace("/", "-");
+    date = date.replace("/", "-");
     return date;
-  }
+  };
 
   const formatAcadYear = (date) => {
-    let year = date.split('-').pop();
+    let year = date.split("-").pop();
     let next = parseInt(year) + 1;
-    let last = next.toString().slice(2,4)
-    return `${year}-${last}`
-  }
+    let last = next.toString().slice(2, 4);
+    return `${year}-${last}`;
+  };
 
   useEffect(() => {
     Axios.get("http://localhost:8000/api/subject/all", {
@@ -358,6 +383,7 @@ export default function Subjects({ user }) {
                   <TableCell align="center">Subject ID</TableCell>
                   <TableCell align="center">Subject Name</TableCell>
                   <TableCell align="center">Year</TableCell>
+                  <TableCell align="center">Division</TableCell>
                   <TableCell align="center">Role</TableCell>
                   <TableCell align="center">Upload</TableCell>
                   <TableCell align="center">Delete</TableCell>
@@ -369,6 +395,7 @@ export default function Subjects({ user }) {
                     <TableCell align="center">{subject.subId}</TableCell>
                     <TableCell align="center">{subject.subName}</TableCell>
                     <TableCell align="center">{subject.year}</TableCell>
+                    <TableCell align="center">{subject.division}</TableCell>
                     <TableCell align="center">
                       {subject.role_id === 1 ? "Teacher" : "Coordinator"}
                     </TableCell>

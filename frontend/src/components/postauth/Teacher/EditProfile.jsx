@@ -32,10 +32,9 @@ export default function EditProfile() {
     const { enqueueSnackbar } = useSnackbar();
   const [expanded, setExpanded] = useState(false);
   const [details, setDetails] = useState({
-    "firstName": "",
-    "lastName": "",
-    "email": "",
-    "mobile": [''],
+    "firstName": JSON.parse(sessionStorage.getItem("user")).firstName,
+    "lastName": JSON.parse(sessionStorage.getItem("user")).lastName,
+    "email": JSON.parse(sessionStorage.getItem("user")).email,
 });
 
   const handleChange = (panel) => (event, isExpanded) => {
@@ -45,18 +44,18 @@ export default function EditProfile() {
   const handleSubmit = e => {
       e.preventDefault();
       Axios.post(
-        `http://localhost:8000/api/staff/update/${sessionStorage.getItem("usertoken")}`,
+        `http://localhost:8000/api/staff/update/${JSON.parse(sessionStorage.getItem("user")).reg_id}`,
         details,
         { 
           headers: 
           { 
-            'Content-Type': 'application/json' 
+            'Content-Type': 'application/json' ,
+            Authorization: `Bearer ${sessionStorage.getItem("usertoken")}`
           } 
         }
       )
       .then(res => {
-        sessionStorage.setItem("usertoken", res.data.data.token);
-        sessionStorage.setItem("user", JSON.stringify(res.data.data.user));
+        setDetails(details);
         enqueueSnackbar('Update Successful', { variant: 'success'});
       })
       .catch(err => {
@@ -88,7 +87,7 @@ export default function EditProfile() {
               label="First name"
               name="firstName"
               autoComplete="firstName"
-              value={details.firstName}
+              defaultValue={details.firstName}
               autoFocus
               onChange={handleChange}
             /> 
@@ -101,7 +100,7 @@ export default function EditProfile() {
               label="Last name"
               name="lastName"
               autoComplete="lastName"
-              value={details.lastName}
+              defaultValue={details.lastName}
               onChange={handleChange}
             />
             <TextField
@@ -113,7 +112,7 @@ export default function EditProfile() {
               label="Email Address"
               name="email"
               autoComplete="email"
-              value={details.email}
+              defaultValue={details.email}
               onChange={handleChange}
             />
             <Button
