@@ -180,6 +180,7 @@ export default function ClippedDrawer() {
         }
       )
       .then(res => {
+        console.log(res.data.data[0])
         setUser(res.data.data[0])
         setIsAdmin(() => res.data.data[0].is_admin === 0 ? false : true)
       })

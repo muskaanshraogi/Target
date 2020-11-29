@@ -74,10 +74,6 @@ export default function Subjects() {
         },
       })
         .then((res) => {
-          enqueueSnackbar("Added subject", { variant: "success" });
-          let newAllSubjects = [...allSubjects];
-          newAllSubjects.push(addSubjects[0]);
-          setAllSubjects(newAllSubjects);
           setAddSubjects([
             {
               subId: "",
@@ -85,6 +81,10 @@ export default function Subjects() {
               year: 2,
             },
           ]);
+          let newAllSubjects = [...allSubjects];
+          newAllSubjects.push(addSubjects[0]);
+          setAllSubjects(newAllSubjects);
+          enqueueSnackbar("Added subject", { variant: "success" });
         })
         .catch((err) =>
           enqueueSnackbar("This subject already exists", { variant: "error" })
@@ -103,10 +103,6 @@ export default function Subjects() {
         }
       )
         .then((res) => {
-          enqueueSnackbar("Added subject", { variant: "success" });
-          let newAllSubjects = [...allSubjects];
-          addSubjects.forEach((subject) => newAllSubjects.push(subject));
-          setAllSubjects(newAllSubjects);
           setAddSubjects([
             {
               subId: "",
@@ -114,6 +110,10 @@ export default function Subjects() {
               year: 2,
             },
           ]);
+          let newAllSubjects = [...allSubjects];
+          addSubjects.forEach((subject) => newAllSubjects.push(subject));
+          setAllSubjects(newAllSubjects);
+          enqueueSnackbar("Added subjects", { variant: "success" });
         })
         .catch((err) => enqueueSnackbar("Invalid", { variant: "error" }));
     }
