@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import {
   Dialog,
   DialogTitle,
@@ -14,8 +14,8 @@ export default function EditSubject({
   allSubjects,
   setAllSubjects,
 }) {
-
-  const handleSubmit = () => {};
+	
+const handleSubmit = () => {};
 
 const handleChange = () => {};
 	
