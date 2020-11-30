@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Grid,
   Accordion,
@@ -32,15 +32,23 @@ export default function EditProfile() {
     const { enqueueSnackbar } = useSnackbar();
   const [expanded, setExpanded] = useState(false);
   const [details, setDetails] = useState({
-    "firstName": JSON.parse(sessionStorage.getItem("user")).firstName,
-    "lastName": JSON.parse(sessionStorage.getItem("user")).lastName,
-    "email": JSON.parse(sessionStorage.getItem("user")).email,
+    "firstName": '',
+    "lastName": '',
+    "email": '',
 });
 
   const handleChange = (panel) => (event, isExpanded) => {
     setExpanded(isExpanded ? panel : false);
   };
 
+  const handleEdit = e => {
+    const et = e.target;
+    if(!!et.id) {
+      setDetails({...details, [et.id]: et.value})
+    }  else {
+      setDetails({...details, [et.name]: et.value});
+    }
+  }
   const handleSubmit = e => {
       e.preventDefault();
       Axios.post(
@@ -62,6 +70,23 @@ export default function EditProfile() {
         enqueueSnackbar('Could not update', { variant: 'error' });
       })
   }
+
+  useEffect(() => {
+    Axios.get(
+      `http://localhost:8000/api/staff/${JSON.parse(sessionStorage.getItem("user")).reg_id}`,
+      {
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${sessionStorage.getItem("usertoken")}`
+          }
+        }
+      )
+      .then(res => {
+        let data = res.data.data[0]
+        console.log(data);
+        setDetails({firstName: data.firstName, lastName: data.lastName, email: data.email})
+      })
+  }, [])
 
   return (
     <Grid item>
@@ -87,9 +112,9 @@ export default function EditProfile() {
               label="First name"
               name="firstName"
               autoComplete="firstName"
-              defaultValue={details.firstName}
+              value={details.firstName}
               autoFocus
-              onChange={handleChange}
+              onChange={handleEdit}
             /> 
             <TextField
               variant="outlined"
@@ -100,8 +125,8 @@ export default function EditProfile() {
               label="Last name"
               name="lastName"
               autoComplete="lastName"
-              defaultValue={details.lastName}
-              onChange={handleChange}
+              value={details.lastName}
+              onChange={handleEdit}
             />
             <TextField
               variant="outlined"
@@ -112,8 +137,8 @@ export default function EditProfile() {
               label="Email Address"
               name="email"
               autoComplete="email"
-              defaultValue={details.email}
-              onChange={handleChange}
+              value={details.email}
+              onChange={handleEdit}
             />
             <Button
               type="submit"
