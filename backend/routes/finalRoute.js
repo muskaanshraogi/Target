@@ -13,8 +13,8 @@ router.use(function (req, res, next) {
     next();
 });
 
-router.get('/calculate/:subject', authenticate, (req, res, next) => {
-  finalModel.calculateFinal(req.params.subject, (err, status, data) => {
+router.get('/calculate/:subject/:acadYear', authenticate, (req, res, next) => {
+  finalModel.calculateFinal(req.params.subject, req.params.acadYear, (err, status, data) => {
       if(err) {
           delete err.sql
           res.status(status).send({ err: err, data: null })

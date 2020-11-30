@@ -172,7 +172,7 @@ export default function Subjects({ user }) {
   const handleFileChange = (subject) => (e) => {
     let date = new Date().toISOString().split('T')[0]
     date = formatDate(date);
-    let acadYear = formatAcadYear(date);
+    let acadYear = formatAcadYear(formatDate(new Date().toLocaleDateString()));
     const fileType = e.target.value.split(".").pop();
     const fileName = e.target.value.split("\\").pop();
 
