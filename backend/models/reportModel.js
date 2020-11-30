@@ -11,7 +11,7 @@ const addReport = (reg_id, subject, report, callback) => {
             else {
                 db.query(
                     "INSERT INTO report(reg_id, subId, submittedOn, acadYear, pathName) VALUES (?, ?, ?, ?, ?)",
-                    [reg_id, res[0].subId, report.submittedOn, report.acadYear, report.path],
+                    [reg_id, res[0].subId, report.submittedOn, report.acadYear, `reports/${report.filename}`],
                     (err, res) => {
                         if(err) {
                             return callback(err, 500, null)

@@ -134,25 +134,25 @@ export default function Subjects({ user }) {
     ]);
   };
 
-  const handleDeleteSubject = (subject) => {  
+  const handleDeleteSubject = (data) => {  
     let reg_id = JSON.parse(sessionStorage.getItem("user")).reg_id;
     let token = sessionStorage.getItem("usertoken");
-    Axios.delete(
+    Axios.post(
       `http://localhost:8000/api/faculty/delete/${reg_id}`,
-      {
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
+        {
+          subject:  data.subName,
+          division: data.division
         },
-      },
-      {
-        "subject":  subject.subName,
-        "division": subject.division
-      },
+        {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        },
     )
     .then(res => {
       let newAllSubjects = [...mySubjects];
-      newAllSubjects = mySubjects.filter((s) => s.subId !== subject.subId);
+      newAllSubjects = mySubjects.filter((s) => s.subId !== data.subId);
       setMySubjects(newAllSubjects);
       enqueueSnackbar('Deleted entry', {variant:'success'})
     })
@@ -170,22 +170,23 @@ export default function Subjects({ user }) {
   };
 
   const handleFileChange = (subject) => (e) => {
-    let date = new Date().toLocaleDateString();
+    let date = new Date().toISOString().split('T')[0]
     date = formatDate(date);
     let acadYear = formatAcadYear(date);
     const fileType = e.target.value.split(".").pop();
     const fileName = e.target.value.split("\\").pop();
 
-    if (fileType === ".xlsx") {
+    if (fileType === "xlsx" || fileType === "xls") {
       enqueueSnackbar("Uploading...", {
         variant: "info",
         persist: true,
       });
-      const data = new FormData();
+      let data = new FormData();
       data.append("file", e.target.files[0]);
       data.append("filename", fileName);
       data.append("submittedOn", date);
       data.append("acadYear", acadYear);
+
       Axios.post(
         `http://localhost:8000/api/report/add/${subject.subName}/${
           JSON.parse(sessionStorage.getItem("user")).reg_id
@@ -400,21 +401,23 @@ export default function Subjects({ user }) {
                       {subject.role_id === 1 ? "Teacher" : "Coordinator"}
                     </TableCell>
                     <TableCell align="center">
-                      <input
-                        type="file"
-                        id="fileUploadButton"
-                        style={{ display: "none" }}
-                        onChange={handleFileChange(subject)}
-                      />
-                      <label htmlFor={"fileUploadButton"}>
-                        <Button
-                          color="secondary"
-                          variant="outlined"
-                          component="span"
-                        >
-                          Upload worksheet
-                        </Button>
-                      </label>
+                      <form id='upload-form' enctype="multipart/form-data">
+                        <input
+                          type="file"
+                          id="fileUploadButton"
+                          style={{ display: "none" }}
+                          onChange={handleFileChange(subject)}
+                        />
+                        <label htmlFor={"fileUploadButton"}>
+                          <Button
+                            color="secondary"
+                            variant="outlined"
+                            component="span"
+                          >
+                            Upload worksheet
+                          </Button>
+                        </label>
+                      </form>
                     </TableCell>
                     <TableCell align="center">
                       <IconButton

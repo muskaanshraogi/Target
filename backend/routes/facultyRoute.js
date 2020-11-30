@@ -37,7 +37,7 @@ router.post('/add/multiple/:reg_id', authenticate, (req, res, next) => {
     })
 })
 
-router.delete('/delete/:reg_id', authenticate, (req, res, next) => {
+router.post('/delete/:reg_id', authenticate, (req, res, next) => {
     facultyModel.deleteRelation(req.body, req.params.reg_id, (err, status, data) => {
         if(err) {
             delete err.sql

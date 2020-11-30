@@ -1,4 +1,5 @@
 const express = require('express')
+const multer = require('multer');
 const router = express.Router()
 const reportModel = require('./../models/reportModel');
 const { authenticate, authenticateAdmin } = require('../globals');
@@ -13,14 +14,36 @@ router.use(function (req, res, next) {
     next();
 });
 
+let storage = multer.diskStorage({
+    destination: function (req, file, cb) {
+    cb(null, 'reports')
+  },
+  filename: function (req, file, cb) {
+    cb(null, file.originalname )
+  }
+})
+
+let upload = multer({ storage: storage }).single('file')
+
 router.post('/add/:subject/:reg_id', authenticate, (req, res, next) => {
-    reportModel.addReport(req.params.reg_id, req.params.subject, req.body, (err, status, data) => {
-        if(err) {
-            delete err.sql
-            res.status(status).send({ err: err, data: null })
+    upload(req, res, function (err) {
+        if (err instanceof multer.MulterError) {
+            res.status(500).send({ err: err, data: null })
+        } 
+        else if (err) {
+            res.status(500).send({ err: err, data: null })
         }
         else {
-            res.status(200).send({ err: null, data: data })
+            reportModel.addReport(req.params.reg_id, req.params.subject, req.body,  (err, status, data) => {
+                if(err) {
+                    console.log(err)
+                    delete err.sql
+                    res.status(status).send({ err: err, data: null })
+                }
+                else {
+                    res.status(200).send({ err: null, data: data })
+                }
+            })
         }
     })
 })
