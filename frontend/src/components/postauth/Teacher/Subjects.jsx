@@ -140,15 +140,15 @@ export default function Subjects({ user }) {
     Axios.delete(
       `http://localhost:8000/api/faculty/delete/${reg_id}`,
       {
-        "subject":  subject.subName,
-        "division": subject.division
-      },
-      {
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
         },
-      }
+      },
+      {
+        "subject":  subject.subName,
+        "division": subject.division
+      },
     )
     .then(res => {
       let newAllSubjects = [...mySubjects];
