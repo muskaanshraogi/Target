@@ -34,6 +34,12 @@ export default function Subjects({ user }) {
       division: 9,
     },
   ]);
+  const [index, setIndex] = useState('');
+
+  const handleIndex = (e) => {
+    let subName = e.target.innerHTML.split(' ').pop();
+    setIndex(subName);
+  };
 
   const handleChange = (e) => {
     let et = e.target;
@@ -134,32 +140,31 @@ export default function Subjects({ user }) {
     ]);
   };
 
-  const handleDeleteSubject = (data) => {  
+  const handleDeleteSubject = (data) => {
     let reg_id = JSON.parse(sessionStorage.getItem("user")).reg_id;
     let token = sessionStorage.getItem("usertoken");
     Axios.post(
       `http://localhost:8000/api/faculty/delete/${reg_id}`,
-        {
-          subject:  data.subName,
-          division: data.division
+      {
+        subject: data.subName,
+        division: data.division,
+      },
+      {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
         },
-        {
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-        },
+      }
     )
-    .then(res => {
-      let newAllSubjects = [...mySubjects];
-      newAllSubjects = mySubjects.filter((s) => s.subId !== data.subId);
-      setMySubjects(newAllSubjects);
-      enqueueSnackbar('Deleted entry', {variant:'success'})
-    })
-    .catch(err => {
-      enqueueSnackbar('Could not delete entry', {variant: 'error'})
-    })
-    
+      .then((res) => {
+        let newAllSubjects = [...mySubjects];
+        newAllSubjects = mySubjects.filter((s) => s.subId !== data.subId);
+        setMySubjects(newAllSubjects);
+        enqueueSnackbar("Deleted entry", { variant: "success" });
+      })
+      .catch((err) => {
+        enqueueSnackbar("Could not delete entry", { variant: "error" });
+      });
   };
 
   const handleRemoveSubject = () => {
@@ -168,8 +173,8 @@ export default function Subjects({ user }) {
     setAddSubjects(newAddSubjects);
   };
 
-  const handleFileChange = (subject) => (e) => {
-    let date = new Date().toISOString().split('T')[0]
+  const handleFileChange = (e) => {
+    let date = new Date().toISOString().split("T")[0];
     date = formatDate(date);
     let acadYear = formatAcadYear(formatDate(new Date().toLocaleDateString()));
     const fileType = e.target.value.split(".").pop();
@@ -178,7 +183,6 @@ export default function Subjects({ user }) {
     if (fileType === "xlsx" || fileType === "xls") {
       enqueueSnackbar("Uploading...", {
         variant: "info",
-        persist: true,
       });
       let data = new FormData();
       data.append("file", e.target.files[0]);
@@ -186,33 +190,33 @@ export default function Subjects({ user }) {
       data.append("submittedOn", date);
       data.append("acadYear", acadYear);
 
-      Axios.post(
-        `http://localhost:8000/api/report/add/${subject.subName}/${
-          JSON.parse(sessionStorage.getItem("user")).reg_id
-        }`,
-        data,
-        {
-          headers: {
-            "Content-Type": "multipart/form-data",
-            Authorization: `Bearer ${sessionStorage.getItem("usertoken")}`,
-          },
-        }
-      )
-        .then((res) => {
-          enqueueSnackbar("Uploaded file", {
-            variant: "success",
-            persist: false,
+        Axios.post(
+          `http://localhost:8000/api/report/add/${index}/${
+            JSON.parse(sessionStorage.getItem("user")).reg_id
+          }`,
+          data,
+          {
+            headers: {
+              "Content-Type": "multipart/form-data",
+              Authorization: `Bearer ${sessionStorage.getItem("usertoken")}`,
+            },
+          }
+        )
+          .then((res) => {
+            enqueueSnackbar("Uploaded file", {
+              variant: "success",
+              persist: false,
+            });
+          })
+          .catch((err) => {
+            enqueueSnackbar("Could not upload file", {
+              variant: "error",
+              persist: false,
+            });
           });
-        })
-        .catch((err) => {
-          enqueueSnackbar("Could not upload file", {
-            variant: "error",
-            persist: false,
-          });
-        });
-    } else {
-      enqueueSnackbar("Only .xlsx format is allowed", { variant: "warning" });
-      return;
+      } else {
+        enqueueSnackbar("Only .xlsx format is allowed", { variant: "warning" });
+        return;
     }
   };
 
@@ -390,7 +394,7 @@ export default function Subjects({ user }) {
                 </TableRow>
               </TableHead>
               <TableBody>
-                {mySubjects.map((subject) => (
+                {mySubjects.map((subject, index) => (
                   <TableRow key={subject.subId}>
                     <TableCell align="center">{subject.subId}</TableCell>
                     <TableCell align="center">{subject.subName}</TableCell>
@@ -400,23 +404,22 @@ export default function Subjects({ user }) {
                       {subject.role_id === 1 ? "Teacher" : "Coordinator"}
                     </TableCell>
                     <TableCell align="center">
-                      <form id='upload-form' enctype="multipart/form-data">
-                        <input
-                          type="file"
-                          id="fileUploadButton"
-                          style={{ display: "none" }}
-                          onChange={handleFileChange(subject)}
-                        />
-                        <label htmlFor={"fileUploadButton"}>
-                          <Button
-                            color="secondary"
-                            variant="outlined"
-                            component="span"
-                          >
-                            Upload worksheet
-                          </Button>
-                        </label>
-                      </form>
+                      <input
+                        type="file"
+                        id="fileUploadButton"
+                        style={{ display: "none" }}
+                        onChange={handleFileChange}
+                      />
+                      <label htmlFor={"fileUploadButton"}>
+                        <Button
+                          color="secondary"
+                          variant="outlined"
+                          component="span"
+                          onClick={handleIndex}
+                        >
+                          Upload worksheet for {subject.subName}
+                        </Button>
+                      </label>
                     </TableCell>
                     <TableCell align="center">
                       <IconButton

@@ -83,7 +83,6 @@ export default function EditProfile() {
       )
       .then(res => {
         let data = res.data.data[0]
-        console.log(data);
         setDetails({firstName: data.firstName, lastName: data.lastName, email: data.email})
       })
   }, [])

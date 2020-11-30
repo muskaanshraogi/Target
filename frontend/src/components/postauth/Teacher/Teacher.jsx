@@ -7,6 +7,7 @@ import Basic from "./Basic";
 import OtherDetails from "./OtherDetails";
 import Subjects from "./Subjects";
 import EditProfile from "./EditProfile";
+import Download from './Download';
 
 export default function Teacher() {
   const [token, setToken] = useState(null);
@@ -50,6 +51,7 @@ export default function Teacher() {
       <Grid container item direction="column" xs={12} md={4} spacing={1}>
         <Basic user={user} />
         <OtherDetails user={user} />
+        <Download />
         <EditProfile />
       </Grid>
       <Grid container item direction="column" xs={12} md={8} spacing={1}>

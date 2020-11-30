@@ -137,6 +137,10 @@ const drawerItems = [
   {
     name: "Admin Interface",
     icon: <SupervisorAccount />
+  },
+  {
+    name: "Coordinator Interface",
+    icon: <SupervisorAccount />
   }
 ];
 
@@ -269,6 +273,21 @@ export default function ClippedDrawer() {
                   <ListItemText primary={drawerItems[1].name} />
                 </ListItem>
               }
+              <ListItem
+                key={0}
+                selected={location.pathname.includes(
+                  drawerItems[2].name.split(" ")[0].toLowerCase()
+                )}
+                onClick={() =>
+                  history.push(`/home/${drawerItems[2].name.split(" ")[0].toLowerCase()}`)
+                }
+                button
+              >
+                <ListItemIcon className={classes.list}>
+                  {drawerItems[2].icon}
+                </ListItemIcon>
+                <ListItemText primary={drawerItems[2].name} />
+              </ListItem>
           </List>
         </div>
       </Drawer>
