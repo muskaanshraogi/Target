@@ -114,6 +114,22 @@ const calculateFinal = (subId, acadYear, callback) => {
     )
 }
 
+const getAttainment = (regId, callback) => {
+    db.query(
+        "SELECT attainment FROM final WHERE subId IN (SELECT subId FROM faculty WHERE reg_id=?",
+        [reg_id],
+        (err, res) => {
+            if(err) {
+                return callback(err, 500, null)
+            }
+            else {
+                return callback(null, 200, res)
+            }
+        }
+    )
+}
+
 module.exports = {
-    calculateFinal
+    calculateFinal,
+    getAttainment
 }

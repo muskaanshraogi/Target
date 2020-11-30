@@ -25,4 +25,16 @@ router.get('/calculate/:subject/:acadYear', authenticate, (req, res, next) => {
   })
 })
 
+router.get('/attainment/:reg_id', authenticate, (req, res, next) => {
+  finalModel.calculateFinal(req.params.reg_id, (err, status, data) => {
+      if(err) {
+          delete err.sql
+          res.status(status).send({ err: err, data: null })
+      }
+      else {
+          res.status(200).send({ err: null, data: data })
+      }
+  })
+})
+
 module.exports = router
