@@ -36,7 +36,6 @@ router.post('/add/:subject/:reg_id', authenticate, (req, res, next) => {
         else {
             reportModel.addReport(req.params.reg_id, req.params.subject, req.body,  (err, status, data) => {
                 if(err) {
-                    console.log(err)
                     delete err.sql
                     res.status(status).send({ err: err, data: null })
                 }

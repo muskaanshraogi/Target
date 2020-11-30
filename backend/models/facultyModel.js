@@ -37,7 +37,6 @@ const addMultipleRelations = (data, teacher, callback) => {
 }
 
 const deleteRelation = (relation, teacher, callback) => {
-    console.log(relation, teacher)
     db.query(
         "CALL relation_delete(?, ?, ?)",
         [teacher, relation.subject, relation.division],

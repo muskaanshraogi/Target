@@ -157,7 +157,6 @@ export default function Subjects({ user }) {
       enqueueSnackbar('Deleted entry', {variant:'success'})
     })
     .catch(err => {
-      console.log(err.response)
       enqueueSnackbar('Could not delete entry', {variant: 'error'})
     })
     
