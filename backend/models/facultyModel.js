@@ -53,7 +53,7 @@ const deleteRelation = (relation, teacher, callback) => {
 
 const getSubjectTeacherDetails = (reg_id, callback) => {
     db.query(
-        "SELECT subject.subId, subject.subName, subject.year, staff.firstName, staff.lastName, role.roleName, faculty.division FROM faculty JOIN staff JOIN role JOIN subject ON faculty.reg_id=staff.reg_id AND faculty.role_id=role.role_id AND faculty.subId=subject.subId WHERE faculty.subId IN (SELECT subId FROM faculty WHERE reg_id=? AND role_id=2)",
+        "SELECT subject.subId, subject.subName, subject.year, staff.firstName, staff.lastName, role.roleName, faculty.division, faculty.reg_id FROM faculty JOIN staff JOIN role JOIN subject ON faculty.reg_id=staff.reg_id AND faculty.role_id=role.role_id AND faculty.subId=subject.subId WHERE faculty.subId IN (SELECT subId FROM faculty WHERE reg_id=? AND role_id=2)",
         [reg_id],
         (err, res) => {
             if(err) {
