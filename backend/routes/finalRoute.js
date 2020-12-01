@@ -26,7 +26,7 @@ router.get('/calculate/:subject/:acadYear', authenticate, (req, res, next) => {
 })
 
 router.get('/attainment/:reg_id', authenticate, (req, res, next) => {
-  finalModel.calculateFinal(req.params.reg_id, (err, status, data) => {
+  finalModel.getAttainment(req.params.reg_id, (err, status, data) => {
       if(err) {
           delete err.sql
           res.status(status).send({ err: err, data: null })

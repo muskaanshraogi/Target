@@ -81,7 +81,7 @@ export default function Coordinator() {
           </TableContainer>
         </Card>
       </Grid>
-      {teachers.length >= 3 && (
+      {(
         <Grid>
           <Button variant="contained" color="primary" style={{margin: '2% 2% 0% 2%'}} onClick={handleCalculate}>
             Calculate Attainment

@@ -54,7 +54,7 @@ const deleteReport = (reg_id, subject, acadYear, callback) => {
 
 const getSubjectReports = (reg_id, callback) => {
     db.query(
-        "SELECT * FROM report WHERE subId IN (SELECT subId FROM FACULTY WHERE reg_id=? AND role_id=2)",
+        "SELECT * FROM report WHERE subId IN (SELECT subId FROM faculty WHERE reg_id=? AND role_id=2)",
         [reg_id],
         (err, res) => {
             if(err) {

@@ -114,9 +114,9 @@ const calculateFinal = (subId, acadYear, callback) => {
     )
 }
 
-const getAttainment = (regId, callback) => {
+const getAttainment = (reg_id, callback) => {
     db.query(
-        "SELECT attainment FROM final WHERE subId IN (SELECT subId FROM faculty WHERE reg_id=?",
+        "SELECT attainment FROM final WHERE subId IN (SELECT subId FROM faculty WHERE reg_id=?)",
         [reg_id],
         (err, res) => {
             if(err) {
