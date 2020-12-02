@@ -9,16 +9,25 @@ import {
 	ListItemText,
 	Typography,
 	ListItemSecondaryAction,
-	IconButton
+	IconButton,
+	colors,
+	makeStyles
 } from '@material-ui/core';
 import DeleteIcon from '@material-ui/icons/Delete';
 import Axios from 'axios';
 import { useSnackbar } from "notistack";
 
+const useStyles = makeStyles(theme => ({
+	avatar: {
+		color: theme.palette.getContrastText(colors.blue[600]),
+		backgroundColor: colors.blue[600]
+	},  
+}))
+
 export default function AllUsers() {
 	
+	const classes = useStyles();
 	const { enqueueSnackbar } = useSnackbar();
-  
 	const [allUsers, setAllUsers] = useState([]);
 
 	const handleDeleteUser = (reg_id) => {
@@ -56,7 +65,7 @@ export default function AllUsers() {
 					allUsers.map((user, index) => (
 						<ListItem id={index} key={index}>
 							<ListItemAvatar>
-								<Avatar>
+								<Avatar className={classes.avatar}>
 									{user.firstName.charAt(0)}
 									{user.lastName.charAt(0)}
 								</Avatar>

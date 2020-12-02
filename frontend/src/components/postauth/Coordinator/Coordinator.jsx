@@ -22,8 +22,6 @@ export default function Coordinator() {
   const [attainment, setAttainment] = useState(0);
 
   const handleCalculate = () => {
-    let date = new Date().toISOString().split("T")[0];
-    date = formatDate(date);
     let acadYear = formatAcadYear(formatDate(new Date().toLocaleDateString()));
     Axios.get(
       `http://localhost:8000/api/final/calculate/${teachers[0].subId}/${acadYear}`,
@@ -94,19 +92,22 @@ export default function Coordinator() {
         enqueueSnackbar("Could not fetch teachers", { variant: "error" });
       });
     Axios.get(
-      `http://localhost:8000/api/final/attainment/${JSON.parse(sessionStorage.getItem("user")).reg_id}`,
+      `http://localhost:8000/api/final/attainment/${
+        JSON.parse(sessionStorage.getItem("user")).reg_id
+      }`,
       {
         headers: {
           "Content-Type": "application/json",
           Authorization: `Beaer ${sessionStorage.getItem("usertoken")}`,
         },
       }
-    ).then(res => {
-      setAttainment(res.data.data[0].attainment);
-    })
-    .catch(err => {
-      setAttainment(0);
-    })
+    )
+      .then((res) => {
+        setAttainment(res.data.data[0].attainment);
+      })
+      .catch((err) => {
+        setAttainment(0);
+      });
   }, [enqueueSnackbar]);
   return (
     <Grid container item spacing={1}>
@@ -155,19 +156,28 @@ export default function Coordinator() {
                 </Table>
               </TableContainer>
             </Card>
+            <Card
+              style={{
+                margin: "2% 0% 0% 0%",
+              }}
+            >
+              <CardHeader
+                title={`Attainment for the subject is ${attainment}`}
+                titleTypographyProps={{ variant: "h4" }}
+              />
+            </Card>
             <Grid>
-            {
-              attainment === 0 &&
-              <Button
-                variant="contained"
-                color="primary"
-                style={{ margin: "2% 2% 0% 0%" }}
-                onClick={handleCalculate}
-                disabled={reports.length >= 3 ? false : true}
-              >
-                Calculate Attainment
-              </Button>
-            }
+              {attainment === 0 && (
+                <Button
+                  variant="contained"
+                  color="primary"
+                  style={{ margin: "2% 2% 0% 0%" }}
+                  onClick={handleCalculate}
+                  disabled={reports.length >= 3 ? false : true}
+                >
+                  Calculate Attainment
+                </Button>
+              )}
             </Grid>
           </>
         ) : (
@@ -179,15 +189,6 @@ export default function Coordinator() {
           </Card>
         )}
       </Grid>
-      <Card
-        style={{
-          margin: '2% 0% 0% 0%'
-        }}>
-        <CardHeader
-          title={`Attainment for the subject is ${attainment}`}
-          titleTypographyProps={{ variant: "h4" }}
-        />
-      </Card>
     </Grid>
   );
 }

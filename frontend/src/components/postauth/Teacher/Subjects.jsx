@@ -412,7 +412,7 @@ export default function Subjects({ user }) {
                       />
                       <label htmlFor={"fileUploadButton"}>
                         <Button
-                          color="secondary"
+                          color="primary"
                           variant="outlined"
                           component="span"
                           onClick={handleIndex}

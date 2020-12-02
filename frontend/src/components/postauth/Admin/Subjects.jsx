@@ -13,15 +13,25 @@ import {
   Avatar,
   ListItemSecondaryAction,
   IconButton,
+  makeStyles,
+  colors,
 } from "@material-ui/core";
 import DeleteIcon from "@material-ui/icons/Delete";
-import EditIcon from "@material-ui/icons/Edit";
 import { useSnackbar } from "notistack";
 import Axios from "axios";
 
 import EditSubject from "./EditSubject";
 
+const useStyles = makeStyles(theme => ({
+	avatar: {
+		color: theme.palette.getContrastText(colors.blue[600]),
+		backgroundColor: colors.blue[600]
+	},  
+}))
+
+
 export default function Subjects() {
+  const classes = useStyles();
   const { enqueueSnackbar } = useSnackbar();
 
   const [editSubject, setEditSubject] = useState(-1);
@@ -241,7 +251,7 @@ export default function Subjects() {
           {allSubjects.map((subject, index) => (
             <ListItem id={subject.subId} key={index}>
               <ListItemAvatar>
-                <Avatar>{subject.subName.charAt(0)}</Avatar>
+                <Avatar className={classes.avatar}>{subject.subName.charAt(0)}</Avatar>
               </ListItemAvatar>
               <ListItemText
                 primary={

@@ -7,15 +7,17 @@ const lightPallete = {
   palette: {
     type: 'light',
     primary: { main: colors.blue[600] },
-    secondary: { main: colors.teal[600] },
+    secondary: { main: colors.blue[200] },  
+    background: { paper: colors.grey[100], default: colors.grey[200] }
   }
 }
 
 const darkPallette = {
   palette: {
     type: 'dark',
-    primary: { main: colors.blue[200] },
-    secondary: { main: colors.teal[200] },
+    primary: { main: colors.blue[600] },
+    secondary: { main: colors.blue[200] },
+    background: { paper: '#23395D', default: '#152238' }
   }
 }
 

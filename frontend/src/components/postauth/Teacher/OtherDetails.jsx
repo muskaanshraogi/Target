@@ -9,11 +9,22 @@ import {
   Typography,
   ListItemText,
   Avatar,
+  makeStyles,
+  colors,
 } from "@material-ui/core";
 
 import { VpnKey, AccessibilityNew } from "@material-ui/icons";
 
+const useStyles = makeStyles(theme => ({
+	avatar: {
+		color: theme.palette.getContrastText(colors.blue[600]),
+		backgroundColor: colors.blue[600]
+	},  
+}))
+
+
 export default function OtherDetails({ user }) {
+  const classes = useStyles();
   return (
     <Grid item>
       <Card>
@@ -25,7 +36,7 @@ export default function OtherDetails({ user }) {
         <List dense>
           <ListItem>
             <ListItemAvatar>
-              <Avatar>
+              <Avatar className={classes.avatar}>
                 <VpnKey />
               </Avatar>
             </ListItemAvatar>
@@ -44,7 +55,7 @@ export default function OtherDetails({ user }) {
           </ListItem>
           <ListItem>
             <ListItemAvatar>
-              <Avatar>
+              <Avatar className={classes.avatar}>
                 <AccessibilityNew />
               </Avatar>
             </ListItemAvatar>

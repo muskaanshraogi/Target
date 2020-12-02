@@ -15,7 +15,8 @@ import {
   Grid,
   Avatar,
   Card,
-  CardHeader
+  CardHeader,
+  colors
 } from "@material-ui/core";
 import {
   SupervisorAccount,
@@ -25,6 +26,7 @@ import {
   AccountCircle,
   ExitToApp,
 } from "@material-ui/icons";
+import SupervisedUserCircleIcon from '@material-ui/icons/SupervisedUserCircle';
 import { ThemeContext } from "../../context/useTheme";
 import Routes from "./Routes";
 import clsx from "clsx";
@@ -34,6 +36,10 @@ import Axios from "axios";
 const drawerWidth = 400;
 
 const useStyles = makeStyles((theme) => ({
+  avatar: {
+    color: theme.palette.getContrastText(colors.blue[600]),
+    backgroundColor: colors.blue[600]
+  },  
   root: {
     display: "flex",
   },
@@ -140,7 +146,7 @@ const drawerItems = [
   },
   {
     name: "Coordinator Interface",
-    icon: <SupervisorAccount />
+    icon: <SupervisedUserCircleIcon />
   }
 ];
 
@@ -233,7 +239,7 @@ export default function ClippedDrawer() {
               <CardHeader
                 title={`${user.firstName} ${user.lastName}`}
                 subheader={user.email}
-                avatar={<Avatar>{`${user.firstName.charAt(0)}${user.lastName.charAt(0)}`}</Avatar>}
+                avatar={<Avatar className={classes.avatar}>{`${user.firstName.charAt(0)}${user.lastName.charAt(0)}`}</Avatar>}
                 titleTypographyProps={{ variant: "h4" }}
                 subheaderTypographyProps={{ variant: "h6" }}
               />
