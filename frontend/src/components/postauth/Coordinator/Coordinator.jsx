@@ -19,7 +19,9 @@ export default function Coordinator() {
   const { enqueueSnackbar } = useSnackbar();
   const [teachers, setTeachers] = useState([]);
   const [reports, setReports] = useState([]);
+  const [flags, setFlags] = useState([]);
   const [attainment, setAttainment] = useState(0);
+  const [coordinator, setCoordinator] = useState('');
 
   const handleCalculate = () => {
     let acadYear = formatAcadYear(formatDate(new Date().toLocaleDateString()));
@@ -43,6 +45,24 @@ export default function Coordinator() {
       });
   };
 
+  const handleEmail = reg_id => {
+    Axios.post(
+      `http://localhost:8000/api/faculty/email/${reg_id}/${coordinator}`,
+      {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Beaer ${sessionStorage.getItem("usertoken")}`,
+        },
+      }
+    )
+    .then(res => {
+      enqueueSnackbar('Email sent!', {variant: 'success'})
+    })
+    .catch(err => {
+      enqueueSnackbar('Could not send email', {variant: 'error'});
+    })
+
+  }
   const formatDate = (date) => {
     date = date.replace("/", "-");
     date = date.replace("/", "-");
@@ -69,11 +89,24 @@ export default function Coordinator() {
       }
     )
       .then((res) => {
-        setTeachers(res.data.data);
+        let data = res.data.data;
+        let temp = [];
+        data.forEach((d, index) => {
+          temp.push({ reg_id: d.reg_id, count: 0 });
+        });
+        setFlags(temp);
+        setTeachers(data);
+        let found = data.find((d) => d.roleName === 'Subject Coordinator')
+        if(found) {
+          setCoordinator(found.reg_id);
+        }
       })
       .catch((err) => {
         enqueueSnackbar("Could not fetch teachers", { variant: "error" });
       });
+  }, [enqueueSnackbar]);
+
+  useEffect(() => {
     Axios.get(
       `http://localhost:8000/api/report/get/subject/${
         JSON.parse(sessionStorage.getItem("user")).reg_id
@@ -86,6 +119,12 @@ export default function Coordinator() {
       }
     )
       .then((res) => {
+        let data = res.data.data;
+        let temp = teachers.map((t) => ({
+          reg_id: t.reg_id,
+          count: data.some((d) => t.reg_id === d.reg_id) ? 1 : 0,
+        }));
+        setFlags(temp);
         setReports(res.data.data);
       })
       .catch((err) => {
@@ -108,11 +147,12 @@ export default function Coordinator() {
       .catch((err) => {
         setAttainment(0);
       });
-  }, [enqueueSnackbar]);
+  }, [teachers, enqueueSnackbar]);
+
   return (
     <Grid container item spacing={1}>
       <Grid container item direction="column" xs={12} md={12} spacing={1}>
-        {teachers.length > 0 ? (
+        {teachers.length > 0 && flags.length > 0 ? (
           <>
             <Card>
               <CardHeader
@@ -126,30 +166,43 @@ export default function Coordinator() {
                       <TableCell align="center">Subject Name</TableCell>
                       <TableCell align="center">Role</TableCell>
                       <TableCell align="center">Year</TableCell>
-                      <TableCell align="center">First Name</TableCell>
-                      <TableCell align="center">Last Name</TableCell>
+                      <TableCell align="center">Name</TableCell>
                       <TableCell align="center">Division</TableCell>
                       <TableCell align="center">Submitted On</TableCell>
                     </TableRow>
                   </TableHead>
                   <TableBody>
-                    {teachers.map((teacher, index) => (
-                      <TableRow key={index}>
+                    {teachers.map((teacher, index1) => (
+                      <TableRow key={index1}>
                         <TableCell align="center">{teacher.subName}</TableCell>
                         <TableCell align="center">{teacher.roleName}</TableCell>
                         <TableCell align="center">{teacher.year}</TableCell>
                         <TableCell align="center">
-                          {teacher.firstName}
+                          {teacher.firstName} {teacher.lastName}
                         </TableCell>
-                        <TableCell align="center">{teacher.lastName}</TableCell>
                         <TableCell align="center">{teacher.division}</TableCell>
-                        {reports.map((report, index) =>
-                          report.reg_id === teacher.reg_id ? (
-                            <TableCell align="center">
-                              {report.submittedOn}
-                            </TableCell>
-                          ) : null
-                        )}
+                        {reports.some(
+                          (report) => report.reg_id === teacher.reg_id
+                        ) ? (
+                          <TableCell align="center">
+                            {reports
+                              .find(
+                                (report) => report.reg_id === teacher.reg_id
+                              )
+                              .submittedOn.slice(0, 10)}
+                          </TableCell>
+                        ) : flags[index1].count === 0 ? (
+                          <TableCell align="center">
+                            <Button
+                              color="primary"
+                              variant="outlined"
+                              component="span"
+                              onClick={() => handleEmail(teacher.reg_id)}
+                            >
+                              Send Email
+                            </Button>
+                          </TableCell>
+                        ) : null}
                       </TableRow>
                     ))}
                   </TableBody>

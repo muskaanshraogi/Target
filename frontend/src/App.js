@@ -6,8 +6,8 @@ import { ThemeContext } from './context/useTheme';
 const lightPallete = {
   palette: {
     type: 'light',
-    primary: { main: colors.blue[600] },
-    secondary: { main: colors.blue[200] },  
+    primary: { main: colors.blue[500] },
+    secondary: { main: colors.blue[300] },  
     background: { paper: colors.grey[100], default: colors.grey[200] }
   }
 }
@@ -15,9 +15,9 @@ const lightPallete = {
 const darkPallette = {
   palette: {
     type: 'dark',
-    primary: { main: colors.blue[600] },
-    secondary: { main: colors.blue[200] },
-    background: { paper: '#23395D', default: '#152238' }
+    primary: { main: colors.blue[500] },
+    secondary: { main: colors.blue[300] },
+    background: { paper: colors.grey[800], default: colors.grey[900] }
   }
 }
 

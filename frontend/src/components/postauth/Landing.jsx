@@ -137,7 +137,7 @@ const useStyles = makeStyles((theme) => ({
 
 const drawerItems = [
   {
-    name: "Information and More",
+    name: "Teacher Interface",
     icon: <AccountCircle />,
   },
   {
@@ -266,7 +266,7 @@ export default function ClippedDrawer() {
                 <ListItem
                   key={1}
                   selected={location.pathname.includes(
-                    drawerItems[1].name.split(" ")[1].toLowerCase()
+                    drawerItems[1].name.split(" ")[0].toLowerCase()
                   )}
                   onClick={() =>
                     history.push(`/home/${drawerItems[1].name.split(" ")[0].toLowerCase()}`)

@@ -31,6 +31,7 @@ router.post('/add/:subject/:reg_id', authenticate, (req, res, next) => {
             res.status(500).send({ err: err, data: null })
         } 
         else if (err) {
+            console.log(err)
             res.status(500).send({ err: err, data: null })
         }
         else {
