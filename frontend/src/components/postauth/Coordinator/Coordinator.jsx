@@ -30,7 +30,7 @@ export default function Coordinator() {
       {
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Beaer ${sessionStorage.getItem("usertoken")}`,
+          Authorization: `Bearer ${sessionStorage.getItem("usertoken")}`,
         },
       }
     )
@@ -85,7 +85,7 @@ export default function Coordinator() {
       {
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Beaer ${sessionStorage.getItem("usertoken")}`,
+          Authorization: `Bearer ${sessionStorage.getItem("usertoken")}`,
         },
       }
     )
@@ -115,7 +115,7 @@ export default function Coordinator() {
       {
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Beaer ${sessionStorage.getItem("usertoken")}`,
+          Authorization: `Bearer ${sessionStorage.getItem("usertoken")}`,
         },
       }
     )
@@ -138,7 +138,7 @@ export default function Coordinator() {
       {
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Beaer ${sessionStorage.getItem("usertoken")}`,
+          Authorization: `Bearer ${sessionStorage.getItem("usertoken")}`,
         },
       }
     )

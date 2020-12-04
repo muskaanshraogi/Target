@@ -237,7 +237,7 @@ export default function Subjects({ user }) {
     Axios.get("http://localhost:8000/api/subject/all", {
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Beaer ${sessionStorage.getItem("usertoken")}`,
+        Authorization: `Bearer ${sessionStorage.getItem("usertoken")}`,
       },
     })
       .then((res) => {
@@ -253,7 +253,7 @@ export default function Subjects({ user }) {
       {
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Beaer ${sessionStorage.getItem("usertoken")}`,
+          Authorization: `Bearer ${sessionStorage.getItem("usertoken")}`,
         },
       }
     )
