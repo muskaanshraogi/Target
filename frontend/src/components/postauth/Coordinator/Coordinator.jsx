@@ -48,10 +48,11 @@ export default function Coordinator() {
   const handleEmail = reg_id => {
     Axios.post(
       `http://localhost:8000/api/faculty/email/${reg_id}/${coordinator}`,
+      {},
       {
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Beaer ${sessionStorage.getItem("usertoken")}`,
+          Authorization: `Bearer ${sessionStorage.getItem("usertoken")}`,
         },
       }
     )

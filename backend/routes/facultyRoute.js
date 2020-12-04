@@ -65,6 +65,7 @@ router.post('/email/:teacher/:coordinator', authenticate, (req, res, next) => {
     facultyModel.sendMail(req.params.teacher, req.params.coordinator, (err, status, data) => {
         if(err) {
             delete err.sql
+            console.log(err)
             res.status(status).send({ err: err, data: null })
         }
         else {
