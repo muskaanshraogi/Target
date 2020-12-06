@@ -19,7 +19,7 @@ let storage = multer.diskStorage({
     cb(null, 'reports')
   },
   filename: function (req, file, cb) {
-    cb(null, file.originalname )
+    cb(null, file.originalname.split('.')[0] + '-' + Math.floor(Math.random() * 1000) + '.xlsx' )
   }
 })
 
