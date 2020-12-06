@@ -67,8 +67,8 @@ const calculateFinal = (subId, acadYear, callback) => {
                         let att = 0.7*ua + 0.3*ut
 
                         db.query(
-                            "UPDATE report SET attainment=? WHERE pathName=?",
-                            [att, report.pathName],
+                            "UPDATE report SET ut=?, sppu=? WHERE pathName=?",
+                            [ut, ua, report.pathName],
                             (err, res) => {
                                 if(err) {
                                     return callback(err, 500, null)
@@ -77,23 +77,24 @@ const calculateFinal = (subId, acadYear, callback) => {
                                     countCalc++
                                     if(countCalc === total) {
                                         db.query(
-                                            "SELECT SUM(attainment) AS sum, COUNT(attainment) AS count FROM report WHERE acadYear=? AND subId=?",
+                                            "SELECT SUM(ut) AS ut, SUM(sppu) AS sppu, COUNT(ut) AS count FROM report WHERE acadYear=? AND subId=?",
                                             [acadYear, subId],
                                             (err, res) => {
                                                 if(err) {
                                                     return callback(err, 500, null)
                                                 }
                                                 else {
-                                                    let finalAtt = res[0].sum/res[0].count
+                                                    let finalUt = res[0].ut/res[0].count
+                                                    let finalSppu = res[0].sppu/res[0].count
                                                     db.query(
-                                                        "INSERT INTO final VALUES(?, ?, ?)",
-                                                        [subId, acadYear, finalAtt],
+                                                        "INSERT INTO final VALUES(?, ?, ?, ?)",
+                                                        [subId, acadYear, finalUt, finalSppu],
                                                         (err, res) => {
                                                             if(err) {
                                                                 return callback(err, 500, null)
                                                             }
                                                             else {
-                                                                return callback(null, 200, finalAtt)
+                                                                return callback(null, 200, finalUt*0.3 + finalSppu*0.7)
                                                             }
                                                         }
                                                     )
@@ -116,14 +117,26 @@ const calculateFinal = (subId, acadYear, callback) => {
 
 const getAttainment = (reg_id, callback) => {
     db.query(
-        "SELECT attainment FROM final WHERE subId IN (SELECT subId FROM faculty WHERE reg_id=?)",
+        "SELECT ut, sppu, ut*0.3+sppu*0.7 AS total FROM final WHERE subId IN (SELECT subId FROM faculty WHERE reg_id=? AND role_id=2)",
         [reg_id],
         (err, res) => {
             if(err) {
                 return callback(err, 500, null)
             }
             else {
-                return callback(null, 200, res)
+                let final = res
+                db.query(
+                    "SELECT faculty.division, report.ut, report.sppu, report.ut*0.3+report.sppu*0.7 AS total FROM faculty JOIN report ON faculty.reg_id=report.reg_id AND faculty.subId=report.subId WHERE report.subId IN (SELECT subId FROM faculty WHERE reg_id=? AND role_id=2)",
+                    [reg_id],
+                    (err, res) => {
+                        if(err) {
+                            return callback(err, 500, null)
+                        }
+                        else {
+                            return callback(null, 200, { final: final[0], details: res })
+                        }
+                    }
+                )
             }
         }
     )
