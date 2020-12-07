@@ -22,13 +22,12 @@ import Axios from "axios";
 
 import EditSubject from "./EditSubject";
 
-const useStyles = makeStyles(theme => ({
-	avatar: {
-		color: theme.palette.getContrastText(colors.blue[600]),
-		backgroundColor: colors.blue[600]
-	},  
-}))
-
+const useStyles = makeStyles((theme) => ({
+  avatar: {
+    color: theme.palette.getContrastText(colors.blue[600]),
+    backgroundColor: colors.blue[600],
+  },
+}));
 
 export default function Subjects() {
   const classes = useStyles();
@@ -171,7 +170,7 @@ export default function Subjects() {
         />
         <form onSubmit={handleSubmit}>
           {addSubjects.map((subject, index) => (
-            <Grid container item spacing={2} style={{ padding: "1%" }}>
+            <Grid container item spacing={1} style={{ padding: "1%" }}>
               <Grid item>
                 <TextField
                   variant="outlined"
@@ -251,7 +250,9 @@ export default function Subjects() {
           {allSubjects.map((subject, index) => (
             <ListItem id={subject.subId} key={index}>
               <ListItemAvatar>
-                <Avatar className={classes.avatar}>{subject.subName.charAt(0)}</Avatar>
+                <Avatar className={classes.avatar}>
+                  {subject.subName.charAt(0)}
+                </Avatar>
               </ListItemAvatar>
               <ListItemText
                 primary={

@@ -3,10 +3,6 @@ import {
   Grid,
   Card,
   CardHeader,
-  Select,
-  MenuItem,
-  FormControlLabel,
-  Checkbox,
   Button,
   Table,
   TableCell,
@@ -21,123 +17,14 @@ import DeleteIcon from "@material-ui/icons/Delete";
 import Axios from "axios";
 import { useSnackbar } from "notistack";
 
-const division = [9, 10, 11];
-
 export default function Subjects({ user }) {
   const { enqueueSnackbar } = useSnackbar();
-  const [subjects, setSubjects] = useState([]);
   const [mySubjects, setMySubjects] = useState([]);
-  const [addSubjects, setAddSubjects] = useState([
-    {
-      subject: "",
-      role: "Subject Teacher",
-      division: 9,
-    },
-  ]);
-  const [index, setIndex] = useState('');
+  const [index, setIndex] = useState("");
 
   const handleIndex = (e) => {
-    let subName = e.target.innerHTML.split(' ').pop();
+    let subName = e.target.innerHTML.split(" ").pop();
     setIndex(subName);
-  };
-
-  const handleChange = (e) => {
-    let et = e.target;
-    let index = parseInt(et.name.split(" ")[1]);
-    let property = et.name.split(" ")[0];
-    let value = et.value;
-
-    let newAddSubjects = [...addSubjects];
-    newAddSubjects[index] = { ...newAddSubjects[index], [property]: value };
-    setAddSubjects(newAddSubjects);
-  };
-
-  const handleChecked = (e, c) => {
-    let index = parseInt(e.target.value);
-    let newAddSubjects = [...addSubjects];
-
-    if (c === true) {
-      newAddSubjects[index] = {
-        ...newAddSubjects[index],
-        role: "Subject Coordinator",
-      };
-      setAddSubjects(newAddSubjects);
-    } else {
-      newAddSubjects[index] = {
-        ...newAddSubjects[index],
-        role: "Subject Teacher",
-      };
-      setAddSubjects(newAddSubjects);
-    }
-  };
-
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    let reg_id = JSON.parse(sessionStorage.getItem("user")).reg_id;
-    if (addSubjects.length === 1) {
-      Axios.post(
-        `http://localhost:8000/api/faculty/add/${reg_id}`,
-        addSubjects[0],
-        {
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${sessionStorage.getItem("usertoken")}`,
-          },
-        }
-      )
-        .then((res) => {
-          enqueueSnackbar("Added subject", { variant: "success" });
-          let newAllSubjects = [...mySubjects];
-          newAllSubjects.push(addSubjects[0]);
-          setMySubjects(newAllSubjects);
-          setAddSubjects([
-            {
-              subject: "",
-              role: "Subject Teacher",
-              division: 9,
-            },
-          ]);
-        })
-        .catch((err) => {
-          enqueueSnackbar("Could not add subject", { variant: "error" });
-        });
-    } else {
-      Axios.post(
-        `http://localhost:8000/api/faculty/add/multiple/${reg_id}`,
-        {
-          relations: addSubjects,
-        },
-        {
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${sessionStorage.getItem("usertoken")}`,
-          },
-        }
-      )
-        .then((res) => {
-          enqueueSnackbar("Added subjects", { variant: "success" });
-          let newAllSubjects = [...mySubjects];
-          mySubjects.forEach((subject) => newAllSubjects.push(subject));
-          setMySubjects(newAllSubjects);
-          setAddSubjects([
-            {
-              subject: "",
-              role: "Subject Teacher",
-              division: 9,
-            },
-          ]);
-        })
-        .catch((err) => {
-          enqueueSnackbar("Could not add subjects", { variant: "error" });
-        });
-    }
-  };
-
-  const handleAddSubject = () => {
-    setAddSubjects([
-      ...addSubjects,
-      { subject: "", role: "Subject Teacher", division: "" },
-    ]);
   };
 
   const handleDeleteSubject = (data) => {
@@ -167,12 +54,6 @@ export default function Subjects({ user }) {
       });
   };
 
-  const handleRemoveSubject = () => {
-    const newAddSubjects = [...addSubjects];
-    newAddSubjects.pop();
-    setAddSubjects(newAddSubjects);
-  };
-
   const handleFileChange = (e) => {
     let date = new Date().toISOString().split("T")[0];
     date = formatDate(date);
@@ -190,33 +71,33 @@ export default function Subjects({ user }) {
       data.append("submittedOn", date);
       data.append("acadYear", acadYear);
 
-        Axios.post(
-          `http://localhost:8000/api/report/add/${index}/${
-            JSON.parse(sessionStorage.getItem("user")).reg_id
-          }`,
-          data,
-          {
-            headers: {
-              "Content-Type": "multipart/form-data",
-              Authorization: `Bearer ${sessionStorage.getItem("usertoken")}`,
-            },
-          }
-        )
-          .then((res) => {
-            enqueueSnackbar("Uploaded file", {
-              variant: "success",
-              persist: false,
-            });
-          })
-          .catch((err) => {
-            enqueueSnackbar("Could not upload file", {
-              variant: "error",
-              persist: false,
-            });
+      Axios.post(
+        `http://localhost:8000/api/report/add/${index}/${
+          JSON.parse(sessionStorage.getItem("user")).reg_id
+        }`,
+        data,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+            Authorization: `Bearer ${sessionStorage.getItem("usertoken")}`,
+          },
+        }
+      )
+        .then((res) => {
+          enqueueSnackbar("Uploaded file", {
+            variant: "success",
+            persist: false,
           });
-      } else {
-        enqueueSnackbar("Only .xlsx format is allowed", { variant: "warning" });
-        return;
+        })
+        .catch((err) => {
+          enqueueSnackbar("Could not upload file", {
+            variant: "error",
+            persist: false,
+          });
+        });
+    } else {
+      enqueueSnackbar("Only .xlsx format is allowed", { variant: "warning" });
+      return;
     }
   };
 
@@ -234,18 +115,6 @@ export default function Subjects({ user }) {
   };
 
   useEffect(() => {
-    Axios.get("http://localhost:8000/api/subject/all", {
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${sessionStorage.getItem("usertoken")}`,
-      },
-    })
-      .then((res) => {
-        setSubjects(res.data.data);
-      })
-      .catch((err) => {
-        enqueueSnackbar("Could not fetch subjects", { variant: "error" });
-      });
     Axios.get(
       `http://localhost:8000/api/subject/teacher/${
         JSON.parse(sessionStorage.getItem("user")).reg_id
@@ -268,113 +137,6 @@ export default function Subjects({ user }) {
   return (
     <>
       <Grid item>
-        <Card>
-          <CardHeader
-            title="Add Subjects you are teaching"
-            titleTypographyProps={{ variant: "h4" }}
-          />
-          <form onSubmit={handleSubmit}>
-            {addSubjects.map((subject, index) => (
-              <Grid container item spacing={6}>
-                <Grid
-                  container
-                  item
-                  direction="column"
-                  xs={12}
-                  md={3}
-                  spacing={1}
-                >
-                  <Select
-                    style={{ margin: "0% 5% 0% 6%" }}
-                    name={`subject ${index}`}
-                    variant="outlined"
-                    multiline
-                    value={addSubjects[index].subject}
-                    onChange={handleChange}
-                    fullWidth
-                  >
-                    {subjects.map((subject, index) => (
-                      <MenuItem key={index} value={subject.subName}>
-                        {subject.subId} - {subject.subName}
-                      </MenuItem>
-                    ))}
-                  </Select>
-                </Grid>
-                <Grid
-                  container
-                  item
-                  direction="column"
-                  xs={12}
-                  md={3}
-                  spacing={1}
-                >
-                  <Select
-                    style={{ margin: "0% 5% 0% 6%" }}
-                    name={`division ${index}`}
-                    variant="outlined"
-                    multiline
-                    value={addSubjects[index].division}
-                    onChange={handleChange}
-                    fullWidth
-                  >
-                    {division.map((d, index) => (
-                      <MenuItem key={index} value={d}>
-                        {d}
-                      </MenuItem>
-                    ))}
-                  </Select>
-                </Grid>
-                <Grid
-                  container
-                  item
-                  direction="column"
-                  xs={12}
-                  md={3}
-                  spacing={1}
-                >
-                  <FormControlLabel
-                    style={{ padding: "3% 0% 0% 0%" }}
-                    control={
-                      <Checkbox
-                        onChange={handleChecked}
-                        value={index}
-                        color="primary"
-                      />
-                    }
-                    label="Subject Coordinator?"
-                    labelPlacement="end"
-                  />
-                </Grid>
-              </Grid>
-            ))}
-            <Button
-              color="primary"
-              variant="contained"
-              onClick={handleSubmit}
-              style={{ margin: "2% 0% 2% 1%" }}
-            >
-              Submit
-            </Button>
-            <Button
-              color="secondary"
-              variant="contained"
-              onClick={handleAddSubject}
-              style={{ margin: "2% 0% 2% 2%" }}
-            >
-              Add More Subjects
-            </Button>
-            {addSubjects.length > 1 && (
-              <Button
-                color="secondary"
-                variant="contained"
-                onClick={handleRemoveSubject}
-                style={{ margin: "2% 0% 2% 2%" }}
-              >
-                Remove Subject
-              </Button>
-            )}
-          </form>
-        </Card>
         <Card>
           <CardHeader
             title="Your Subjects"

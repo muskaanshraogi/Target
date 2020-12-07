@@ -11,6 +11,7 @@ import {
   Paper,
   TableBody,
   Button,
+  CardContent,
 } from "@material-ui/core";
 import Axios from "axios";
 import { useSnackbar } from "notistack";
@@ -20,8 +21,8 @@ export default function Coordinator() {
   const [teachers, setTeachers] = useState([]);
   const [reports, setReports] = useState([]);
   const [flags, setFlags] = useState([]);
-  const [attainment, setAttainment] = useState(0);
-  const [coordinator, setCoordinator] = useState('');
+  const [attainment, setAttainment] = useState({ details: [] });
+  const [coordinator, setCoordinator] = useState("");
 
   const handleCalculate = () => {
     let acadYear = formatAcadYear(formatDate(new Date().toLocaleDateString()));
@@ -45,7 +46,7 @@ export default function Coordinator() {
       });
   };
 
-  const handleEmail = reg_id => {
+  const handleEmail = (reg_id) => {
     Axios.post(
       `http://localhost:8000/api/faculty/email/${reg_id}/${coordinator}`,
       {},
@@ -56,14 +57,13 @@ export default function Coordinator() {
         },
       }
     )
-    .then(res => {
-      enqueueSnackbar('Email sent!', {variant: 'success'})
-    })
-    .catch(err => {
-      enqueueSnackbar('Could not send email', {variant: 'error'});
-    })
-
-  }
+      .then((res) => {
+        enqueueSnackbar("Email sent!", { variant: "success" });
+      })
+      .catch((err) => {
+        enqueueSnackbar("Could not send email", { variant: "error" });
+      });
+  };
   const formatDate = (date) => {
     date = date.replace("/", "-");
     date = date.replace("/", "-");
@@ -97,8 +97,8 @@ export default function Coordinator() {
         });
         setFlags(temp);
         setTeachers(data);
-        let found = data.find((d) => d.roleName === 'Subject Coordinator')
-        if(found) {
+        let found = data.find((d) => d.roleName === "Subject Coordinator");
+        if (found) {
           setCoordinator(found.reg_id);
         }
       })
@@ -143,10 +143,11 @@ export default function Coordinator() {
       }
     )
       .then((res) => {
-        setAttainment(res.data.data[0].attainment);
+        console.log(res.data.data);
+        setAttainment(res.data.data);
       })
       .catch((err) => {
-        setAttainment(0);
+        setAttainment(null);
       });
   }, [teachers, enqueueSnackbar]);
 
@@ -210,28 +211,68 @@ export default function Coordinator() {
                 </Table>
               </TableContainer>
             </Card>
-            <Card
-              style={{
-                margin: "2% 0% 0% 0%",
-              }}
-            >
-              <CardHeader
-                title={`Attainment for the subject is ${attainment}`}
-                titleTypographyProps={{ variant: "h4" }}
-              />
-            </Card>
+            {
+              <Card
+                style={{
+                  margin: "2% 0% 0% 0%",
+                }}
+              >
+                {attainment.details.length > 3 && (
+                  <>
+                    <CardHeader
+                      title="Attaiment stats"
+                      titleTypographyProps={{ variant: "h4" }}
+                    />
+                    <CardContent>
+                      <Table>
+                        <TableHead>
+                          <TableRow>
+                            <TableCell align="center">Division</TableCell>
+                            <TableCell align="center">UT</TableCell>
+                            <TableCell align="center">SPPU</TableCell>
+                            <TableCell align="center">Total</TableCell>
+                          </TableRow>
+                        </TableHead>
+                        <TableBody>
+                          {attainment.details.map((att, index) => (
+                            <TableRow key={index}>
+                              <TableCell align="center">
+                                {att.division}
+                              </TableCell>
+                              <TableCell align="center">{att.ut}</TableCell>
+                              <TableCell align="center">{att.sppu}</TableCell>
+                              <TableCell align="center">{att.total}</TableCell>
+                            </TableRow>
+                          ))}
+                          <TableRow>
+                            <TableCell align="center">Total</TableCell>
+                            <TableCell align="center">
+                              {attainment.final.ut}
+                            </TableCell>
+                            <TableCell align="center">
+                              {attainment.final.sppu}
+                            </TableCell>
+                            <TableCell align="center">
+                              {attainment.final.total}
+                            </TableCell>
+                          </TableRow>
+                        </TableBody>
+                      </Table>
+                    </CardContent>
+                  </>
+                )}
+              </Card>
+            }
             <Grid>
-              {attainment === 0 && (
-                <Button
-                  variant="contained"
-                  color="primary"
-                  style={{ margin: "2% 2% 0% 0%" }}
-                  onClick={handleCalculate}
-                  disabled={reports.length >= 3 ? false : true}
-                >
-                  Calculate Attainment
-                </Button>
-              )}
+              <Button
+                variant="contained"
+                color="primary"
+                style={{ margin: "2% 2% 0% 0%" }}
+                onClick={handleCalculate}
+                disabled={reports.length >= 3 ? false : true}
+              >
+                Calculate Attainment
+              </Button>
             </Grid>
           </>
         ) : (
