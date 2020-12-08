@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import {
+  makeStyles,
   Grid,
   TableCell,
   TableRow,
@@ -15,13 +16,29 @@ import {
 } from "@material-ui/core";
 import Axios from "axios";
 import { useSnackbar } from "notistack";
+import { ThemeContext } from "../../../context/useTheme";
+import PDF from "../PDF/pdfContainer";
+import Doc from "../PDF/docService";
+
+const useStyles = makeStyles((theme) => ({
+  tableDark: {
+    backgroundColor: "black",
+    color: "white",
+  },
+  tableLight: {
+    backgroundColor: "grey",
+    color: "white",
+  },
+}));
 
 export default function Coordinator() {
+  const classes = useStyles();
+  const { dark } = React.useContext(ThemeContext);
   const { enqueueSnackbar } = useSnackbar();
   const [teachers, setTeachers] = useState([]);
   const [reports, setReports] = useState([]);
   const [flags, setFlags] = useState([]);
-  const [attainment, setAttainment] = useState({ details: [], }, { final: {} });
+  const [attainment, setAttainment] = useState({ details: [] }, { final: {} });
   const [coordinator, setCoordinator] = useState("");
 
   const handleCalculate = () => {
@@ -124,6 +141,10 @@ export default function Coordinator() {
       });
   }, [enqueueSnackbar]);
 
+  const createPdf = (html) => {
+    Doc.createPdf(html, `${teachers[0].subName}_report`);
+  };
+
   useEffect(() => {
     Axios.get(
       `http://localhost:8000/api/report/get/subject/${
@@ -162,7 +183,6 @@ export default function Coordinator() {
       .then((res) => {
         console.log(res.data.data);
         setAttainment(res.data.data);
-
       })
       .catch((err) => {
         setAttainment(null);
@@ -173,7 +193,7 @@ export default function Coordinator() {
     <Grid container item spacing={1}>
       <Grid container item direction="column" xs={12} md={12} spacing={1}>
         {teachers.length > 0 && flags.length > 0 ? (
-          <>
+          <PDF createPdf={createPdf}>
             <Card>
               <CardHeader
                 title={`Teachers teaching your subject`}
@@ -262,7 +282,11 @@ export default function Coordinator() {
                               <TableCell align="center">{att.total}</TableCell>
                             </TableRow>
                           ))}
-                          <TableRow>
+                          <TableRow
+                            className={
+                              dark ? classes.tableDark : classes.tableLight
+                            }
+                          >
                             <TableCell align="center">Total</TableCell>
                             <TableCell align="center">
                               {attainment.final.ut}
@@ -287,12 +311,17 @@ export default function Coordinator() {
                 color="primary"
                 style={{ margin: "2% 2% 0% 0%" }}
                 onClick={handleCalculate}
-                disabled={reports.length >= 3 && !(attainment.details && attainment.final) ? false : true}
+                disabled={
+                  reports.length >= 3 &&
+                  !(attainment.details && attainment.final)
+                    ? false
+                    : true
+                }
               >
                 Calculate Attainment
               </Button>
             </Grid>
-          </>
+          </PDF>
         ) : (
           <Card>
             <CardHeader

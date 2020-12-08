@@ -2,6 +2,11 @@
 # yarn lockfile v1
 
 
+"@progress/kendo-react-all@^4.1.0":
+  version "4.1.0"
+  resolved "https://registry.yarnpkg.com/@progress/kendo-react-all/-/kendo-react-all-4.1.0.tgz#e1d80cc314a0d9d38a91b95eba84ef06075ed694"
+  integrity sha512-jxFHlmF8K9kiYKysczdHMaAosiea8WvzdzoF0e/vZNEPR+/9YDbFZo2R30J+cDrp2PJxyKSv1Np1Q1ZfYcaIdw==
+
 "@sindresorhus/is@^0.14.0":
   version "0.14.0"
   resolved "https://registry.yarnpkg.com/@sindresorhus/is/-/is-0.14.0.tgz#9fb3a3cf3132328151f353de4632e01e52102bea"

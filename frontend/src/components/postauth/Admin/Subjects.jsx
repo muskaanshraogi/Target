@@ -128,10 +128,6 @@ export default function Subjects() {
     }
   };
 
-  const handleEditSubject = (ind) => {
-    setEditSubject(ind);
-  };
-
   const handleDeleteSubject = (subId) => {
     Axios.delete(`http://localhost:8000/api/subject/delete/${subId}`, {
       headers: {
