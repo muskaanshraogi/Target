@@ -103,7 +103,6 @@ export default function AllUsers() {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    // let admin_reg_id = JSON.parse(sessionStorage.getItem("user")).reg_id;
     if (addSubjects.length === 1) {
       Axios.post(
         `http://localhost:8000/api/faculty/add/${addSubjects[0].reg_id}`,
@@ -119,7 +118,7 @@ export default function AllUsers() {
           enqueueSnackbar("Assgined subject", { variant: "success" });
         })
         .catch((err) => {
-          enqueueSnackbar("Could not assign", { variant: "error" });
+          enqueueSnackbar("The relation already exists", { variant: "error" });
         });
     } else {
       Axios.post(
@@ -138,7 +137,7 @@ export default function AllUsers() {
           enqueueSnackbar("Assgined subjects", { variant: "success" });
         })
         .catch((err) => {
-          enqueueSnackbar("Could not assign", { variant: "error" });
+          enqueueSnackbar("The relation already exists", { variant: "error" });
         });
     }
   };
@@ -162,7 +161,7 @@ export default function AllUsers() {
         Authorization: `Bearer ${sessionStorage.getItem("usertoken")}`,
       },
     }).then((res) => setAllUsers(res.data.data));
-  }, []);
+  }, [enqueueSnackbar]);
 
   return (
     <>
@@ -277,7 +276,7 @@ export default function AllUsers() {
           >
             Submit
           </Button>
-          <Button
+          {/* <Button
             color="secondary"
             variant="contained"
             onClick={handleAddSubject}
@@ -294,7 +293,7 @@ export default function AllUsers() {
             >
               Remove Subject
             </Button>
-          )}
+          )} */}
         </form>
       </Card>
       <Card>
