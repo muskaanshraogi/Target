@@ -13,7 +13,7 @@ router.use(function (req, res, next) {
     next();
 });
 
-router.post('/add/:reg_id', authenticateAdmin, (req, res, next) => {
+router.post('/add/:reg_id', authenticate, (req, res, next) => {
     facultyModel.addRelation(req.body, req.params.reg_id, (err, status, data) => {
         if(err) {
             delete err.sql

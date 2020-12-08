@@ -21,7 +21,7 @@ export default function Coordinator() {
   const [teachers, setTeachers] = useState([]);
   const [reports, setReports] = useState([]);
   const [flags, setFlags] = useState([]);
-  const [attainment, setAttainment] = useState({ details: [] });
+  const [attainment, setAttainment] = useState({ details: [], }, { final: {} });
   const [coordinator, setCoordinator] = useState("");
 
   const handleCalculate = () => {
@@ -36,10 +36,27 @@ export default function Coordinator() {
       }
     )
       .then((res) => {
-        setAttainment(res.data.data);
-        enqueueSnackbar("Calculated attainment successfully", {
-          variant: "success",
-        });
+        Axios.get(
+          `http://localhost:8000/api/final/attainment/${
+            JSON.parse(sessionStorage.getItem("user")).reg_id
+          }`,
+          {
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${sessionStorage.getItem("usertoken")}`,
+            },
+          }
+        )
+          .then((res) => {
+            console.log(res.data);
+            setAttainment(res.data.data);
+            enqueueSnackbar("Calculated attainment successfully", {
+              variant: "success",
+            });
+          })
+          .catch((err) => {
+            setAttainment(null);
+          });
       })
       .catch((err) => {
         enqueueSnackbar("Could not calculate attainment", { variant: "error" });
@@ -145,6 +162,7 @@ export default function Coordinator() {
       .then((res) => {
         console.log(res.data.data);
         setAttainment(res.data.data);
+
       })
       .catch((err) => {
         setAttainment(null);
@@ -217,7 +235,7 @@ export default function Coordinator() {
                   margin: "2% 0% 0% 0%",
                 }}
               >
-                {attainment.details.length > 3 && (
+                {attainment.details.length === 3 && attainment.final && (
                   <>
                     <CardHeader
                       title="Attaiment stats"
@@ -269,7 +287,7 @@ export default function Coordinator() {
                 color="primary"
                 style={{ margin: "2% 2% 0% 0%" }}
                 onClick={handleCalculate}
-                disabled={reports.length >= 3 ? false : true}
+                disabled={reports.length >= 3 && !(attainment.details && attainment.final) ? false : true}
               >
                 Calculate Attainment
               </Button>

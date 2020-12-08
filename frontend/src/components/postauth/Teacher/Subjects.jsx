@@ -59,7 +59,7 @@ export default function Subjects({ user }) {
     date = formatDate(date);
     let acadYear = formatAcadYear(formatDate(new Date().toLocaleDateString()));
     const fileType = e.target.value.split(".").pop();
-    const fileName = e.target.value.split("\\").pop();
+    let fileName = e.target.value.split("\\").pop();
 
     if (fileType === "xlsx" || fileType === "xls") {
       enqueueSnackbar("Uploading...", {

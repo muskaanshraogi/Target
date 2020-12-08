@@ -72,7 +72,12 @@ const loginTeacher = (teacher, callback) => {
                             return callback(err, 400, null)
                         }
                         else {
-                            return callback(null, 200, generateToken(user[0]))
+                            if(res) {
+                                return callback(null, 200, generateToken(user[0]))
+                            }
+                            else {
+                                return callback(err, 400, null)
+                            }
                         }
                     })
                 }
