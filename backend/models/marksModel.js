@@ -24,10 +24,10 @@ const generateRoll = (div) => {
     return roll
 }
 
-const addMarks = (marks, subId, callback) => {
+const addMarks = (data, subId, callback) => {
     db.query(
-        "DELETE FROM marks WHERE subId=?",
-        [subId],
+        "DELETE FROM marks WHERE subId=? AND (roll_no BETWEEN ? AND ?)",
+        [subId, data.marks[0].roll_no, data.marks[0].roll_no+90],
         (err, res) => {
             if(err) {
                 return callback(err, 500, null)
@@ -36,8 +36,7 @@ const addMarks = (marks, subId, callback) => {
                 db.query(
                     "INSERT INTO marks VALUES ?",
                     [
-                        cols,
-                        marks.map(entry => 
+                        data.marks.map(entry => 
                             [entry.roll_no, entry.co1, entry.co2, entry.co3, entry.co4, entry.co5, entry.co6, entry.sppu, subId]
                         )
                     ],
@@ -89,8 +88,25 @@ const getMarks = (div, subId, callback) => {
     )
 }
 
+const submitMarks = (subId, division, callback) => {
+    db.query(
+        "UPDATE faculty SET submitted=1 WHERE subId=? AND division=?",
+        [subId, division],
+        (err, res) => {
+            if(err) {
+                return callback(err, 500, null)
+            }
+            else {
+                return callback(null, 201, res)
+            }
+        }
+    )
+}
+
+
 module.exports = {
     addMarks,
     deleteMarks,
-    getMarks
+    getMarks,
+    submitMarks
 }

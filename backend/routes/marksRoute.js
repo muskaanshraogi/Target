@@ -49,4 +49,24 @@ router.get('/get/:div/:subId', authenticate, (req, res, next) => {
     })
 })
 
+router.post('/submit/:subId/:division', authenticate, (req, res, next) => {
+    marksModel.addMarks(req.body, req.params.subId, (err, status, data) => {
+        if(err) {
+            delete err.sql
+            res.status(status).send({ err: err, data: null })
+        }
+        else {
+            marksModel.submitMarks(req.params.subId, req.params.division, (err, status, data) => {
+                if(err) {
+                    delete err.sql
+                    res.status(status).send({ err: err, data: null })
+                }
+                else {
+                    res.status(200).send({ err: null, data: data })
+                }
+            })
+        }
+    })
+})
+
 module.exports = router
