@@ -85,4 +85,52 @@ router.get('/teacher/:reg_id', authenticate, (req, res, next) => {
     })
 })
 
+router.post('/set/total/:subject', authenticate, (req, res, next) => {
+    subjectModel.setTotalMarks(req.params.subject, req.body, (err, status, data) => {
+        if(err) {
+            delete err.sql
+            res.status(status).send({ err: err, data: null })
+        }
+        else {
+            res.status(200).send({ err: null, data: data })
+        }
+    })
+})
+
+router.post('/set/target/:subject', authenticate, (req, res, next) => {
+    subjectModel.setTarget(req.params.subject, req.body, (err, status, data) => {
+        if(err) {
+            delete err.sql
+            res.status(status).send({ err: err, data: null })
+        }
+        else {
+            res.status(200).send({ err: null, data: data })
+        }
+    })
+})
+
+router.get('/get/total/:subject', authenticate, (req, res, next) => {
+    subjectModel.getTotalMarks(req.params.subject, (err, status, data) => {
+        if(err) {
+            delete err.sql
+            res.status(status).send({ err: err, data: null })
+        }
+        else {
+            res.status(200).send({ err: null, data: data })
+        }
+    })
+})
+
+router.get('/get/target/:subject', authenticate, (req, res, next) => {
+    subjectModel.getTarget(req.params.subject, (err, status, data) => {
+        if(err) {
+            delete err.sql
+            res.status(status).send({ err: err, data: null })
+        }
+        else {
+            res.status(200).send({ err: null, data: data })
+        }
+    })
+})
+
 module.exports = router

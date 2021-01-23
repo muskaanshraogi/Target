@@ -1,115 +1,103 @@
 const db = require('./../dbConnection')
 const xlsxFile = require('read-excel-file/node');
+const marksModel = require('./marksModel');
 
-const calculateFinal = (subId, acadYear, callback) => {
+const calculateFinal = (subId, callback) => {
     db.query(
-        "SELECT pathName FROM report WHERE subId=? AND acadYear=?",
-        [subId, acadYear],
-        (err, res) => {
+        "SELECT tco1, tco2, tco3, tco4, tco5, tco6, tsppu, mt1, mt2, mt3, sppu1, sppu2, sppu3 FROM subject WHERE subId=?",
+        [subId],
+        (err, values) => {
             if(err) {
                 return callback(err, 500, null)
             }
             else {
-                let countCalc = 0
-                let total = res.length
-                res.forEach((report) => {
-                    xlsxFile(report.pathName)
-                    .then((rows) => {
-                        let count = [0, 0, 0, 0, 0, 0, 0]
-                        let max = [0, 0, 0, 0, 0, 0, 100]
-                        let lc = [[0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0]]
-                        
-                        for(let j=1; j<7; j++) 
-                        {
-                            max[j-1] = rows[1][j]
+                db.query(
+                    "SELECT * FROM marks WHERE subId=?",
+                    [subId],
+                    (err, res) => {
+                        if(err) {
+                            return callback(err, 500, null)
                         }
+                        else {
+                            let countCalc = 0
+                            let students = [0, 0, 0, 0, 0, 0, res.length]
+                            let maxMarks = [
+                                values[0].tco1, 
+                                values[0].tco2, 
+                                values[0].tco3, 
+                                values[0].tco4, 
+                                values[0].tco5, 
+                                values[0].tco6, 
+                                values[0].tsppu
+                            ]
+                            let target = [
+                                [values[0].mt1, values[0].mt2, values[0].mt3],
+                                [values[0].sppu1, values[0].sppu2, values[0].sppu3],
+                            ]
+                            let lc = [[0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0]]
+                            let rows =  []
 
-                        for(let i = 3; i < rows.length; i++)
-                        {
-                            for(let j=1; j < 8; j++) 
+                            res.forEach((student) => {
+                                let row = [student.co1, student.co2, student.co3, student.co4, student.co5, student.co6, student.sppu]
+                                rows.push(row) 
+                            })
+
+                            for(let i=0; i<res.length; i++)
                             {
-                                if(!isNaN(rows[i][j]))
+                                for(let j=0; j<7; j++)
                                 {
-                                    count[j-1]++
-                                    if(rows[i][j] >= 0.4*max[j-1])
-                                        lc[0][j-1]++
-                                    if(rows[i][j] >= 0.6*max[j-1])
-                                        lc[1][j-1]++
-                                    if(rows[i][j] >= 0.66*max[j-1])
-                                        lc[2][j-1]++
-                                }
-                            }
-                        }
-                        count[6] = rows.length - 3
-                        
-                        let k = 5
-                        for(let i=0; i<3; i++)
-                        {
-                            for(let j=0; j<6; j++)
-                            {
-                                lc[i][j] = ((lc[i][j]*100/count[j])/rows[k][9]) * (i+1)
-                                lc[i][j] = lc[i][j] >= i+1 ? i+1 : lc[i][j]
-                            }
-                            lc[i][6] = ((lc[i][6]*100/count[6])/rows[k][10]) * (i+1)
-                            lc[i][6] = lc[i][6] >= i+1 ? i+1 : lc[i][6]
-                            k--
-                        }
-
-                        let ut_co = []
-                        let ut = 0
-                        for(let i=0; i<6; i++)
-                        {
-                            ut_co[i] = (lc[0][i]+lc[1][i]+lc[2][i])/6 
-                            ut += ut_co[i]
-                        }
-                        ut /= 6
-                        let ua = (lc[0][6]+lc[1][6]+lc[2][6])/6 
-                        let att = 0.7*ua + 0.3*ut
-
-                        db.query(
-                            "UPDATE report SET ut=?, sppu=? WHERE pathName=?",
-                            [ut, ua, report.pathName],
-                            (err, res) => {
-                                if(err) {
-                                    return callback(err, 500, null)
-                                }
-                                else {
-                                    countCalc++
-                                    if(countCalc === total) {
-                                        db.query(
-                                            "SELECT SUM(ut) AS ut, SUM(sppu) AS sppu, COUNT(ut) AS count FROM report WHERE acadYear=? AND subId=?",
-                                            [acadYear, subId],
-                                            (err, res) => {
-                                                if(err) {
-                                                    return callback(err, 500, null)
-                                                }
-                                                else {
-                                                    let finalUt = res[0].ut/res[0].count
-                                                    let finalSppu = res[0].sppu/res[0].count
-                                                    db.query(
-                                                        "INSERT INTO final VALUES(?, ?, ?, ?)",
-                                                        [subId, acadYear, finalUt, finalSppu],
-                                                        (err, res) => {
-                                                            if(err) {
-                                                                return callback(err, 500, null)
-                                                            }
-                                                            else {
-                                                                return callback(null, 200, finalUt*0.3 + finalSppu*0.7)
-                                                            }
-                                                        }
-                                                    )
-                                                }
-                                            }
-                                        )
+                                    if(!isNaN(rows[i][j]))
+                                    {
+                                        students[j]++
+                                        if(rows[i][j] >= 0.4*maxMarks[j])
+                                            lc[0][j]++
+                                        if(rows[i][j] >= 0.6*maxMarks[j])
+                                            lc[1][j]++
+                                        if(rows[i][j] >= 0.66*maxMarks[j])
+                                            lc[2][j]++
                                     }
                                 }
                             }
-                        )
-                    })
-                    .catch((error) => {
-                        return callback(err, 500, null)
-                    })
-                })
+
+                            let k = 2
+                            for(let i=0; i<3; i++)
+                            {
+                                for(let j=0; j<6; j++)
+                                {
+                                    lc[i][j] = ((lc[i][j]*100/students[j])/target[0][k]) * (i+1)
+                                    lc[i][j] = lc[i][j] >= i+1 ? i+1 : lc[i][j]
+                                }
+                                lc[i][6] = ((lc[i][6]*100/students[6])/target[1][k]) * (i+1)
+                                lc[i][6] = lc[i][6] >= i+1 ? i+1 : lc[i][6]
+                                k--
+                            }
+
+                            let ut_co = []
+                            let ut = 0
+                            for(let i=0; i<6; i++)
+                            {
+                                ut_co[i] = (lc[0][i]+lc[1][i]+lc[2][i])/6 
+                                ut += ut_co[i]
+                            }
+                            ut /= 6
+                            let ua = (lc[0][6]+lc[1][6]+lc[2][6])/6 
+                            let att = 0.7*ua + 0.3*ut
+
+                            db.query(
+                                "INSERT INTO final VALUES(?, ?, ?)",
+                                [subId, ut, ua],
+                                (err, res) => {
+                                    if(err) {
+                                        return callback(err, 500, null)
+                                    }
+                                    else {
+                                        return callback(null, 200, att)
+                                    }
+                                }
+                            )
+                        }
+                    }
+                )
             }
         }
     )
@@ -124,16 +112,42 @@ const getAttainment = (reg_id, callback) => {
                 return callback(err, 500, null)
             }
             else {
-                let final = res
+                return callback(null, 200, res)
+            }
+        }
+    )
+}
+
+const getAttainments = (callback) => {
+    db.query(
+        "SELECT s.subName, s.subId, f.ut, f.sppu, f.ut*0.3+f.sppu*0.7 AS total FROM final AS f JOIN subject AS s ON s.subId=f.subId",
+        (err, res) => {
+            if(err) {
+                return callback(err, 500, null)
+            }
+            else {
+                return callback(null, 200, res)
+            }
+        }
+    )
+}
+
+const resetDB = (callback) => {
+    db.query(
+        "DELETE FROM staff",
+        (err, res) => {
+            if(err) {
+                return callback(err, 500, null)
+            }
+            else {
                 db.query(
-                    "SELECT faculty.division, report.ut, report.sppu, report.ut*0.3+report.sppu*0.7 AS total FROM faculty JOIN report ON faculty.reg_id=report.reg_id AND faculty.subId=report.subId WHERE report.subId IN (SELECT subId FROM faculty WHERE reg_id=? AND role_id=2)",
-                    [reg_id],
+                    "DELETE FROM subject",
                     (err, res) => {
                         if(err) {
                             return callback(err, 500, null)
                         }
                         else {
-                            return callback(null, 200, { final: final[0], details: res })
+                            return callback(null, 200, true)
                         }
                     }
                 )
@@ -144,5 +158,7 @@ const getAttainment = (reg_id, callback) => {
 
 module.exports = {
     calculateFinal,
-    getAttainment
+    getAttainment,
+    getAttainments,
+    resetDB
 }

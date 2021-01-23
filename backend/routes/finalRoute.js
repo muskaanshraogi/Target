@@ -13,10 +13,11 @@ router.use(function (req, res, next) {
     next();
 });
 
-router.get('/calculate/:subject/:acadYear', authenticate, (req, res, next) => {
-  finalModel.calculateFinal(req.params.subject, req.params.acadYear, (err, status, data) => {
+router.get('/calculate/:subject', authenticate, (req, res, next) => {
+  finalModel.calculateFinal(req.params.subject, (err, status, data) => {
       if(err) {
           delete err.sql
+          console.log(err)
           res.status(status).send({ err: err, data: null })
       }
       else {
@@ -35,6 +36,30 @@ router.get('/attainment/:reg_id', authenticate, (req, res, next) => {
           res.status(200).send({ err: null, data: data })
       }
   })
+})
+
+router.get('/attainments', authenticateAdmin, (req, res, next) => {
+    finalModel.getAttainments((err, status, data) => {
+        if(err) {
+            delete err.sql
+            res.status(status).send({ err: err, data: null })
+        }
+        else {
+            res.status(200).send({ err: null, data: data })
+        }
+    })
+})
+
+router.delete('/reset', authenticateAdmin, (req, res, next) => {
+    finalModel.resetDB((err, status, data) => {
+        if(err) {
+            delete err.sql
+            res.status(status).send({ err: err, data: null })
+        }
+        else {
+            res.status(200).send({ err: null, data: data })
+        }
+    })
 })
 
 module.exports = router

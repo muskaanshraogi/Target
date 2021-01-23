@@ -104,9 +104,41 @@ const submitMarks = (subId, division, callback) => {
 }
 
 
+const checkSubmitted = (subId, division, callback) => {
+    db.query(
+        "SELECT submitted FROM faculty WHERE subId=? AND division=?",
+        [subId, division],
+        (err, res) => {
+            if(err) {
+                return callback(err, 500, null)
+            }
+            else {
+                return callback(null, 201, res)
+            }
+        }
+    )
+}
+
+const checkSubmittedSubject = (subId, callback) => {
+    db.query(
+        "SELECT division, submitted FROM faculty WHERE subId=?",
+        [subId],
+        (err, res) => {
+            if(err) {
+                return callback(err, 500, null)
+            }
+            else {
+                return callback(null, 201, res)
+            }
+        }
+    )
+}
+
 module.exports = {
     addMarks,
     deleteMarks,
     getMarks,
-    submitMarks
+    submitMarks,
+    checkSubmitted,
+    checkSubmittedSubject
 }

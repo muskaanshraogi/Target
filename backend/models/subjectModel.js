@@ -95,11 +95,75 @@ const getTeacherSubjects = (reg_id, callback) => {
     )
 }
 
+const setTotalMarks = (subId, marks, callback) => {
+    db.query(
+        "UPDATE subject SET tco1=?, tco2=?, tco3=?, tco4=?, tco5=?, tco6=?, tsppu=? WHERE subId=?",
+        [marks.tco1, marks.tco2, marks.tco3, marks.tco4, marks.tco5, marks.tco6, marks.sppu, subId],
+        (err, res) => {
+            if(err) {
+                return callback(err, 500, null)
+            }
+            else {
+                return callback(null, 200, res)
+            }
+        }
+    )
+}
+
+const setTarget = (subId, target, callback) => {
+    db.query(
+        "UPDATE subject SET mt1=?, mt2=?, mt3=?, sppu1=?, sppu2=?, sppu3=? WHERE subId=?",
+        [target.mt1, target.mt2, target.mt3, target.sppu1, target.sppu2, target.sppu3, subId],
+        (err, res) => {
+            if(err) {
+                return callback(err, 500, null)
+            }
+            else {
+                return callback(null, 200, res)
+            }
+        }
+    )
+}
+
+const getTotalMarks = (subId, callback) => {
+    db.query(
+        "SELECT tco1, tco2, tco3, tco4, tco5, tco6, tsppu FROM subject WHERE subId=?",
+        [subId],
+        (err, res) => {
+            if(err) {
+                return callback(err, 500, null)
+            }
+            else {
+                return callback(null, 200, res)
+            }
+        }
+    )
+}
+
+const getTarget = (subId, callback) => {
+    db.query(
+        "SELECT mt1, mt2, mt3, sppu1, sppu2, sppu3 FROM subject WHERE subId=?",
+        [subId],
+        (err, res) => {
+            if(err) {
+                return callback(err, 500, null)
+            }
+            else {
+                return callback(null, 200, res)
+            }
+        }
+    )
+}
+
 module.exports = {
     addSubject,
     addMultipleSubjects,
     updateSubject,
     deleteSubject,
     getAllSubjects,
-    getTeacherSubjects
+    getTeacherSubjects,
+    setTotalMarks,
+    setTarget,
+    getTarget,
+    getTotalMarks
 }

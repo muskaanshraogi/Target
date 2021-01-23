@@ -69,4 +69,28 @@ router.post('/submit/:subId/:division', authenticate, (req, res, next) => {
     })
 })
 
+router.get('/submit/:subId/:division', authenticate, (req, res, next) => {
+    marksModel.checkSubmitted(req.params.subId, req.params.division, (err, status, data) => {
+        if(err) {
+            delete err.sql
+            res.status(status).send({ err: err, data: null })
+        }
+        else {
+            res.status(200).send({ err: null, data: data })
+        }
+    })
+})
+
+router.get('/submit/:subId', authenticate, (req, res, next) => {
+    marksModel.checkSubmittedSubject(req.params.subId, (err, status, data) => {
+        if(err) {
+            delete err.sql
+            res.status(status).send({ err: err, data: null })
+        }
+        else {
+            res.status(200).send({ err: null, data: data })
+        }
+    })
+})
+
 module.exports = router
