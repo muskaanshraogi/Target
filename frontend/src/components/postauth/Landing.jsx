@@ -16,7 +16,8 @@ import {
   Avatar,
   Card,
   CardHeader,
-  colors
+  colors,
+  ListItemAvatar,
 } from "@material-ui/core";
 import {
   SupervisorAccount,
@@ -26,20 +27,22 @@ import {
   AccountCircle,
   ExitToApp,
 } from "@material-ui/icons";
-import SupervisedUserCircleIcon from '@material-ui/icons/SupervisedUserCircle';
+import SupervisedUserCircleIcon from "@material-ui/icons/SupervisedUserCircle";
 import { ThemeContext } from "../../context/useTheme";
 import Routes from "./Routes";
 import clsx from "clsx";
 import { useHistory, useLocation } from "react-router-dom";
 import Axios from "axios";
+import { VpnKey, AccessibilityNew } from "@material-ui/icons";
+import EmailIcon from "@material-ui/icons/Email";
 
 const drawerWidth = 400;
 
 const useStyles = makeStyles((theme) => ({
   avatar: {
     color: theme.palette.getContrastText(colors.blue[600]),
-    backgroundColor: colors.blue[600]
-  },  
+    backgroundColor: colors.blue[600],
+  },
   root: {
     display: "flex",
   },
@@ -137,17 +140,17 @@ const useStyles = makeStyles((theme) => ({
 
 const drawerItems = [
   {
+    name: "Admin Interface",
+    icon: <SupervisorAccount />,
+  },
+  {
     name: "Teacher Interface",
     icon: <AccountCircle />,
   },
   {
-    name: "Admin Interface",
-    icon: <SupervisorAccount />
-  },
-  {
     name: "Coordinator Interface",
-    icon: <SupervisedUserCircleIcon />
-  }
+    icon: <SupervisedUserCircleIcon />,
+  },
 ];
 
 export default function ClippedDrawer() {
@@ -159,15 +162,15 @@ export default function ClippedDrawer() {
   const { dark, toggleTheme } = React.useContext(ThemeContext);
 
   const [user, setUser] = useState({
-    "firstName": "",
-    "lastName": "",
-    "email": "",
-    "is_admin": 1,
-    "reg_id": "",
-    "division": null,
-    "roleName": null,
-    "subName": null,
-    "year": null
+    firstName: "",
+    lastName: "",
+    email: "",
+    is_admin: 1,
+    reg_id: "",
+    division: null,
+    roleName: null,
+    subName: null,
+    year: null,
   });
   const [open, setOpen] = useState(true);
   const [isAdmin, setIsAdmin] = useState(false);
@@ -177,23 +180,24 @@ export default function ClippedDrawer() {
     sessionStorage.removeItem("usertoken");
     sessionStorage.removeItem("user");
     history.push("");
-  }
-  
+  };
+
   useEffect(() => {
-      Axios.get(
-      `http://localhost:8000/api/staff/${JSON.parse(sessionStorage.getItem("user")).reg_id}`,
+    Axios.get(
+      `http://localhost:8000/api/staff/${
+        JSON.parse(sessionStorage.getItem("user")).reg_id
+      }`,
       {
         headers: {
           "Content-Type": "application/json",
-          "Authorization": `Bearer ${sessionStorage.getItem("usertoken")}`
-          }
-        }
-      )
-      .then(res => {
-        setUser(res.data.data[0])
-        setIsAdmin(() => res.data.data[0].is_admin === 0 ? false : true)
-      })
-  }, [])
+          Authorization: `Bearer ${sessionStorage.getItem("usertoken")}`,
+        },
+      }
+    ).then((res) => {
+      setUser(res.data.data[0]);
+      setIsAdmin(() => (res.data.data[0].is_admin === 0 ? false : true));
+    });
+  }, []);
 
   return (
     <div className={classes.root}>
@@ -235,24 +239,89 @@ export default function ClippedDrawer() {
         <Toolbar />
         <div className={classes.drawerContainer}>
           <Card>
-            { user && 
+            {user && (
               <CardHeader
                 title={`${user.firstName} ${user.lastName}`}
-                subheader={user.email}
-                avatar={<Avatar className={classes.avatar}>{`${user.firstName.charAt(0)}${user.lastName.charAt(0)}`}</Avatar>}
+                avatar={
+                  <Avatar className={classes.avatar}>{`${user.firstName.charAt(
+                    0
+                  )}${user.lastName.charAt(0)}`}</Avatar>
+                }
                 titleTypographyProps={{ variant: "h4" }}
                 subheaderTypographyProps={{ variant: "h6" }}
               />
-            }
+            )}
+            <List dense>
+              <ListItem>
+                <ListItemAvatar>
+                  <Avatar className={classes.avatar}>
+                    <EmailIcon />
+                  </Avatar>
+                </ListItemAvatar>
+                <ListItemText
+                  primary={
+                    <Typography variant="h6" color="textPrimary">
+                      Email
+                    </Typography>
+                  }
+                  secondary={
+                    <Typography variant="body1" color="textPrimary">
+                      {user.email}
+                    </Typography>
+                  }
+                />
+              </ListItem>
+              <ListItem>
+                <ListItemAvatar>
+                  <Avatar className={classes.avatar}>
+                    <VpnKey />
+                  </Avatar>
+                </ListItemAvatar>
+                <ListItemText
+                  primary={
+                    <Typography variant="h6" color="textPrimary">
+                      Registration ID
+                    </Typography>
+                  }
+                  secondary={
+                    <Typography variant="body1" color="textPrimary">
+                      {user.reg_id}
+                    </Typography>
+                  }
+                />
+              </ListItem>
+              <ListItem>
+                <ListItemAvatar>
+                  <Avatar className={classes.avatar}>
+                    <AccessibilityNew />
+                  </Avatar>
+                </ListItemAvatar>
+                <ListItemText
+                  primary={
+                    <Typography variant="h6" color="textPrimary">
+                      Admin User
+                    </Typography>
+                  }
+                  secondary={
+                    <Typography variant="body1" color="textPrimary">
+                      {user.is_admin === 1 ? "Yes" : "No"}
+                    </Typography>
+                  }
+                />
+              </ListItem>
+            </List>
           </Card>
           <List>
+            {isAdmin && (
               <ListItem
                 key={0}
                 selected={location.pathname.includes(
                   drawerItems[0].name.split(" ")[0].toLowerCase()
                 )}
                 onClick={() =>
-                  history.push(`/home/${drawerItems[0].name.split(" ")[0].toLowerCase()}`)
+                  history.push(
+                    `/home/${drawerItems[0].name.split(" ")[0].toLowerCase()}`
+                  )
                 }
                 button
               >
@@ -261,39 +330,42 @@ export default function ClippedDrawer() {
                 </ListItemIcon>
                 <ListItemText primary={drawerItems[0].name} />
               </ListItem>
-              {
-                isAdmin && 
-                <ListItem
-                  key={1}
-                  selected={location.pathname.includes(
-                    drawerItems[1].name.split(" ")[0].toLowerCase()
-                  )}
-                  onClick={() =>
-                    history.push(`/home/${drawerItems[1].name.split(" ")[0].toLowerCase()}`)
-                  }
-                  button
-                >
-                  <ListItemIcon className={classes.list}>
-                    {drawerItems[1].icon}
-                  </ListItemIcon>
-                  <ListItemText primary={drawerItems[1].name} />
-                </ListItem>
+            )}
+            <ListItem
+              key={1}
+              selected={location.pathname.includes(
+                drawerItems[1].name.split(" ")[0].toLowerCase()
+              )}
+              onClick={() =>
+                history.push(
+                  `/home/${drawerItems[1].name.split(" ")[0].toLowerCase()}`
+                )
               }
-              <ListItem
-                key={0}
-                selected={location.pathname.includes(
-                  drawerItems[2].name.split(" ")[0].toLowerCase()
-                )}
-                onClick={() =>
-                  history.push(`/home/${drawerItems[2].name.split(" ")[0].toLowerCase()}`)
-                }
-                button
-              >
-                <ListItemIcon className={classes.list}>
-                  {drawerItems[2].icon}
-                </ListItemIcon>
-                <ListItemText primary={drawerItems[2].name} />
-              </ListItem>
+              button
+            >
+              <ListItemIcon className={classes.list}>
+                {drawerItems[1].icon}
+              </ListItemIcon>
+              <ListItemText primary={drawerItems[1].name} />
+            </ListItem>
+
+            <ListItem
+              key={2}
+              selected={location.pathname.includes(
+                drawerItems[2].name.split(" ")[0].toLowerCase()
+              )}
+              onClick={() =>
+                history.push(
+                  `/home/${drawerItems[2].name.split(" ")[0].toLowerCase()}`
+                )
+              }
+              button
+            >
+              <ListItemIcon className={classes.list}>
+                {drawerItems[2].icon}
+              </ListItemIcon>
+              <ListItemText primary={drawerItems[2].name} />
+            </ListItem>
           </List>
         </div>
       </Drawer>

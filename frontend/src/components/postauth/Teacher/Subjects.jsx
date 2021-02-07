@@ -3,7 +3,6 @@ import {
   Grid,
   Card,
   CardHeader,
-  Button,
   Table,
   TableCell,
   TableRow,
@@ -12,20 +11,19 @@ import {
   TableHead,
   Paper,
   IconButton,
+  Tabs,
+  Tab,
 } from "@material-ui/core";
 import DeleteIcon from "@material-ui/icons/Delete";
 import Axios from "axios";
 import { useSnackbar } from "notistack";
+import TabPanel from "./TabPanel";
 
 export default function Subjects({ user }) {
   const { enqueueSnackbar } = useSnackbar();
+  const [value, setValue] = useState(0);
   const [mySubjects, setMySubjects] = useState([]);
-  const [index, setIndex] = useState("");
-
-  const handleIndex = (e) => {
-    let subName = e.target.innerHTML.split(" ").pop();
-    setIndex(subName);
-  };
+  const [subject, setSubject] = useState({});
 
   const handleDeleteSubject = (data) => {
     let reg_id = JSON.parse(sessionStorage.getItem("user")).reg_id;
@@ -54,66 +52,6 @@ export default function Subjects({ user }) {
       });
   };
 
-  const handleFileChange = (e) => {
-    let date = new Date().toISOString().split("T")[0];
-    date = formatDate(date);
-    let acadYear = formatAcadYear(formatDate(new Date().toLocaleDateString()));
-    const fileType = e.target.value.split(".").pop();
-    let fileName = e.target.value.split("\\").pop();
-
-    if (fileType === "xlsx" || fileType === "xls") {
-      enqueueSnackbar("Uploading...", {
-        variant: "info",
-      });
-      let data = new FormData();
-      data.append("file", e.target.files[0]);
-      data.append("filename", fileName);
-      data.append("submittedOn", date);
-      data.append("acadYear", acadYear);
-
-      Axios.post(
-        `http://localhost:8000/api/report/add/${index}/${
-          JSON.parse(sessionStorage.getItem("user")).reg_id
-        }`,
-        data,
-        {
-          headers: {
-            "Content-Type": "multipart/form-data",
-            Authorization: `Bearer ${sessionStorage.getItem("usertoken")}`,
-          },
-        }
-      )
-        .then((res) => {
-          enqueueSnackbar("Uploaded file", {
-            variant: "success",
-            persist: false,
-          });
-        })
-        .catch((err) => {
-          enqueueSnackbar("Could not upload file", {
-            variant: "error",
-            persist: false,
-          });
-        });
-    } else {
-      enqueueSnackbar("Only .xlsx format is allowed", { variant: "warning" });
-      return;
-    }
-  };
-
-  const formatDate = (date) => {
-    date = date.replace("/", "-");
-    date = date.replace("/", "-");
-    return date;
-  };
-
-  const formatAcadYear = (date) => {
-    let year = date.split("-").pop();
-    let next = parseInt(year) + 1;
-    let last = next.toString().slice(2, 4);
-    return `${year}-${last}`;
-  };
-
   useEffect(() => {
     Axios.get(
       `http://localhost:8000/api/subject/teacher/${
@@ -128,6 +66,7 @@ export default function Subjects({ user }) {
     )
       .then((res) => {
         setMySubjects(res.data.data);
+        setSubject(res.data.data[0]);
       })
       .catch((err) => {
         enqueueSnackbar("Could not fetch my subjects", { variant: "error" });
@@ -136,11 +75,11 @@ export default function Subjects({ user }) {
 
   return (
     <>
-      <Grid item>
+      <Grid item spacing={2}>
         <Card>
           <CardHeader
             title="Your Subjects"
-            titleTypographyProps={{ variant: "h4" }}
+            titleTypographyProps={{ variant: "h3" }}
           />
           <TableContainer component={Paper}>
             <Table aria-label="caption table">
@@ -151,7 +90,6 @@ export default function Subjects({ user }) {
                   <TableCell align="center">Year</TableCell>
                   <TableCell align="center">Division</TableCell>
                   <TableCell align="center">Role</TableCell>
-                  <TableCell align="center">Upload</TableCell>
                   <TableCell align="center">Delete</TableCell>
                 </TableRow>
               </TableHead>
@@ -164,24 +102,6 @@ export default function Subjects({ user }) {
                     <TableCell align="center">{subject.division}</TableCell>
                     <TableCell align="center">
                       {subject.role_id === 1 ? "Teacher" : "Coordinator"}
-                    </TableCell>
-                    <TableCell align="center">
-                      <input
-                        type="file"
-                        id="fileUploadButton"
-                        style={{ display: "none" }}
-                        onChange={handleFileChange}
-                      />
-                      <label htmlFor={"fileUploadButton"}>
-                        <Button
-                          color="primary"
-                          variant="outlined"
-                          component="span"
-                          onClick={handleIndex}
-                        >
-                          Upload worksheet for {subject.subName}
-                        </Button>
-                      </label>
                     </TableCell>
                     <TableCell align="center">
                       <IconButton
@@ -199,6 +119,24 @@ export default function Subjects({ user }) {
           </TableContainer>
         </Card>
       </Grid>
+      {subject && (
+        <Grid item>
+          <Card>
+            <Tabs
+              value={value}
+              onChange={(e, nV) => {
+                setValue(nV);
+                setSubject(mySubjects[nV]);
+              }}
+            >
+              {mySubjects.map((sub, index) => (
+                <Tab label={sub.subName} />
+              ))}
+            </Tabs>
+            <TabPanel subject={subject} />
+          </Card>
+        </Grid>
+      )}
     </>
   );
 }

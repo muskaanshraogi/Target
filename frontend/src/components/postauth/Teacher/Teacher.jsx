@@ -1,10 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Grid } from "@material-ui/core";
 import Axios from "axios";
-import OtherDetails from "./OtherDetails";
 import Subjects from "./Subjects";
-import EditProfile from "./EditProfile";
-import Download from "./Download";
 
 export default function Teacher() {
   const [token, setToken] = useState(null);
@@ -45,13 +42,8 @@ export default function Teacher() {
 
   return (
     <Grid container item spacing={1}>
-      <Grid container item direction="column" xs={12} md={4} spacing={1}>
-        <OtherDetails user={user} />
-        <EditProfile />
-      </Grid>
-      <Grid container item direction="column" xs={12} md={8} spacing={1}>
+      <Grid container item direction="column" xs={12} spacing={1}>
         <Subjects user={user} />
-        <Download />
       </Grid>
     </Grid>
   );

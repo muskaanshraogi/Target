@@ -65,7 +65,6 @@ export default function Coordinator() {
           }
         )
           .then((res) => {
-            console.log(res.data);
             setAttainment(res.data.data);
             enqueueSnackbar("Calculated attainment successfully", {
               variant: "success",
@@ -181,7 +180,6 @@ export default function Coordinator() {
       }
     )
       .then((res) => {
-        console.log(res.data.data);
         setAttainment(res.data.data);
       })
       .catch((err) => {
