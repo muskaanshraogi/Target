@@ -8,6 +8,7 @@ import {
 } from "@material-ui/core";
 import Axios from "axios";
 import React, { useState, useEffect } from "react";
+import { useSnackbar } from "notistack";
 import DataGrid, { TextEditor } from "react-data-grid";
 
 const useStyles = makeStyles((theme) => ({
@@ -33,36 +34,56 @@ const columns = [
 
 export default function TabPanel({ subject }) {
   const classes = useStyles();
-  let rollNumber = 1;
-
+  const { enqueueSnackbar } = useSnackbar();
   const [token, setToken] = useState(null);
+  const [table, setTable] = useState(true);
+  const [text, setText] = useState(false);
   const [number, setNumber] = useState(0);
-  const [rows, setRows] = useState([
-    {
-      roll_no: rollNumber,
-      co1: "",
-      co2: "",
-      co3: "",
-      co4: "",
-      co5: "",
-      co6: "",
-      sppu: "",
-    },
-  ]);
+  const [sub, setSub] = useState(subject);
+  let [rollNumber, setRollNumber] = useState("");
+  const [rows, setRows] = useState([]);
 
-  const getMarks = () => {
+  const generateRoll = (div, year) => {
+    let roll = "";
+
+    if (year === 2) roll = "2";
+    else if (year === 3) roll = "3";
+    else if (year === 4) roll = "4";
+
+    roll += "3";
+
+    if (div === 9) roll += "1";
+    else if (div === 10) roll += "2";
+    else if (div === 11) roll += "3";
+
+    roll += "01";
+
+    return roll;
+  };
+
+  const getMarks = (sub) => {
     if (token) {
-      Axios.get(
-        `http://localhost:8000/api/marks/get/${subject.divison}/${subject.subId}`,
-        {
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      )
+      let final = "";
+      let div = sub.division;
+      if (div === 9) {
+        div = "09";
+      }
+      if (parseInt(sub.year) === 2) final += "SE" + div;
+      else if (parseInt(sub.year) === 3) final += "TE" + div;
+      else final += "BE" + div;
+      Axios.get(`http://localhost:8000/api/marks/get/${final}/${sub.subId}`, {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      })
         .then((res) => {
-          console.log(res);
+          if (res.data.data.length > 0) {
+            setNumber(res.data.data.length);
+            setText(true);
+            setTable(true);
+            setRows(res.data.data);
+          }
         })
         .catch((err) => {
           console.log(err.message);
@@ -72,13 +93,17 @@ export default function TabPanel({ subject }) {
 
   const handleChange = (e) => {
     setNumber(e.target.value);
+    if (parseInt(e.target.value) > 0) setTable(false);
   };
 
   const handleAdd = () => {
     let newArray = [...rows];
-    for (let i = 1; i < number; i++) {
+    let startIndex =
+      rows[rows.length - 1] === undefined ? 0 : rows[rows.length - 1];
+    let endIndex = startIndex + number;
+    for (let i = startIndex; i < endIndex; i++) {
       newArray.push({
-        roll_no: ++rollNumber,
+        roll_no: rollNumber++,
         co1: "",
         co2: "",
         co3: "",
@@ -114,11 +139,11 @@ export default function TabPanel({ subject }) {
         },
       }
     )
-      .then((res) => {
-        console.log(res);
+      .then(() => {
+        enqueueSnackbar("Saved new entries", { variant: "success" });
       })
-      .catch((err) => {
-        console.log(err);
+      .catch(() => {
+        enqueueSnackbar("Could not save", { variant: "error" });
       });
   };
 
@@ -126,11 +151,21 @@ export default function TabPanel({ subject }) {
 
   useEffect(() => {
     setToken(sessionStorage.getItem("usertoken"));
-  }, []);
+    setSub(subject);
+  }, [subject]);
 
   useEffect(() => {
-    getMarks();
-  }, [token]);
+    setRows([]);
+    setNumber(0);
+    setText(false);
+    getMarks(sub);
+  }, [token, sub]);
+
+  useEffect(() => {
+    setRollNumber(
+      generateRoll(parseInt(subject.division), parseInt(subject.year))
+    );
+  }, [subject.division, subject.year]);
 
   return (
     <div style={{ padding: "2%" }}>
@@ -165,15 +200,16 @@ export default function TabPanel({ subject }) {
             label={`Enter number of students in ${
               subject.year === 2 ? "SE" : subject.year === 3 ? "TE" : "BE"
             } ${subject.division}`}
-            name="firstName"
-            autoComplete="firstName"
-            defaultValue={number}
+            name="students"
+            autoComplete="students"
+            value={number}
+            disabled={text}
             onChange={handleChange}
           />
         </Grid>
         <Grid item xs={4}>
           <Button
-            disabled={number === 0 ? true : false}
+            disabled={table}
             variant="contained"
             color="primary"
             style={{ padding: "2%", marginTop: "5%" }}
@@ -183,6 +219,8 @@ export default function TabPanel({ subject }) {
           </Button>
         </Grid>
         <Grid item xs={12}>
+          <Typography variant="body2">Enter marks here: </Typography>
+          <br />
           <DataGrid
             columns={columns}
             rows={rows}
