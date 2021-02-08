@@ -1,20 +1,80 @@
 import React from "react";
-import { Grid } from "@material-ui/core";
+import { makeStyles,
+         colors, 
+         Tabs, 
+         Tab, 
+         Box, 
+         Typography } from "@material-ui/core";
 
 import AllUsers from "./AllUsers";
 import Subjects from "./Subjects";
 
-export default function Admin() {
+const useStyles = makeStyles((theme) => ({
+  root: {
+    width: '94%',
+    margin: '0 3%'
+  },
+  tab: {
+    padding: 0,
+    margin: 0,
+    position: "relative",
+    backgroundColor: colors.grey[900]
+  }
+}));
+
+function TabPanel(props) {
+  const { children, value, index, ...other } = props;
+
   return (
-    <Grid container item spacing={1}>
-      <Grid container item direction="column" xs={12} md={6} spacing={1}>
-        <Grid item>
-          <AllUsers />
-        </Grid>
-      </Grid>
-      <Grid container item direction="column" xs={12} md={6} spacing={1}>
-        <Subjects />
-      </Grid>
-    </Grid>
+    <div
+      role="tabpanel"
+      hidden={value !== index}
+      id={`simple-tabpanel-${index}`}
+      aria-labelledby={`simple-tab-${index}`}
+      {...other}
+    >
+      {value === index && (
+        <Box p={3}>
+          <Typography>{children}</Typography>
+        </Box>
+      )}
+    </div>
+  );
+}
+
+function a11yProps(index) {
+  return {
+    id: `simple-tab-${index}`,
+    'aria-controls': `simple-tabpanel-${index}`,
+  };
+}
+
+export default function Admin() {
+  const classes = useStyles();
+  const [value, setValue] = React.useState(0);
+
+  const handleChange = (event, newValue) => {
+    setValue(newValue);
+  };
+
+  return (
+    <div className={classes.root}>
+      <Tabs 
+       variant="fullWidth"
+       value={value} 
+       onChange={handleChange} 
+       aria-label="simple tabs example" 
+       className={classes.tab}
+      >
+        <Tab label="Staff" {...a11yProps(0)} />
+        <Tab label="Subjects" {...a11yProps(1)} />
+      </Tabs>
+      <TabPanel value={value} index={0}>
+        <AllUsers/>
+      </TabPanel>
+      <TabPanel value={value} index={1}>
+        <Subjects/>
+      </TabPanel>
+    </div>
   );
 }

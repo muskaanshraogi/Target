@@ -95,8 +95,9 @@ export default function Subjects() {
           setAllSubjects(newAllSubjects);
           enqueueSnackbar("Added subject", { variant: "success" });
         })
-        .catch((err) =>
+        .catch((err) => {
           enqueueSnackbar("This subject already exists", { variant: "error" })
+        }
         );
     } else {
       Axios.post(

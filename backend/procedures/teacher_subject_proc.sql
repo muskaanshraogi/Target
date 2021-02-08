@@ -10,7 +10,7 @@ BEGIN
     SELECT subId INTO subjectId FROM subject WHERE subName=subjectName;
     SELECT role_id INTO roleId FROM role WHERE roleName=rolName;
 
-    INSERT INTO faculty VALUES(teacher, roleId, subjectId, divi);
+    INSERT INTO faculty VALUES(teacher, roleId, subjectId, divi, 0);
 END$
 
 DELIMITER ;

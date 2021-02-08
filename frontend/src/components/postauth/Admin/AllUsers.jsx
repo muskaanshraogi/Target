@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react";
 import {
   Card,
-  CardHeader,
   List,
   ListItem,
   ListItemAvatar,
@@ -30,6 +29,14 @@ const useStyles = makeStyles((theme) => ({
     color: theme.palette.getContrastText(colors.blue[600]),
     backgroundColor: colors.blue[600],
   },
+  card: {
+    marginTop: '2%',
+  },
+  header: {
+    padding: '2% 1%',
+    margin: 0,
+    fontSize: '25px'
+  }
 }));
 
 export default function AllUsers() {
@@ -166,10 +173,7 @@ export default function AllUsers() {
   return (
     <>
       <Card>
-        <CardHeader
-          title="Assign Teachers to Subjects"
-          titleTypographyProps={{ variant: "h3" }}
-        />
+        <p className={classes.header}>Teacher - Subject Relation</p>
         <form onSubmit={handleSubmit}>
           {addSubjects.map((subject, index) => (
             <Grid container item spacing={3}>
@@ -182,10 +186,11 @@ export default function AllUsers() {
                 spacing={1}
               >
                 <Select
-                  style={{ margin: "0% 5% 0% 6%" }}
+                  style={{ margin: "0% 5% 0% 6%"}}
                   name={`reg_id ${index}`}
                   variant="outlined"
                   multiline
+                  label='Teacher'
                   value={addSubjects[index].reg_id}
                   onChange={handleChange}
                   fullWidth
@@ -209,6 +214,7 @@ export default function AllUsers() {
                   style={{ margin: "0% 5% 0% 6%" }}
                   name={`subject ${index}`}
                   variant="outlined"
+                  label='Subject'
                   multiline
                   value={addSubjects[index].subject}
                   onChange={handleChange}
@@ -254,7 +260,7 @@ export default function AllUsers() {
                 spacing={1}
               >
                 <FormControlLabel
-                  style={{ padding: "3% 0% 0% 0%" }}
+                  style={{ paddingTop: "3%", paddingLeft: "9%" }}
                   control={
                     <Checkbox
                       onChange={handleChecked}
@@ -272,15 +278,15 @@ export default function AllUsers() {
             color="primary"
             variant="contained"
             onClick={handleSubmit}
-            style={{ margin: "2% 0% 2% 1%" }}
+            style={{ margin: "2% 0% 1% 1%" }}
           >
             Submit
           </Button>
-          {/* <Button
+          <Button
             color="secondary"
             variant="contained"
             onClick={handleAddSubject}
-            style={{ margin: "2% 0% 2% 2%" }}
+            style={{ margin: "2% 0% 1% 1%" }}
           >
             Add More Subjects
           </Button>
@@ -289,18 +295,15 @@ export default function AllUsers() {
               color="secondary"
               variant="contained"
               onClick={handleRemoveSubject}
-              style={{ margin: "2% 0% 2% 2%" }}
+              style={{ margin: "2% 0% 1% 1%" }}
             >
               Remove Subject
-            </Button>
-          )} */}
+            </Button> 
+          )}
         </form>
       </Card>
-      <Card>
-        <CardHeader
-          title="All Users on the platform"
-          titleTypographyProps={{ variant: "h3" }}
-        />
+      <Card className={classes.card}>
+        <p className={classes.header}>Staff List</p>
         <List>
           {allUsers.map((user, index) => (
             <ListItem id={index} key={index}>
