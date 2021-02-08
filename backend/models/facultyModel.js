@@ -18,6 +18,7 @@ const addRelation = (relation, teacher, callback) => {
 const addMultipleRelations = (data, teacher, callback) => {
   let count = 0;
   data.relations.forEach((relation) => {
+    console.log(relation)
     db.query(
       "CALL teacher_subject(?, ?, ?, ?)",
       [teacher, relation.subject, relation.role, relation.division],

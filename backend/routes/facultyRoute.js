@@ -17,6 +17,7 @@ router.post('/add/:reg_id', authenticate, (req, res, next) => {
     facultyModel.addRelation(req.body, req.params.reg_id, (err, status, data) => {
         if(err) {
             delete err.sql
+            console.log(err)
             res.status(status).send({ err: err, data: null })
         }
         else {
@@ -29,6 +30,7 @@ router.post('/add/multiple/:reg_id', authenticate, (req, res, next) => {
     facultyModel.addMultipleRelations(req.body, req.params.reg_id, (err, status, data) => {
         if(err) {
             delete err.sql
+            console.log(err)
             res.status(status).send({ err: err, data: null })
         }
         else {

@@ -2,7 +2,7 @@ const db = require('./../dbConnection')
 
 const addSubject = (subject, callback) => {
     db.query(
-        "INSERT INTO subject VALUES(?, ?, ?)",
+        "INSERT INTO subject(subId, subName, year) VALUES(?, ?, ?)",
         [subject.subId, subject.subName, subject.year],
         (err, res) => {
             if(err) {
@@ -19,7 +19,7 @@ const addMultipleSubjects = (data, callback) => {
     let count = 0
     data.subjects.forEach((subject) => {
         db.query(
-            "INSERT INTO subject VALUES(?, ?, ?)",
+            "INSERT INTO subject(subId, subName, year) VALUES(?, ?, ?)",
             [subject.subId, subject.subName, subject.year],
             (err, res) => {
                 if(err) {

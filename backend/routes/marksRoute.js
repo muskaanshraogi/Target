@@ -17,6 +17,7 @@ router.post('/add/:subId', authenticate, (req, res, next) => {
     marksModel.addMarks(req.body, req.params.subId, (err, status, data) => {
         if(err) {
             delete err.sql
+            console.log(err)
             res.status(status).send({ err: err, data: null })
         }
         else {
