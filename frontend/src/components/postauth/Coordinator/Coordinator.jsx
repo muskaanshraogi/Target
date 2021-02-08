@@ -144,48 +144,48 @@ export default function Coordinator() {
     Doc.createPdf(html, `${teachers[0].subName}_report`);
   };
 
-  useEffect(() => {
-    Axios.get(
-      `http://localhost:8000/api/report/get/subject/${
-        JSON.parse(sessionStorage.getItem("user")).reg_id
-      }`,
-      {
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${sessionStorage.getItem("usertoken")}`,
-        },
-      }
-    )
-      .then((res) => {
-        let data = res.data.data;
-        let temp = teachers.map((t) => ({
-          reg_id: t.reg_id,
-          count: data.some((d) => t.reg_id === d.reg_id) ? 1 : 0,
-        }));
-        setFlags(temp);
-        setReports(res.data.data);
-      })
-      .catch((err) => {
-        enqueueSnackbar("Could not fetch teachers", { variant: "error" });
-      });
-    Axios.get(
-      `http://localhost:8000/api/final/attainment/${
-        JSON.parse(sessionStorage.getItem("user")).reg_id
-      }`,
-      {
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${sessionStorage.getItem("usertoken")}`,
-        },
-      }
-    )
-      .then((res) => {
-        setAttainment(res.data.data);
-      })
-      .catch((err) => {
-        setAttainment(null);
-      });
-  }, [teachers, enqueueSnackbar]);
+  // useEffect(() => {
+  //   Axios.get(
+  //     `http://localhost:8000/api/report/get/subject/${
+  //       JSON.parse(sessionStorage.getItem("user")).reg_id
+  //     }`,
+  //     {
+  //       headers: {
+  //         "Content-Type": "application/json",
+  //         Authorization: `Bearer ${sessionStorage.getItem("usertoken")}`,
+  //       },
+  //     }
+  //   )
+  //     .then((res) => {
+  //       let data = res.data.data;
+  //       let temp = teachers.map((t) => ({
+  //         reg_id: t.reg_id,
+  //         count: data.some((d) => t.reg_id === d.reg_id) ? 1 : 0,
+  //       }));
+  //       setFlags(temp);
+  //       setReports(res.data.data);
+  //     })
+  //     .catch((err) => {
+  //       enqueueSnackbar("Could not fetch teachers", { variant: "error" });
+  //     });
+  //   Axios.get(
+  //     `http://localhost:8000/api/final/attainment/${
+  //       JSON.parse(sessionStorage.getItem("user")).reg_id
+  //     }`,
+  //     {
+  //       headers: {
+  //         "Content-Type": "application/json",
+  //         Authorization: `Bearer ${sessionStorage.getItem("usertoken")}`,
+  //       },
+  //     }
+  //   )
+  //     .then((res) => {
+  //       setAttainment(res.data.data);
+  //     })
+  //     .catch((err) => {
+  //       setAttainment(null);
+  //     });
+  // }, [teachers, enqueueSnackbar]);
 
   return (
     <Grid container item spacing={1}>
