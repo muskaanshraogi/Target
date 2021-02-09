@@ -30,12 +30,24 @@ const useStyles = makeStyles((theme) => ({
     backgroundColor: colors.blue[600],
   },
   card: {
-    marginTop: '2%',
+    marginTop: '1%',
+    marginRight: '1%',
+    width: '49%',
+    float:'left'
   },
-  header: {
-    padding: '2% 1%',
+  card2: {
+    marginTop: '1%',
+    width: '50%',
+  },
+  cardhead: {
+    marginTop: '3%',
+    paddingLeft: '1%',
     margin: 0,
     fontSize: '25px'
+  },
+  list: {
+    padding: '0 1% 1% 1%',
+    margin: '0'
   }
 }));
 
@@ -129,7 +141,7 @@ export default function AllUsers() {
         });
     } else {
       Axios.post(
-        `http://localhost:8000/api/faculty/add/multiple`,
+        `http://localhost:8000/api/faculty/add/multiple/${addSubjects[0].reg_id}`,
         {
           relations: addSubjects,
         },
@@ -302,10 +314,52 @@ export default function AllUsers() {
           )}
         </form>
       </Card>
-      <Card className={classes.card}>
+      <Card className={classes.cardhead}>
         <p className={classes.header}>Staff List</p>
-        <List>
-          {allUsers.map((user, index) => (
+      </Card>
+      <Card className={classes.card}>
+        <List className={classes.list}>
+          {allUsers.slice(0, (allUsers.length/2)+1).map((user, index) => (
+            <ListItem id={index} key={index}>
+              <ListItemAvatar>
+                <Avatar className={classes.avatar}>
+                  {user.firstName.charAt(0)}
+                  {user.lastName.charAt(0)}
+                </Avatar>
+              </ListItemAvatar>
+              <ListItemText
+                primary={
+                  <Typography variant="h6" color="textPrimary">
+                    {user.firstName} {user.lastName}
+                  </Typography>
+                }
+                secondary={
+                  <React.Fragment>
+                    <Typography variant="body1" color="textPrimary">
+                      {user.reg_id}
+                    </Typography>
+                    <Typography variant="body2" color="textSecondary">
+                      {user.email}
+                    </Typography>
+                  </React.Fragment>
+                }
+              />
+              <ListItemSecondaryAction>
+                <IconButton
+                  edge="end"
+                  aria-label="delete"
+                  onClick={() => handleDeleteUser(user.reg_id)}
+                >
+                  <DeleteIcon />
+                </IconButton>
+              </ListItemSecondaryAction>
+            </ListItem>
+          ))}
+        </List>
+        </Card>
+        <Card className={classes.card2}>
+        <List className={classes.list}>
+          {allUsers.slice((allUsers.length/2)+1, allUsers.length).map((user, index) => (
             <ListItem id={index} key={index}>
               <ListItemAvatar>
                 <Avatar className={classes.avatar}>

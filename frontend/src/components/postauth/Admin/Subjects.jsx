@@ -27,6 +27,26 @@ const useStyles = makeStyles((theme) => ({
     color: theme.palette.getContrastText(colors.blue[600]),
     backgroundColor: colors.blue[600],
   },
+  card: {
+    marginTop: '1%',
+    marginRight: '1%',
+    width: '49%',
+    float:'left'
+  },
+  card2: {
+    marginTop: '1%',
+    width: '50%',
+  },
+  cardhead: {
+    marginTop: '3%',
+    paddingLeft: '1%',
+    margin: 0,
+    fontSize: '25px'
+  },
+  list: {
+    padding: '0 1% 1% 1%',
+    margin: '0'
+  }
 }));
 
 export default function Subjects() {
@@ -161,17 +181,14 @@ export default function Subjects() {
         setAllSubjects={setAllSubjects}
       />
       <Card>
-        <CardHeader
-          title="Add Subjects"
-          titleTypographyProps={{ variant: "h3" }}
-        />
+        <p className={classes.header}>New Subject(s)</p>
         <form onSubmit={handleSubmit}>
           {addSubjects.map((subject, index) => (
-            <Grid container item spacing={1} style={{ padding: "1%" }}>
+            <Grid container item spacing={1}>
               <Grid item>
                 <TextField
                   variant="outlined"
-                  margin="normal"
+                  style={{ margin: "0% 5% 0% 6%"}}
                   required
                   fullWidth
                   defaultValue={subject.subName}
@@ -185,7 +202,7 @@ export default function Subjects() {
               <Grid item>
                 <TextField
                   variant="outlined"
-                  margin="normal"
+                  style={{ margin: "0% 5% 0% 6%"}}
                   required
                   fullWidth
                   defaultValue={subject.subId}
@@ -198,7 +215,7 @@ export default function Subjects() {
               <Grid item>
                 <TextField
                   variant="outlined"
-                  margin="normal"
+                  style={{ margin: "0% 5% 0% 6%"}}
                   required
                   fullWidth
                   defaultValue={subject.year}
@@ -214,7 +231,7 @@ export default function Subjects() {
             color="primary"
             variant="contained"
             onClick={handleSubmit}
-            style={{ margin: "0% 0% 2% 1%" }}
+            style={{ margin: "2% 0% 1% 1%" }}
           >
             Submit
           </Button>
@@ -222,7 +239,7 @@ export default function Subjects() {
             color="secondary"
             variant="contained"
             onClick={handleAddSubject}
-            style={{ margin: "0% 0% 2% 2%" }}
+            style={{ margin: "2% 0% 1% 1%" }}
           >
             Add More Subjects
           </Button>
@@ -231,20 +248,65 @@ export default function Subjects() {
               color="secondary"
               variant="contained"
               onClick={handleRemoveSubject}
-              style={{ margin: "0% 0% 2% 2%" }}
+              style={{ margin: "2% 0% 1% 1%" }}
             >
               Remove Subject
             </Button>
           )}
         </form>
       </Card>
-      <Card>
-        <CardHeader
-          title="Subjects Added"
-          titleTypographyProps={{ variant: "h3" }}
-        />
-        <List dense>
-          {allSubjects.map((subject, index) => (
+      <Card className={classes.cardhead}>
+        <p className={classes.header}>Subjects List</p>
+      </Card>
+      <Card className={classes.card}>
+        <List dense className={classes.list}>
+          {allSubjects.slice(0, (allSubjects.length/2)+1).map((subject, index) => (
+            <ListItem id={subject.subId} key={index}>
+              <ListItemAvatar>
+                <Avatar className={classes.avatar}>
+                  {subject.subName.charAt(0)}
+                </Avatar>
+              </ListItemAvatar>
+              <ListItemText
+                primary={
+                  <Typography variant="h6" color="textPrimary">
+                    {subject.subName}
+                  </Typography>
+                }
+                secondary={
+                  <React.Fragment>
+                    <Typography variant="body1" color="textPrimary">
+                      {subject.subId}
+                    </Typography>
+                    <Typography variant="body2" color="textSecondary">
+                      Year : {subject.year}
+                    </Typography>
+                  </React.Fragment>
+                }
+              />
+              <ListItemSecondaryAction>
+                {/* <IconButton
+                  edge="end"
+                  aria-label="edit"
+                  onClick={() => handleEditSubject(index)}
+                >
+                  <EditIcon />
+                </IconButton> */}
+                <IconButton
+                  edge="end"
+                  aria-label="delete"
+                  onClick={() => handleDeleteSubject(subject.subId)}
+                >
+                  <DeleteIcon />
+                </IconButton>
+              </ListItemSecondaryAction>
+            </ListItem>
+          ))}
+        </List>
+      </Card>
+      <Card className={classes.card2}>
+        <List dense className={classes.list}>
+          {allSubjects.slice((allSubjects.length/2)+1, allSubjects.length).map((subject, index) => (
             <ListItem id={subject.subId} key={index}>
               <ListItemAvatar>
                 <Avatar className={classes.avatar}>
