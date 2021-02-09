@@ -202,6 +202,8 @@ export default function TabPanel({ subject }) {
       .then((r) => {
         enqueueSnackbar("Submitted Data Successfully", { variant: "success" });
         setOpen(!open);
+        setText(true);
+        setTable(true);
         setSubmitted(true);
       })
       .catch(() => {

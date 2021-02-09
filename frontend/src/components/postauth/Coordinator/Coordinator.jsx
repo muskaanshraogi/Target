@@ -12,13 +12,16 @@ import {
   Paper,
   TableBody,
   Button,
+  Typography,
   CardContent,
+  TextField,
 } from "@material-ui/core";
 import Axios from "axios";
 import { useSnackbar } from "notistack";
 import { ThemeContext } from "../../../context/useTheme";
 import PDF from "../PDF/pdfContainer";
 import Doc from "../PDF/docService";
+import Teachers from "./Teachers";
 
 const useStyles = makeStyles((theme) => ({
   tableDark: {
@@ -37,9 +40,79 @@ export default function Coordinator() {
   const { enqueueSnackbar } = useSnackbar();
   const [teachers, setTeachers] = useState([]);
   const [reports, setReports] = useState([]);
-  const [flags, setFlags] = useState([]);
   const [attainment, setAttainment] = useState({ details: [] }, { final: {} });
   const [coordinator, setCoordinator] = useState("");
+  const [subId, setSubID] = useState("");
+  const [total, setTotal] = useState({
+    tco1: 0,
+    tco2: 0,
+    tco3: 0,
+    tco4: 0,
+    tco5: 0,
+    tco6: 0,
+    tsppu: 0,
+  });
+  const [target, setTarget] = useState({
+    mt1: 0,
+    mt2: 0,
+    mt3: 0,
+    sppu1: 0,
+    sppu2: 0,
+    sppu3: 0,
+  });
+  const [totalBool, setTotalBool] = useState(false);
+  const [targetBool, setTargetBool] = useState(false);
+  const [submittedBool, setSubmittedBool] = useState(false);
+
+  const handleTotal = () => {
+    Axios.post(`http://localhost:8000/api/subject/set/total/${subId}`, total, {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${sessionStorage.getItem("usertoken")}`,
+      },
+    })
+      .then((res) => {
+        setTotal(total);
+        enqueueSnackbar("Added Total Marks Successfully!", {
+          variant: "success",
+        });
+      })
+      .catch((err) => {
+        enqueueSnackbar("Could Not Add Total Marks", { variant: "error" });
+      });
+  };
+
+  const handleTarget = () => {
+    Axios.post(
+      `http://localhost:8000/api/subject/set/target/${subId}`,
+      target,
+      {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${sessionStorage.getItem("usertoken")}`,
+        },
+      }
+    )
+      .then((res) => {
+        setTarget(target);
+        enqueueSnackbar("Added Target Successfully!", {
+          variant: "success",
+        });
+      })
+      .catch((err) => {
+        enqueueSnackbar("Could Not Add Target", { variant: "error" });
+      });
+  };
+
+  const handleTotalChange = (e) => {
+    let value = e.target.value;
+    setTotal({ ...total, [e.target.name]: value });
+  };
+
+  const handleTargetChange = (e) => {
+    let value = e.target.value;
+    setTarget({ ...total, [e.target.name]: value });
+  };
 
   const handleCalculate = () => {
     let acadYear = formatAcadYear(formatDate(new Date().toLocaleDateString()));
@@ -79,24 +152,6 @@ export default function Coordinator() {
       });
   };
 
-  const handleEmail = (reg_id) => {
-    Axios.post(
-      `http://localhost:8000/api/faculty/email/${reg_id}/${coordinator}`,
-      {},
-      {
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${sessionStorage.getItem("usertoken")}`,
-        },
-      }
-    )
-      .then((res) => {
-        enqueueSnackbar("Email sent!", { variant: "success" });
-      })
-      .catch((err) => {
-        enqueueSnackbar("Could not send email", { variant: "error" });
-      });
-  };
   const formatDate = (date) => {
     date = date.replace("/", "-");
     date = date.replace("/", "-");
@@ -110,7 +165,7 @@ export default function Coordinator() {
     return `${year}-${last}`;
   };
 
-  useEffect(() => {
+  const getTeachers = () => {
     Axios.get(
       `http://localhost:8000/api/faculty/subject/teacher/${
         JSON.parse(sessionStorage.getItem("user")).reg_id
@@ -128,17 +183,81 @@ export default function Coordinator() {
         data.forEach((d, index) => {
           temp.push({ reg_id: d.reg_id, count: 0 });
         });
-        setFlags(temp);
         setTeachers(data);
         let found = data.find((d) => d.roleName === "Subject Coordinator");
         if (found) {
           setCoordinator(found.reg_id);
         }
+        setSubID(data[0].subId);
       })
       .catch((err) => {
         enqueueSnackbar("Could not fetch teachers", { variant: "error" });
       });
-  }, [enqueueSnackbar]);
+  };
+
+  const getSubmitted = (subId) => {
+    Axios.get(`http://localhost:8000/api/marks/submit/${subId}`, {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${sessionStorage.getItem("usertoken")}`,
+      },
+    })
+      .then((res) => {
+        let data = res.data.data;
+        let temp = [...teachers];
+        let count = 0;
+        temp.map((obj) => {
+          let t = data.find((d) => d.division === obj.division);
+          obj.submitted = t.submitted;
+          if (t.submitted === 1) count++;
+        });
+        if (count === 3) setSubmittedBool(true);
+        setTeachers(temp);
+      })
+      .catch((err) => console.log(err));
+  };
+
+  const getTotalMarks = (subId) => {
+    Axios.get(`http://localhost:8000/api/subject/get/total/${subId}`, {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${sessionStorage.getItem("usertoken")}`,
+      },
+    })
+      .then((res) => {
+        setTotal(res.data.data[0]);
+        if (res.data.data[0].tco1 !== null) {
+          setTotalBool(true);
+        }
+      })
+      .catch((err) => console.log(err));
+  };
+
+  const getTargetValues = (subId) => {
+    Axios.get(`http://localhost:8000/api/subject/get/target/${subId}`, {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${sessionStorage.getItem("usertoken")}`,
+      },
+    })
+      .then((res) => {
+        setTarget(res.data.data[0]);
+        if (res.data.data[0].mt1 !== null) {
+          setTargetBool(true);
+        }
+      })
+      .catch((err) => console.log(err));
+  };
+
+  useEffect(() => {
+    getTeachers();
+  }, []);
+
+  useEffect(() => {
+    getSubmitted(subId);
+    getTotalMarks(subId);
+    getTargetValues(subId);
+  }, [subId]);
 
   const createPdf = (html) => {
     Doc.createPdf(html, `${teachers[0].subName}_report`);
@@ -190,62 +309,200 @@ export default function Coordinator() {
   return (
     <Grid container item spacing={1}>
       <Grid container item direction="column" xs={12} md={12} spacing={1}>
-        {teachers.length > 0 && flags.length > 0 ? (
+        {teachers.length > 0 ? (
           <PDF createPdf={createPdf}>
             <Card>
               <CardHeader
                 title={`Teachers teaching your subject`}
                 titleTypographyProps={{ variant: "h4" }}
               />
-              <TableContainer component={Paper}>
-                <Table aria-label="caption table">
-                  <TableHead>
-                    <TableRow>
-                      <TableCell align="center">Subject Name</TableCell>
-                      <TableCell align="center">Role</TableCell>
-                      <TableCell align="center">Year</TableCell>
-                      <TableCell align="center">Name</TableCell>
-                      <TableCell align="center">Division</TableCell>
-                      <TableCell align="center">Submitted On</TableCell>
-                    </TableRow>
-                  </TableHead>
-                  <TableBody>
-                    {teachers.map((teacher, index1) => (
-                      <TableRow key={index1}>
-                        <TableCell align="center">{teacher.subName}</TableCell>
-                        <TableCell align="center">{teacher.roleName}</TableCell>
-                        <TableCell align="center">{teacher.year}</TableCell>
-                        <TableCell align="center">
-                          {teacher.firstName} {teacher.lastName}
-                        </TableCell>
-                        <TableCell align="center">{teacher.division}</TableCell>
-                        {reports.some(
-                          (report) => report.reg_id === teacher.reg_id
-                        ) ? (
+              {total && (
+                <>
+                  <Typography variant="h6" style={{ padding: "1% 2% 0% 1%" }}>
+                    Enter Total Marks:
+                  </Typography>
+                  <TableContainer component={Paper}>
+                    <Table aria-label="caption table">
+                      <TableHead>
+                        <TableRow>
+                          <TableCell align="center">CO 1</TableCell>
+                          <TableCell align="center">CO 2</TableCell>
+                          <TableCell align="center">CO 3</TableCell>
+                          <TableCell align="center">CO 4</TableCell>
+                          <TableCell align="center">CO 5</TableCell>
+                          <TableCell align="center">CO 6</TableCell>
+                          <TableCell align="center">SPPU</TableCell>
+                        </TableRow>
+                      </TableHead>
+                      <TableBody>
+                        <TableRow>
                           <TableCell align="center">
-                            {reports
-                              .find(
-                                (report) => report.reg_id === teacher.reg_id
-                              )
-                              .submittedOn.slice(0, 10)}
+                            <TextField
+                              name="tco1"
+                              variant="filled"
+                              value={total.tco1}
+                              disabled={totalBool}
+                              onChange={handleTotalChange}
+                            />
                           </TableCell>
-                        ) : flags[index1].count === 0 ? (
+                          <TableCell align="center">
+                            <TextField
+                              name="tco2"
+                              variant="filled"
+                              value={total.tco2}
+                              disabled={totalBool}
+                              onChange={handleTotalChange}
+                            />
+                          </TableCell>
+                          <TableCell align="center">
+                            <TextField
+                              name="tco3"
+                              variant="filled"
+                              value={total.tco3}
+                              disabled={totalBool}
+                              onChange={handleTotalChange}
+                            />
+                          </TableCell>
+                          <TableCell align="center">
+                            <TextField
+                              name="tco4"
+                              variant="filled"
+                              value={total.tco4}
+                              disabled={totalBool}
+                              onChange={handleTotalChange}
+                            />
+                          </TableCell>
+                          <TableCell align="center">
+                            <TextField
+                              name="tco5"
+                              variant="filled"
+                              value={total.tco5}
+                              disabled={totalBool}
+                              onChange={handleTotalChange}
+                            />
+                          </TableCell>
+                          <TableCell align="center">
+                            <TextField
+                              name="tco6"
+                              variant="filled"
+                              value={total.tco6}
+                              disabled={totalBool}
+                              onChange={handleTotalChange}
+                            />
+                          </TableCell>
+                          <TableCell align="center">
+                            <TextField
+                              name="tsppu"
+                              variant="filled"
+                              value={total.tsppu}
+                              disabled={totalBool}
+                              onChange={handleTotalChange}
+                            />
+                          </TableCell>
+                        </TableRow>
+                        <TableRow>
                           <TableCell align="center">
                             <Button
+                              variant="contained"
                               color="primary"
-                              variant="outlined"
-                              component="span"
-                              onClick={() => handleEmail(teacher.reg_id)}
+                              onClick={handleTotal}
+                              disabled={totalBool}
                             >
-                              Send Email
+                              Submit Total Marks
                             </Button>
                           </TableCell>
-                        ) : null}
-                      </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
-              </TableContainer>
+                        </TableRow>
+                      </TableBody>
+                    </Table>
+                  </TableContainer>
+                </>
+              )}
+              {target && (
+                <>
+                  <Typography variant="h6" style={{ padding: "1% 2% 0% 1%" }}>
+                    Enter Target Values:
+                  </Typography>
+                  <TableContainer component={Paper}>
+                    <Table aria-label="caption table">
+                      <TableHead>
+                        <TableRow>
+                          <TableCell align="center">MT 1</TableCell>
+                          <TableCell align="center">MT 2</TableCell>
+                          <TableCell align="center">MT 3</TableCell>
+                          <TableCell align="center">SPPU 1</TableCell>
+                          <TableCell align="center">SPPU 2</TableCell>
+                          <TableCell align="center">SPPU 3</TableCell>
+                        </TableRow>
+                      </TableHead>
+                      <TableBody>
+                        <TableRow>
+                          <TableCell align="center">
+                            <TextField
+                              variant="filled"
+                              value={target.mt1}
+                              disabled={targetBool}
+                              onChange={handleTargetChange}
+                            />
+                          </TableCell>
+                          <TableCell align="center">
+                            <TextField
+                              variant="filled"
+                              value={target.mt2}
+                              disabled={targetBool}
+                              onChange={handleTargetChange}
+                            />
+                          </TableCell>
+                          <TableCell align="center">
+                            <TextField
+                              variant="filled"
+                              value={target.mt3}
+                              disabled={targetBool}
+                              onChange={handleTargetChange}
+                            />
+                          </TableCell>
+                          <TableCell align="center">
+                            <TextField
+                              variant="filled"
+                              value={target.sppu1}
+                              disabled={targetBool}
+                              onChange={handleTargetChange}
+                            />
+                          </TableCell>
+                          <TableCell align="center">
+                            <TextField
+                              variant="filled"
+                              value={target.sppu2}
+                              disabled={targetBool}
+                              onChange={handleTargetChange}
+                            />
+                          </TableCell>
+                          <TableCell align="center">
+                            <TextField
+                              variant="filled"
+                              value={target.sppu3}
+                              disabled={targetBool}
+                              onChange={handleTargetChange}
+                            />
+                          </TableCell>
+                        </TableRow>
+                        <TableRow>
+                          <TableCell align="center">
+                            <Button
+                              variant="contained"
+                              color="primary"
+                              onClick={handleTarget}
+                              disabled={targetBool}
+                            >
+                              Submit Target Values
+                            </Button>
+                          </TableCell>
+                        </TableRow>
+                      </TableBody>
+                    </Table>
+                  </TableContainer>
+                </>
+              )}
+              <Teachers teachers={teachers} coordinator={coordinator} />
             </Card>
             {
               <Card
@@ -309,12 +566,7 @@ export default function Coordinator() {
                 color="primary"
                 style={{ margin: "2% 2% 0% 0%" }}
                 onClick={handleCalculate}
-                disabled={
-                  reports.length >= 3 &&
-                  !(attainment.details && attainment.final)
-                    ? false
-                    : true
-                }
+                disabled={!targetBool && !totalBool && !submittedBool}
               >
                 Calculate Attainment
               </Button>
