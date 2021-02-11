@@ -82,7 +82,7 @@ const getAllSubjects = (callback) => {
 
 const getTeacherSubjects = (reg_id, callback) => {
     db.query(
-        "SELECT subject.subId, subject.subName, faculty.division, subject.year, faculty.role_id FROM subject JOIN faculty ON subject.subId=faculty.subId WHERE subject.subId IN (SELECT subId FROM faculty WHERE reg_id=?) AND faculty.reg_id=?",
+        "SELECT subject.subId, subject.subName, subject.acadYear, faculty.division, subject.year, faculty.role_id FROM subject JOIN faculty ON subject.subId=faculty.subId AND subject.acadYear=faculty.acadYear WHERE subject.subId IN (SELECT subId FROM faculty WHERE reg_id=?) AND faculty.reg_id=?",
         [reg_id, reg_id],
         (err, res) => {
             if(err) {

@@ -2,18 +2,18 @@ const db = require('./../dbConnection')
 const xlsxFile = require('read-excel-file/node');
 const marksModel = require('./marksModel');
 
-const calculateFinal = (subId, callback) => {
+const calculateFinal = (subId, acadYear, callback) => {
     db.query(
-        "SELECT tco1, tco2, tco3, tco4, tco5, tco6, tsppu, mt1, mt2, mt3, sppu1, sppu2, sppu3 FROM subject WHERE subId=?",
-        [subId],
+        "SELECT tco1, tco2, tco3, tco4, tco5, tco6, tsppu, mt1, mt2, mt3, sppu1, sppu2, sppu3 FROM subject WHERE subId=? AND acadYear=?",
+        [subId, acadYear],
         (err, values) => {
             if(err) {
                 return callback(err, 500, null)
             }
             else {
                 db.query(
-                    "SELECT * FROM marks WHERE subId=?",
-                    [subId],
+                    "SELECT * FROM marks WHERE subId=? AND acadYear=?",
+                    [subId, acadYear],
                     (err, res) => {
                         if(err) {
                             return callback(err, 500, null)
@@ -84,8 +84,8 @@ const calculateFinal = (subId, callback) => {
                             let att = 0.7*ua + 0.3*ut
 
                             db.query(
-                                "INSERT INTO final VALUES(?, ?, ?)",
-                                [subId, ut, ua],
+                                "INSERT INTO final VALUES(?, ?, ?, ?)",
+                                [subId, ut, ua, acadYear],
                                 (err, res) => {
                                     if(err) {
                                         return callback(err, 500, null)
@@ -103,10 +103,10 @@ const calculateFinal = (subId, callback) => {
     )
 }
 
-const getAttainment = (reg_id, callback) => {
+const getAttainment = (subId, acadYear, callback) => {
     db.query(
-        "SELECT ut, sppu, ut*0.3+sppu*0.7 AS total FROM final WHERE subId IN (SELECT subId FROM faculty WHERE reg_id=? AND role_id=2)",
-        [reg_id],
+        "SELECT ut, sppu, ut*0.3+sppu*0.7 AS total, acadYear FROM final WHERE subId=? AND acadYear=?",
+        [subId, acadYear],
         (err, res) => {
             if(err) {
                 return callback(err, 500, null)
@@ -120,7 +120,7 @@ const getAttainment = (reg_id, callback) => {
 
 const getAttainments = (callback) => {
     db.query(
-        "SELECT s.subName, s.subId, f.ut, f.sppu, f.ut*0.3+f.sppu*0.7 AS total FROM final AS f JOIN subject AS s ON s.subId=f.subId",
+        "SELECT s.subName, s.subId, f.ut, f.sppu, f.ut*0.3+f.sppu*0.7 AS total FROM final AS f JOIN subject AS s ON s.subId=f.subId AND s.acadYear=f.acadYear",
         (err, res) => {
             if(err) {
                 return callback(err, 500, null)
@@ -156,9 +156,25 @@ const resetDB = (callback) => {
     )
 }
 
+const clearYear = (acadYear, callback) => {
+    db.query(
+        "DELETE FROM subject WHERE acadYear=?",
+        [acadYear],
+        (err, res) => {
+            if(err) {
+                return callback(err, 500, null)
+            }
+            else {
+                return callback(null, 200, true)
+            }
+        }
+    )
+}
+
 module.exports = {
     calculateFinal,
     getAttainment,
     getAttainments,
-    resetDB
+    resetDB,
+    clearYear
 }

@@ -13,8 +13,8 @@ router.use(function (req, res, next) {
     next();
 });
 
-router.post('/add/:subId', authenticate, (req, res, next) => {
-    marksModel.addMarks(req.body, req.params.subId, (err, status, data) => {
+router.post('/add/:subId/:acadYear', authenticate, (req, res, next) => {
+    marksModel.addMarks(req.body, req.params.subId, req.params.acadYear, (err, status, data) => {
         if(err) {
             delete err.sql
             console.log(err)
@@ -26,8 +26,8 @@ router.post('/add/:subId', authenticate, (req, res, next) => {
     })
 })
 
-router.delete('/delete/:div/:subId', authenticate, (req, res, next) => {
-    marksModel.deleteMarks(req.params.div, req.params.subId, (err, status, data) => {
+router.delete('/delete/:div/:subId/:acadYear', authenticate, (req, res, next) => {
+    marksModel.deleteMarks(req.params.div, req.params.subId, req.params.acadYear, (err, status, data) => {
         if(err) {
             delete err.sql
             res.status(status).send({ err: err, data: null })
@@ -38,8 +38,8 @@ router.delete('/delete/:div/:subId', authenticate, (req, res, next) => {
     })
 })
 
-router.get('/get/:div/:subId', authenticate, (req, res, next) => {
-    marksModel.getMarks(req.params.div, req.params.subId, (err, status, data) => {
+router.get('/get/:div/:subId/:acadYear', authenticate, (req, res, next) => {
+    marksModel.getMarks(req.params.div, req.params.subId, req.params.acadYear, (err, status, data) => {
         if(err) {
             delete err.sql
             res.status(status).send({ err: err, data: null })
@@ -50,14 +50,14 @@ router.get('/get/:div/:subId', authenticate, (req, res, next) => {
     })
 })
 
-router.post('/submit/:subId/:division', authenticate, (req, res, next) => {
-    marksModel.addMarks(req.body, req.params.subId, (err, status, data) => {
+router.post('/submit/:subId/:division/:acadYear', authenticate, (req, res, next) => {
+    marksModel.addMarks(req.body, req.params.subId, req.params.acadYear, (err, status, data) => {
         if(err) {
             delete err.sql
             res.status(status).send({ err: err, data: null })
         }
         else {
-            marksModel.submitMarks(req.params.subId, req.params.division, (err, status, data) => {
+            marksModel.submitMarks(req.params.subId, req.params.division, req.params.acadYear, (err, status, data) => {
                 if(err) {
                     delete err.sql
                     res.status(status).send({ err: err, data: null })
@@ -70,8 +70,8 @@ router.post('/submit/:subId/:division', authenticate, (req, res, next) => {
     })
 })
 
-router.get('/submit/:subId/:division', authenticate, (req, res, next) => {
-    marksModel.checkSubmitted(req.params.subId, req.params.division, (err, status, data) => {
+router.get('/submit/:subId/:division/:acadYear', authenticate, (req, res, next) => {
+    marksModel.checkSubmitted(req.params.subId, req.params.division, req.params.acadYear, (err, status, data) => {
         if(err) {
             delete err.sql
             res.status(status).send({ err: err, data: null })
@@ -82,8 +82,8 @@ router.get('/submit/:subId/:division', authenticate, (req, res, next) => {
     })
 })
 
-router.get('/submit/:subId', authenticate, (req, res, next) => {
-    marksModel.checkSubmittedSubject(req.params.subId, (err, status, data) => {
+router.get('/submit/:subId/:acadYear', authenticate, (req, res, next) => {
+    marksModel.checkSubmittedSubject(req.params.subId, req.params.acadYear, (err, status, data) => {
         if(err) {
             delete err.sql
             res.status(status).send({ err: err, data: null })

@@ -24,10 +24,10 @@ const generateRoll = (div) => {
     return roll
 }
 
-const addMarks = (data, subId, callback) => {
+const addMarks = (data, subId, acadYear, callback) => {
     db.query(
-        "DELETE FROM marks WHERE subId=? AND (roll_no BETWEEN ? AND ?)",
-        [subId, data.marks[0].roll_no, data.marks[0].roll_no+90],
+        "DELETE FROM marks WHERE subId=? AND (roll_no BETWEEN ? AND ?) AND acadYear=?",
+        [subId, data.marks[0].roll_no, data.marks[0].roll_no+90, acadYear],
         (err, res) => {
             if(err) {
                 return callback(err, 500, null)
@@ -37,7 +37,7 @@ const addMarks = (data, subId, callback) => {
                     "INSERT INTO marks VALUES ?",
                     [
                         data.marks.map(entry => 
-                            [entry.roll_no, entry.co1, entry.co2, entry.co3, entry.co4, entry.co5, entry.co6, entry.sppu, subId]
+                            [entry.roll_no, entry.co1, entry.co2, entry.co3, entry.co4, entry.co5, entry.co6, entry.sppu, subId, acadYear]
                         )
                     ],
                     (err, res) => {
@@ -54,12 +54,12 @@ const addMarks = (data, subId, callback) => {
     )
 }
 
-const deleteMarks = (div, subId, callback) => {
+const deleteMarks = (div, subId, acadYear, callback) => {
     let roll = generateRoll(div)
 
     db.query(
-        "DELETE FROM marks WHERE subId=? AND (roll_no BETWEEN ? AND ?)",
-        [subId, parseInt(roll), parseInt(roll)+90],
+        "DELETE FROM marks WHERE subId=? AND (roll_no BETWEEN ? AND ?) AND acadYear=?",
+        [subId, parseInt(roll), parseInt(roll)+90, acadYear],
         (err, res) => {
             if(err) {
                 return callback(err, 500, null)
@@ -71,12 +71,12 @@ const deleteMarks = (div, subId, callback) => {
     )
 }
 
-const getMarks = (div, subId, callback) => {
+const getMarks = (div, subId, acadYear, callback) => {
     let roll = generateRoll(div)
 
     db.query(
-        "SELECT * FROM marks WHERE subId=? AND (roll_no BETWEEN ? AND ?)",
-        [subId, parseInt(roll), parseInt(roll)+90],
+        "SELECT * FROM marks WHERE subId=? AND (roll_no BETWEEN ? AND ?) AND acadYear=?",
+        [subId, parseInt(roll), parseInt(roll)+90, acadYear],
         (err, res) => {
             if(err) {
                 return callback(err, 500, null)
@@ -88,10 +88,11 @@ const getMarks = (div, subId, callback) => {
     )
 }
 
-const submitMarks = (subId, division, callback) => {
+const submitMarks = (subId, division, acadYear, callback) => {
+    console.log(subId, division, acadYear)
     db.query(
-        "UPDATE faculty SET submitted=1 WHERE subId=? AND division=?",
-        [subId, division],
+        "UPDATE faculty SET submitted=1 WHERE subId=? AND division=? AND acadYear=?",
+        [subId, division, acadYear],
         (err, res) => {
             if(err) {
                 return callback(err, 500, null)
@@ -104,10 +105,10 @@ const submitMarks = (subId, division, callback) => {
 }
 
 
-const checkSubmitted = (subId, division, callback) => {
+const checkSubmitted = (subId, division, acadYear, callback) => {
     db.query(
-        "SELECT submitted FROM faculty WHERE subId=? AND division=?",
-        [subId, division],
+        "SELECT submitted FROM faculty WHERE subId=? AND division=? AND acadYear=?",
+        [subId, division, acadYear],
         (err, res) => {
             if(err) {
                 return callback(err, 500, null)
@@ -119,10 +120,10 @@ const checkSubmitted = (subId, division, callback) => {
     )
 }
 
-const checkSubmittedSubject = (subId, callback) => {
+const checkSubmittedSubject = (subId, acadYear, callback) => {
     db.query(
-        "SELECT division, submitted FROM faculty WHERE subId=?",
-        [subId],
+        "SELECT division, submitted FROM faculty WHERE subId=? AND acadYear=?",
+        [subId, acadYear],
         (err, res) => {
             if(err) {
                 return callback(err, 500, null)
