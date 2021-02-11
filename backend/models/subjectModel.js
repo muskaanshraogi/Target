@@ -2,8 +2,8 @@ const db = require('./../dbConnection')
 
 const addSubject = (subject, callback) => {
     db.query(
-        "INSERT INTO subject(subId, subName, year) VALUES(?, ?, ?)",
-        [subject.subId, subject.subName, subject.year],
+        "INSERT INTO subject(subId, subName, year, acadYear) VALUES(?, ?, ?, ?)",
+        [subject.subId, subject.subName, subject.year, subject.acadYear],
         (err, res) => {
             if(err) {
                 return callback(err, 500, null)
@@ -19,8 +19,8 @@ const addMultipleSubjects = (data, callback) => {
     let count = 0
     data.subjects.forEach((subject) => {
         db.query(
-            "INSERT INTO subject(subId, subName, year) VALUES(?, ?, ?)",
-            [subject.subId, subject.subName, subject.year],
+            "INSERT INTO subject(subId, subName, year, acadYear) VALUES(?, ?, ?, ?)",
+            [subject.subId, subject.subName, subject.year, subject.acadYear],
             (err, res) => {
                 if(err) {
                     return callback(err, 500, null)
@@ -36,10 +36,10 @@ const addMultipleSubjects = (data, callback) => {
     })
 }
 
-const updateSubject = (subject, code, callback) => {
+const updateSubject = (subject, code, acadYear, callback) => {
     db.query(
-        "UPDATE subject SET subName=?, year=? WHERE subId=?",
-        [subject.subName, subject.year, code],
+        "UPDATE subject SET subName=?, year=? WHERE subId=? AND acadYear=?",
+        [subject.subName, subject.year, code, acadYear],
         (err, res) => {
             if(err) {
                 return callback(err, 500, null)
@@ -51,10 +51,10 @@ const updateSubject = (subject, code, callback) => {
     )
 }
 
-const deleteSubject = (subject, callback) => {
+const deleteSubject = (subject, acadYear, callback) => {
     db.query(
-        "DELETE FROM subject WHERE subId=?",
-        [subject],
+        "DELETE FROM subject WHERE subId=? AND acadYear=?",
+        [subject, acadYear],
         (err, res) => {
             if(err) {
                 return callback(err, 500, null)
@@ -68,7 +68,7 @@ const deleteSubject = (subject, callback) => {
 
 const getAllSubjects = (callback) => {
     db.query(
-        "SELECT * FROM subject",
+        "SELECT subId, subName, year, acadYear FROM subject",
         (err, res) => {
             if(err) {
                 return callback(err, 500, null)
@@ -95,10 +95,10 @@ const getTeacherSubjects = (reg_id, callback) => {
     )
 }
 
-const setTotalMarks = (subId, marks, callback) => {
+const setTotalMarks = (subId, acadYear, marks, callback) => {
     db.query(
-        "UPDATE subject SET tco1=?, tco2=?, tco3=?, tco4=?, tco5=?, tco6=?, tsppu=? WHERE subId=?",
-        [marks.tco1, marks.tco2, marks.tco3, marks.tco4, marks.tco5, marks.tco6, marks.sppu, subId],
+        "UPDATE subject SET tco1=?, tco2=?, tco3=?, tco4=?, tco5=?, tco6=?, tsppu=? WHERE subId=? AND acadYear=?",
+        [marks.tco1, marks.tco2, marks.tco3, marks.tco4, marks.tco5, marks.tco6, marks.sppu, subId, acadYear],
         (err, res) => {
             if(err) {
                 return callback(err, 500, null)
@@ -110,10 +110,10 @@ const setTotalMarks = (subId, marks, callback) => {
     )
 }
 
-const setTarget = (subId, target, callback) => {
+const setTarget = (subId, acadYear, target, callback) => {
     db.query(
-        "UPDATE subject SET mt1=?, mt2=?, mt3=?, sppu1=?, sppu2=?, sppu3=? WHERE subId=?",
-        [target.mt1, target.mt2, target.mt3, target.sppu1, target.sppu2, target.sppu3, subId],
+        "UPDATE subject SET mt1=?, mt2=?, mt3=?, sppu1=?, sppu2=?, sppu3=? WHERE subId=? AND acadYear=?",
+        [target.mt1, target.mt2, target.mt3, target.sppu1, target.sppu2, target.sppu3, subId, acadYear],
         (err, res) => {
             if(err) {
                 return callback(err, 500, null)
@@ -125,10 +125,10 @@ const setTarget = (subId, target, callback) => {
     )
 }
 
-const getTotalMarks = (subId, callback) => {
+const getTotalMarks = (subId, acadYear, callback) => {
     db.query(
-        "SELECT tco1, tco2, tco3, tco4, tco5, tco6, tsppu FROM subject WHERE subId=?",
-        [subId],
+        "SELECT tco1, tco2, tco3, tco4, tco5, tco6, tsppu FROM subject WHERE subId=? AND acadYear=?",
+        [subId, acadYear],
         (err, res) => {
             if(err) {
                 return callback(err, 500, null)
@@ -140,10 +140,10 @@ const getTotalMarks = (subId, callback) => {
     )
 }
 
-const getTarget = (subId, callback) => {
+const getTarget = (subId, acadYear, callback) => {
     db.query(
-        "SELECT mt1, mt2, mt3, sppu1, sppu2, sppu3 FROM subject WHERE subId=?",
-        [subId],
+        "SELECT mt1, mt2, mt3, sppu1, sppu2, sppu3 FROM subject WHERE subId=? AND acadYear=?",
+        [subId, acadYear],
         (err, res) => {
             if(err) {
                 return callback(err, 500, null)

@@ -37,8 +37,8 @@ router.post('/add/multiple', authenticateAdmin, (req, res, next) => {
     })
 })
 
-router.post('/update/:subId', authenticateAdmin, (req, res, next) => {
-    subjectModel.updateSubject(req.body, req.params.subId, (err, status, data) => {
+router.post('/update/:subId/:acadYear', authenticateAdmin, (req, res, next) => {
+    subjectModel.updateSubject(req.body, req.params.subId, req.params.acadYear, (err, status, data) => {
         if(err) {
             delete err.sql
             res.status(status).send({ err: err, data: null })
@@ -49,8 +49,8 @@ router.post('/update/:subId', authenticateAdmin, (req, res, next) => {
     })
 })
 
-router.delete('/delete/:subId', authenticateAdmin, (req, res, next) => {
-    subjectModel.deleteSubject(req.params.subId, (err, status, data) => {
+router.delete('/delete/:subId/:acadYear', authenticateAdmin, (req, res, next) => {
+    subjectModel.deleteSubject(req.params.subId, req.params.acadYear, (err, status, data) => {
         if(err) {
             delete err.sql
             res.status(status).send({ err: err, data: null })
@@ -85,8 +85,8 @@ router.get('/teacher/:reg_id', authenticate, (req, res, next) => {
     })
 })
 
-router.post('/set/total/:subject', authenticate, (req, res, next) => {
-    subjectModel.setTotalMarks(req.params.subject, req.body, (err, status, data) => {
+router.post('/set/total/:subject/:acadYear', authenticate, (req, res, next) => {
+    subjectModel.setTotalMarks(req.params.subject, req.params.acadYear, req.body, (err, status, data) => {
         if(err) {
             delete err.sql
             res.status(status).send({ err: err, data: null })
@@ -97,8 +97,8 @@ router.post('/set/total/:subject', authenticate, (req, res, next) => {
     })
 })
 
-router.post('/set/target/:subject', authenticate, (req, res, next) => {
-    subjectModel.setTarget(req.params.subject, req.body, (err, status, data) => {
+router.post('/set/target/:subject/:acadYear', authenticate, (req, res, next) => {
+    subjectModel.setTarget(req.params.subject, req.params.acadYear, req.body, (err, status, data) => {
         if(err) {
             delete err.sql
             res.status(status).send({ err: err, data: null })
@@ -109,8 +109,8 @@ router.post('/set/target/:subject', authenticate, (req, res, next) => {
     })
 })
 
-router.get('/get/total/:subject', authenticate, (req, res, next) => {
-    subjectModel.getTotalMarks(req.params.subject, (err, status, data) => {
+router.get('/get/total/:subject/:acadYear', authenticate, (req, res, next) => {
+    subjectModel.getTotalMarks(req.params.subject, req.params.acadYear, (err, status, data) => {
         if(err) {
             delete err.sql
             res.status(status).send({ err: err, data: null })
@@ -121,8 +121,8 @@ router.get('/get/total/:subject', authenticate, (req, res, next) => {
     })
 })
 
-router.get('/get/target/:subject', authenticate, (req, res, next) => {
-    subjectModel.getTarget(req.params.subject, (err, status, data) => {
+router.get('/get/target/:subject/:acadYear', authenticate, (req, res, next) => {
+    subjectModel.getTarget(req.params.subject, req.params.acadYear, (err, status, data) => {
         if(err) {
             delete err.sql
             res.status(status).send({ err: err, data: null })
