@@ -78,12 +78,15 @@ export default function TabPanel({ subject }) {
       if (parseInt(sub.year) === 2) final += "SE" + div;
       else if (parseInt(sub.year) === 3) final += "TE" + div;
       else final += "BE" + div;
-      Axios.get(`http://localhost:8000/api/marks/get/${final}/${sub.subId}`, {
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-      })
+      Axios.get(
+        `http://localhost:8000/api/marks/get/${final}/${sub.subId}/${sub.acadYear}`,
+        {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      )
         .then((res) => {
           if (res.data.data.length > 0) {
             setNumber(res.data.data.length);
@@ -93,10 +96,10 @@ export default function TabPanel({ subject }) {
           }
         })
         .catch((err) => {
-          console.log(err.message);
+          console.log(err);
         });
       Axios.get(
-        `http://localhost:8000/api/marks/submit/${sub.subId}/${sub.division}`,
+        `http://localhost:8000/api/marks/submit/${sub.subId}/${sub.division}/${sub.acadYear}`,
         {
           headers: {
             "Content-Type": "application/json",
@@ -110,7 +113,7 @@ export default function TabPanel({ subject }) {
           }
         })
         .catch((err) => {
-          console.log(err.message);
+          console.log(err);
         });
     }
   };
@@ -138,6 +141,7 @@ export default function TabPanel({ subject }) {
       });
     }
     setRows(newArray);
+    setTable(true);
   };
 
   const handleSave = () => {
@@ -154,7 +158,7 @@ export default function TabPanel({ subject }) {
         row.sppu === "" || row.sppu === "A" ? null : parseInt(row.sppu);
     });
     Axios.post(
-      `http://localhost:8000/api/marks/add/${subject.subId}`,
+      `http://localhost:8000/api/marks/add/${subject.subId}/${subject.acadYear}`,
       { marks: final },
       {
         headers: {
@@ -168,7 +172,8 @@ export default function TabPanel({ subject }) {
           variant: "success",
         });
       })
-      .catch(() => {
+      .catch((err) => {
+        console.log(err);
         enqueueSnackbar("Could Not Save Your Data", { variant: "error" });
       });
   };

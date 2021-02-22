@@ -1,25 +1,27 @@
 import React from "react";
-import { makeStyles,
-         colors, 
-         Tabs, 
-         Tab, 
-         Box, 
-         Typography } from "@material-ui/core";
+import {
+  makeStyles,
+  colors,
+  Tabs,
+  Tab,
+  Box,
+  Typography,
+} from "@material-ui/core";
 
 import AllUsers from "./AllUsers";
 import Subjects from "./Subjects";
 
 const useStyles = makeStyles((theme) => ({
   root: {
-    width: '94%',
-    margin: '0 3%'
+    width: "100%",
+    margin: "0%",
   },
   tab: {
     padding: 0,
     margin: 0,
     position: "relative",
-    backgroundColor: colors.grey[900]
-  }
+    backgroundColor: colors.grey[900],
+  },
 }));
 
 function TabPanel(props) {
@@ -45,7 +47,7 @@ function TabPanel(props) {
 function a11yProps(index) {
   return {
     id: `simple-tab-${index}`,
-    'aria-controls': `simple-tabpanel-${index}`,
+    "aria-controls": `simple-tabpanel-${index}`,
   };
 }
 
@@ -59,21 +61,21 @@ export default function Admin() {
 
   return (
     <div className={classes.root}>
-      <Tabs 
-       variant="fullWidth"
-       value={value} 
-       onChange={handleChange} 
-       aria-label="simple tabs example" 
-       className={classes.tab}
+      <Tabs
+        variant="fullWidth"
+        value={value}
+        onChange={handleChange}
+        aria-label="simple tabs example"
+        className={classes.tab}
       >
         <Tab label="Staff" {...a11yProps(0)} />
         <Tab label="Subjects" {...a11yProps(1)} />
       </Tabs>
       <TabPanel value={value} index={0}>
-        <AllUsers/>
+        <AllUsers />
       </TabPanel>
       <TabPanel value={value} index={1}>
-        <Subjects/>
+        <Subjects />
       </TabPanel>
     </div>
   );

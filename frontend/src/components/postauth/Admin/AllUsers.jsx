@@ -30,25 +30,26 @@ const useStyles = makeStyles((theme) => ({
     backgroundColor: colors.blue[600],
   },
   card: {
-    marginTop: '1%',
-    marginRight: '1%',
-    width: '49%',
-    float:'left'
+    marginTop: "1%",
+    marginRight: "1%",
+    width: "49%",
+    float: "left",
   },
   card2: {
-    marginTop: '1%',
-    width: '50%',
+    marginTop: "1%",
+    width: "50%",
   },
   cardhead: {
-    marginTop: '3%',
-    paddingLeft: '1%',
+    marginTop: "1%",
     margin: 0,
-    fontSize: '25px'
   },
   list: {
-    padding: '0 1% 1% 1%',
-    margin: '0'
-  }
+    padding: "0 1% 1% 1%",
+    margin: "0",
+  },
+  header: {
+    padding: "1%",
+  },
 }));
 
 export default function AllUsers() {
@@ -185,7 +186,9 @@ export default function AllUsers() {
   return (
     <>
       <Card>
-        <p className={classes.header}>Teacher - Subject Relation</p>
+        <Typography variant="h5" className={classes.header}>
+          Teacher - Subject Relation
+        </Typography>
         <form onSubmit={handleSubmit}>
           {addSubjects.map((subject, index) => (
             <Grid container item spacing={3}>
@@ -198,11 +201,11 @@ export default function AllUsers() {
                 spacing={1}
               >
                 <Select
-                  style={{ margin: "0% 5% 0% 6%"}}
+                  style={{ margin: "0% 5% 0% 6%" }}
                   name={`reg_id ${index}`}
                   variant="outlined"
                   multiline
-                  label='Teacher'
+                  label="Teacher"
                   value={addSubjects[index].reg_id}
                   onChange={handleChange}
                   fullWidth
@@ -226,7 +229,7 @@ export default function AllUsers() {
                   style={{ margin: "0% 5% 0% 6%" }}
                   name={`subject ${index}`}
                   variant="outlined"
-                  label='Subject'
+                  label="Subject"
                   multiline
                   value={addSubjects[index].subject}
                   onChange={handleChange}
@@ -300,7 +303,7 @@ export default function AllUsers() {
             onClick={handleAddSubject}
             style={{ margin: "2% 0% 1% 1%" }}
           >
-            Add More Subjects
+            Allot more teachers
           </Button>
           {addSubjects.length > 1 && (
             <Button
@@ -310,16 +313,18 @@ export default function AllUsers() {
               style={{ margin: "2% 0% 1% 1%" }}
             >
               Remove Subject
-            </Button> 
+            </Button>
           )}
         </form>
       </Card>
       <Card className={classes.cardhead}>
-        <p className={classes.header}>Staff List</p>
+        <Typography variant="h5" className={classes.header}>
+          Staff List
+        </Typography>
       </Card>
       <Card className={classes.card}>
         <List className={classes.list}>
-          {allUsers.slice(0, (allUsers.length/2)+1).map((user, index) => (
+          {allUsers.slice(0, allUsers.length / 2 + 1).map((user, index) => (
             <ListItem id={index} key={index}>
               <ListItemAvatar>
                 <Avatar className={classes.avatar}>
@@ -356,45 +361,47 @@ export default function AllUsers() {
             </ListItem>
           ))}
         </List>
-        </Card>
-        <Card className={classes.card2}>
+      </Card>
+      <Card className={classes.card2}>
         <List className={classes.list}>
-          {allUsers.slice((allUsers.length/2)+1, allUsers.length).map((user, index) => (
-            <ListItem id={index} key={index}>
-              <ListItemAvatar>
-                <Avatar className={classes.avatar}>
-                  {user.firstName.charAt(0)}
-                  {user.lastName.charAt(0)}
-                </Avatar>
-              </ListItemAvatar>
-              <ListItemText
-                primary={
-                  <Typography variant="h6" color="textPrimary">
-                    {user.firstName} {user.lastName}
-                  </Typography>
-                }
-                secondary={
-                  <React.Fragment>
-                    <Typography variant="body1" color="textPrimary">
-                      {user.reg_id}
+          {allUsers
+            .slice(allUsers.length / 2 + 1, allUsers.length)
+            .map((user, index) => (
+              <ListItem id={index} key={index}>
+                <ListItemAvatar>
+                  <Avatar className={classes.avatar}>
+                    {user.firstName.charAt(0)}
+                    {user.lastName.charAt(0)}
+                  </Avatar>
+                </ListItemAvatar>
+                <ListItemText
+                  primary={
+                    <Typography variant="h6" color="textPrimary">
+                      {user.firstName} {user.lastName}
                     </Typography>
-                    <Typography variant="body2" color="textSecondary">
-                      {user.email}
-                    </Typography>
-                  </React.Fragment>
-                }
-              />
-              <ListItemSecondaryAction>
-                <IconButton
-                  edge="end"
-                  aria-label="delete"
-                  onClick={() => handleDeleteUser(user.reg_id)}
-                >
-                  <DeleteIcon />
-                </IconButton>
-              </ListItemSecondaryAction>
-            </ListItem>
-          ))}
+                  }
+                  secondary={
+                    <React.Fragment>
+                      <Typography variant="body1" color="textPrimary">
+                        {user.reg_id}
+                      </Typography>
+                      <Typography variant="body2" color="textSecondary">
+                        {user.email}
+                      </Typography>
+                    </React.Fragment>
+                  }
+                />
+                <ListItemSecondaryAction>
+                  <IconButton
+                    edge="end"
+                    aria-label="delete"
+                    onClick={() => handleDeleteUser(user.reg_id)}
+                  >
+                    <DeleteIcon />
+                  </IconButton>
+                </ListItemSecondaryAction>
+              </ListItem>
+            ))}
         </List>
       </Card>
     </>

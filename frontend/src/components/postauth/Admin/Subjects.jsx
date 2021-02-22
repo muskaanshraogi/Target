@@ -28,25 +28,27 @@ const useStyles = makeStyles((theme) => ({
     backgroundColor: colors.blue[600],
   },
   card: {
-    marginTop: '1%',
-    marginRight: '1%',
-    width: '49%',
-    float:'left'
+    marginTop: "1%",
+    marginRight: "1%",
+    width: "49%",
+    float: "left",
   },
   card2: {
-    marginTop: '1%',
-    width: '50%',
+    marginTop: "1%",
+    width: "50%",
   },
   cardhead: {
-    marginTop: '3%',
-    paddingLeft: '1%',
+    marginTop: "3%",
     margin: 0,
-    fontSize: '25px'
+    fontSize: "25px",
   },
   list: {
-    padding: '0 1% 1% 1%',
-    margin: '0'
-  }
+    padding: "0 1% 1% 1%",
+    margin: "0",
+  },
+  header: {
+    padding: "1%",
+  },
 }));
 
 export default function Subjects() {
@@ -60,11 +62,15 @@ export default function Subjects() {
       subId: "",
       subName: "",
       year: 2,
+      acadYear: "2020-21",
     },
   ]);
 
   const handleAddSubject = () => {
-    setAddSubjects([...addSubjects, { subId: "", subName: "", year: "" }]);
+    setAddSubjects([
+      ...addSubjects,
+      { subId: "", subName: "", year: "", acadYear: "" },
+    ]);
   };
 
   const handleRemoveSubject = () => {
@@ -116,9 +122,8 @@ export default function Subjects() {
           enqueueSnackbar("Added subject", { variant: "success" });
         })
         .catch((err) => {
-          enqueueSnackbar("This subject already exists", { variant: "error" })
-        }
-        );
+          enqueueSnackbar("This subject already exists", { variant: "error" });
+        });
     } else {
       Axios.post(
         "http://localhost:8000/api/subject/add/multiple",
@@ -181,14 +186,16 @@ export default function Subjects() {
         setAllSubjects={setAllSubjects}
       />
       <Card>
-        <p className={classes.header}>New Subject(s)</p>
+        <Typography variant="h5" className={classes.header}>
+          New Subject(s)
+        </Typography>
         <form onSubmit={handleSubmit}>
           {addSubjects.map((subject, index) => (
             <Grid container item spacing={1}>
               <Grid item>
                 <TextField
                   variant="outlined"
-                  style={{ margin: "0% 5% 0% 6%"}}
+                  style={{ margin: "0% 5% 0% 6%" }}
                   required
                   fullWidth
                   defaultValue={subject.subName}
@@ -202,7 +209,7 @@ export default function Subjects() {
               <Grid item>
                 <TextField
                   variant="outlined"
-                  style={{ margin: "0% 5% 0% 6%"}}
+                  style={{ margin: "0% 5% 0% 6%" }}
                   required
                   fullWidth
                   defaultValue={subject.subId}
@@ -215,7 +222,20 @@ export default function Subjects() {
               <Grid item>
                 <TextField
                   variant="outlined"
-                  style={{ margin: "0% 5% 0% 6%"}}
+                  style={{ margin: "0% 5% 0% 6%" }}
+                  required
+                  fullWidth
+                  defaultValue={subject.year}
+                  label="Enter year"
+                  name={"year " + index}
+                  onChange={handleChange}
+                  autoComplete="year"
+                />
+              </Grid>
+              <Grid item>
+                <TextField
+                  variant="outlined"
+                  style={{ margin: "0% 5% 0% 6%" }}
                   required
                   fullWidth
                   defaultValue={subject.year}
@@ -256,98 +276,104 @@ export default function Subjects() {
         </form>
       </Card>
       <Card className={classes.cardhead}>
-        <p className={classes.header}>Subjects List</p>
+        <Typography variant="h5" className={classes.header}>
+          Subjects List
+        </Typography>
       </Card>
       <Card className={classes.card}>
         <List dense className={classes.list}>
-          {allSubjects.slice(0, (allSubjects.length/2)+1).map((subject, index) => (
-            <ListItem id={subject.subId} key={index}>
-              <ListItemAvatar>
-                <Avatar className={classes.avatar}>
-                  {subject.subName.charAt(0)}
-                </Avatar>
-              </ListItemAvatar>
-              <ListItemText
-                primary={
-                  <Typography variant="h6" color="textPrimary">
-                    {subject.subName}
-                  </Typography>
-                }
-                secondary={
-                  <React.Fragment>
-                    <Typography variant="body1" color="textPrimary">
-                      {subject.subId}
+          {allSubjects
+            .slice(0, allSubjects.length / 2 + 1)
+            .map((subject, index) => (
+              <ListItem id={subject.subId} key={index}>
+                <ListItemAvatar>
+                  <Avatar className={classes.avatar}>
+                    {subject.subName.charAt(0)}
+                  </Avatar>
+                </ListItemAvatar>
+                <ListItemText
+                  primary={
+                    <Typography variant="h6" color="textPrimary">
+                      {subject.subName}
                     </Typography>
-                    <Typography variant="body2" color="textSecondary">
-                      Year : {subject.year}
-                    </Typography>
-                  </React.Fragment>
-                }
-              />
-              <ListItemSecondaryAction>
-                {/* <IconButton
+                  }
+                  secondary={
+                    <React.Fragment>
+                      <Typography variant="body1" color="textPrimary">
+                        {subject.subId}
+                      </Typography>
+                      <Typography variant="body2" color="textSecondary">
+                        Year : {subject.year}
+                      </Typography>
+                    </React.Fragment>
+                  }
+                />
+                <ListItemSecondaryAction>
+                  {/* <IconButton
                   edge="end"
                   aria-label="edit"
                   onClick={() => handleEditSubject(index)}
                 >
                   <EditIcon />
                 </IconButton> */}
-                <IconButton
-                  edge="end"
-                  aria-label="delete"
-                  onClick={() => handleDeleteSubject(subject.subId)}
-                >
-                  <DeleteIcon />
-                </IconButton>
-              </ListItemSecondaryAction>
-            </ListItem>
-          ))}
+                  <IconButton
+                    edge="end"
+                    aria-label="delete"
+                    onClick={() => handleDeleteSubject(subject.subId)}
+                  >
+                    <DeleteIcon />
+                  </IconButton>
+                </ListItemSecondaryAction>
+              </ListItem>
+            ))}
         </List>
       </Card>
       <Card className={classes.card2}>
         <List dense className={classes.list}>
-          {allSubjects.slice((allSubjects.length/2)+1, allSubjects.length).map((subject, index) => (
-            <ListItem id={subject.subId} key={index}>
-              <ListItemAvatar>
-                <Avatar className={classes.avatar}>
-                  {subject.subName.charAt(0)}
-                </Avatar>
-              </ListItemAvatar>
-              <ListItemText
-                primary={
-                  <Typography variant="h6" color="textPrimary">
-                    {subject.subName}
-                  </Typography>
-                }
-                secondary={
-                  <React.Fragment>
-                    <Typography variant="body1" color="textPrimary">
-                      {subject.subId}
+          {allSubjects
+            .slice(allSubjects.length / 2 + 1, allSubjects.length)
+            .map((subject, index) => (
+              <ListItem id={subject.subId} key={index}>
+                <ListItemAvatar>
+                  <Avatar className={classes.avatar}>
+                    {subject.subName.charAt(0)}
+                  </Avatar>
+                </ListItemAvatar>
+                <ListItemText
+                  primary={
+                    <Typography variant="h6" color="textPrimary">
+                      {subject.subName}
                     </Typography>
-                    <Typography variant="body2" color="textSecondary">
-                      Year : {subject.year}
-                    </Typography>
-                  </React.Fragment>
-                }
-              />
-              <ListItemSecondaryAction>
-                {/* <IconButton
+                  }
+                  secondary={
+                    <React.Fragment>
+                      <Typography variant="body1" color="textPrimary">
+                        {subject.subId}
+                      </Typography>
+                      <Typography variant="body2" color="textSecondary">
+                        Year : {subject.year}
+                      </Typography>
+                    </React.Fragment>
+                  }
+                />
+                <ListItemSecondaryAction>
+                  {/* <IconButton
                   edge="end"
                   aria-label="edit"
                   onClick={() => handleEditSubject(index)}
                 >
                   <EditIcon />
                 </IconButton> */}
-                <IconButton
-                  edge="end"
-                  aria-label="delete"
-                  onClick={() => handleDeleteSubject(subject.subId)}
-                >
-                  <DeleteIcon />
-                </IconButton>
-              </ListItemSecondaryAction>
-            </ListItem>
-          ))}
+                  <IconButton
+                    edge="end"
+                    aria-label="delete"
+                    onClick={() => handleDeleteSubject(subject.subId)}
+                  >
+                    <DeleteIcon />
+                  </IconButton>
+                </ListItemSecondaryAction>
+              </ListItem>
+            ))}
         </List>
       </Card>
     </Grid>
