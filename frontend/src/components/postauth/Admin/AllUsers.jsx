@@ -15,6 +15,7 @@ import {
   Select,
   MenuItem,
   FormControlLabel,
+  TextField,
   Button,
   Checkbox,
 } from "@material-ui/core";
@@ -62,6 +63,7 @@ export default function AllUsers() {
       subject: "",
       role: "Subject Teacher",
       division: 9,
+      acadYear: "2020-21",
     },
   ]);
 
@@ -82,7 +84,13 @@ export default function AllUsers() {
   const handleAddSubject = () => {
     setAddSubjects([
       ...addSubjects,
-      { subject: "", role: "Subject Teacher", division: "", reg_id: "" },
+      {
+        subject: "",
+        role: "Subject Teacher",
+        division: "",
+        reg_id: "",
+        acadYear: "2020-21",
+      },
     ]);
   };
 
@@ -99,6 +107,7 @@ export default function AllUsers() {
     let value = et.value;
     let newAddSubjects = [...addSubjects];
     newAddSubjects[index] = { ...newAddSubjects[index], [property]: value };
+    console.log(newAddSubjects);
     setAddSubjects(newAddSubjects);
   };
 
@@ -197,7 +206,7 @@ export default function AllUsers() {
                 item
                 direction="column"
                 xs={12}
-                md={3}
+                md={2}
                 spacing={1}
               >
                 <Select
@@ -222,7 +231,7 @@ export default function AllUsers() {
                 item
                 direction="column"
                 xs={12}
-                md={3}
+                md={2}
                 spacing={1}
               >
                 <Select
@@ -247,7 +256,7 @@ export default function AllUsers() {
                 item
                 direction="column"
                 xs={12}
-                md={3}
+                md={2}
                 spacing={1}
               >
                 <Select
@@ -265,6 +274,19 @@ export default function AllUsers() {
                     </MenuItem>
                   ))}
                 </Select>
+              </Grid>
+              <Grid item>
+                <TextField
+                  variant="outlined"
+                  style={{ margin: "0% 5% 0% 6%" }}
+                  required
+                  fullWidth
+                  defaultValue={subject.acadYear}
+                  label="Enter academic year(YYYY-YY)"
+                  name={"acadYear " + index}
+                  onChange={handleChange}
+                  autoComplete="acadYear"
+                />
               </Grid>
               <Grid
                 container

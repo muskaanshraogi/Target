@@ -27,6 +27,7 @@ router.post("/add", authenticateAdmin, (req, res, next) => {
 
 router.post("/add/multiple", authenticateAdmin, (req, res, next) => {
   subjectModel.addMultipleSubjects(req.body, (err, status, data) => {
+    console.log(req.body);
     if (err) {
       delete err.sql;
       res.status(status).send({ err: err, data: null });

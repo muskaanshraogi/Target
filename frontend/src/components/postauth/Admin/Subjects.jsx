@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react";
 import {
   Card,
-  CardHeader,
   Grid,
   Button,
   List,
@@ -20,8 +19,6 @@ import DeleteIcon from "@material-ui/icons/Delete";
 import { useSnackbar } from "notistack";
 import Axios from "axios";
 
-import EditSubject from "./EditSubject";
-
 const useStyles = makeStyles((theme) => ({
   avatar: {
     color: theme.palette.getContrastText(colors.blue[600]),
@@ -38,9 +35,8 @@ const useStyles = makeStyles((theme) => ({
     width: "50%",
   },
   cardhead: {
-    marginTop: "3%",
+    marginTop: "1%",
     margin: 0,
-    fontSize: "25px",
   },
   list: {
     padding: "0 1% 1% 1%",
@@ -55,7 +51,6 @@ export default function Subjects() {
   const classes = useStyles();
   const { enqueueSnackbar } = useSnackbar();
 
-  const [editSubject, setEditSubject] = useState(-1);
   const [allSubjects, setAllSubjects] = useState([]);
   const [addSubjects, setAddSubjects] = useState([
     {
@@ -154,18 +149,27 @@ export default function Subjects() {
     }
   };
 
-  const handleDeleteSubject = (subId) => {
-    Axios.delete(`http://localhost:8000/api/subject/delete/${subId}`, {
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${sessionStorage.getItem("usertoken")}`,
-      },
-    }).then((res) => {
-      let newAllSubjects = [...allSubjects];
-      newAllSubjects = allSubjects.filter((subject) => subject.subId !== subId);
-      setAllSubjects(newAllSubjects);
-      enqueueSnackbar("Deleted!", { variant: "success" });
-    });
+  const handleDeleteSubject = (subId, acadYear) => {
+    Axios.delete(
+      `http://localhost:8000/api/subject/delete/${subId}/${acadYear}`,
+      {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${sessionStorage.getItem("usertoken")}`,
+        },
+      }
+    )
+      .then((res) => {
+        let newAllSubjects = [...allSubjects];
+        newAllSubjects = allSubjects.filter(
+          (subject) => subject.subId !== subId
+        );
+        setAllSubjects(newAllSubjects);
+        enqueueSnackbar("Deleted!", { variant: "success" });
+      })
+      .catch(() => {
+        enqueueSnackbar("Could not delete subject");
+      });
   };
 
   useEffect(() => {
@@ -179,12 +183,6 @@ export default function Subjects() {
 
   return (
     <Grid item>
-      <EditSubject
-        editSubject={editSubject}
-        setEditSubject={setEditSubject}
-        allSubject={allSubjects}
-        setAllSubjects={setAllSubjects}
-      />
       <Card>
         <Typography variant="h5" className={classes.header}>
           New Subject(s)
@@ -238,11 +236,11 @@ export default function Subjects() {
                   style={{ margin: "0% 5% 0% 6%" }}
                   required
                   fullWidth
-                  defaultValue={subject.year}
-                  label="Enter year"
-                  name={"year " + index}
+                  defaultValue={subject.acadYear}
+                  label="Enter academic year(YYYY-YY)"
+                  name={"acadYear " + index}
                   onChange={handleChange}
-                  autoComplete="year"
+                  autoComplete="acadYear"
                 />
               </Grid>
             </Grid>
@@ -305,21 +303,19 @@ export default function Subjects() {
                       <Typography variant="body2" color="textSecondary">
                         Year : {subject.year}
                       </Typography>
+                      <Typography variant="body2" color="textSecondary">
+                        Academic Year : {subject.acadYear}
+                      </Typography>
                     </React.Fragment>
                   }
                 />
                 <ListItemSecondaryAction>
-                  {/* <IconButton
-                  edge="end"
-                  aria-label="edit"
-                  onClick={() => handleEditSubject(index)}
-                >
-                  <EditIcon />
-                </IconButton> */}
                   <IconButton
                     edge="end"
                     aria-label="delete"
-                    onClick={() => handleDeleteSubject(subject.subId)}
+                    onClick={() =>
+                      handleDeleteSubject(subject.subId, subject.acadYear)
+                    }
                   >
                     <DeleteIcon />
                   </IconButton>
