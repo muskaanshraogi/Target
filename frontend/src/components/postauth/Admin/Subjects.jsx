@@ -10,6 +10,11 @@ import {
   TextField,
   ListItemText,
   Avatar,
+  Dialog,
+  DialogActions,
+  DialogTitle,
+  DialogContent,
+  DialogContentText,
   ListItemSecondaryAction,
   IconButton,
   makeStyles,
@@ -52,6 +57,9 @@ export default function Subjects() {
   const { enqueueSnackbar } = useSnackbar();
 
   const [allSubjects, setAllSubjects] = useState([]);
+  const [open, setOpen] = useState(false)
+  const [subject, setSubject] = useState("")
+  const [acadYear, setAcadYear] = useState("")
   const [addSubjects, setAddSubjects] = useState([
     {
       subId: "",
@@ -170,6 +178,7 @@ export default function Subjects() {
       .catch(() => {
         enqueueSnackbar("Could not delete subject");
       });
+      setOpen(false)
   };
 
   useEffect(() => {
@@ -183,7 +192,8 @@ export default function Subjects() {
 
   return (
     <Grid item>
-      <Card>
+      <Card 
+       style={{ width: '100%' }}>
         <Typography variant="h5" className={classes.header}>
           New Subject(s)
         </Typography>
@@ -237,7 +247,7 @@ export default function Subjects() {
                   required
                   fullWidth
                   defaultValue={subject.acadYear}
-                  label="Enter academic year(YYYY-YY)"
+                  label="Academic year (YYYY-YY)"
                   name={"acadYear " + index}
                   onChange={handleChange}
                   autoComplete="acadYear"
@@ -313,9 +323,11 @@ export default function Subjects() {
                   <IconButton
                     edge="end"
                     aria-label="delete"
-                    onClick={() =>
-                      handleDeleteSubject(subject.subId, subject.acadYear)
-                    }
+                    onClick={() => {
+                      setOpen(true)
+                      setSubject(subject.subId)
+                      setAcadYear(subject.acadYear)
+                    }}
                   >
                     <DeleteIcon />
                   </IconButton>
@@ -349,21 +361,21 @@ export default function Subjects() {
                       <Typography variant="body2" color="textSecondary">
                         Year : {subject.year}
                       </Typography>
+                      <Typography variant="body2" color="textSecondary">
+                        Academic Year : {subject.acadYear}
+                      </Typography>
                     </React.Fragment>
                   }
                 />
                 <ListItemSecondaryAction>
-                  {/* <IconButton
-                  edge="end"
-                  aria-label="edit"
-                  onClick={() => handleEditSubject(index)}
-                >
-                  <EditIcon />
-                </IconButton> */}
                   <IconButton
                     edge="end"
                     aria-label="delete"
-                    onClick={() => handleDeleteSubject(subject.subId)}
+                    onClick={() => {
+                      setOpen(true)
+                      setSubject(subject.subId)
+                      setAcadYear(subject.acadYear)
+                    }}
                   >
                     <DeleteIcon />
                   </IconButton>
@@ -372,6 +384,25 @@ export default function Subjects() {
             ))}
         </List>
       </Card>
+      <Dialog
+        open={open}
+        onClose={() => setOpen(false)}
+      >
+        <DialogTitle id="alert-dialog-title">Confirm Delete</DialogTitle>
+        <DialogContent>
+          <DialogContentText id="alert-dialog-description">
+            Are you sure you want to delete <b>{subject} for {acadYear}</b>?
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setOpen(false)} variant="primary" style={{ paddingTop: '8px'}}>
+            Cancel
+          </Button>
+          <Button onClick={() => handleDeleteSubject(subject, acadYear)} variant='primary' style={{ backgroundColor: '#f50057', color: '#ffffff' }} >
+            Delete
+          </Button>
+        </DialogActions>
+      </Dialog>
     </Grid>
   );
 }

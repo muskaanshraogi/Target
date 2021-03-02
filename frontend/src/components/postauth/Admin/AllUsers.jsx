@@ -14,6 +14,11 @@ import {
   Grid,
   Select,
   MenuItem,
+  Dialog,
+  DialogActions,
+  DialogTitle,
+  DialogContent,
+  DialogContentText,
   FormControlLabel,
   TextField,
   Button,
@@ -56,6 +61,9 @@ const useStyles = makeStyles((theme) => ({
 export default function AllUsers() {
   const classes = useStyles();
   const { enqueueSnackbar } = useSnackbar();
+
+  const [open, setOpen] = useState(false)
+  const [teacher, setTeacher] = useState("")
   const [allUsers, setAllUsers] = useState([]);
   const [subjects, setSubjects] = useState([]);
   const [addSubjects, setAddSubjects] = useState([
@@ -79,6 +87,8 @@ export default function AllUsers() {
       setAllUsers(newAllUsers);
       enqueueSnackbar("Deleted!", { variant: "success" });
     });
+
+    setOpen(false)
   };
 
   const handleAddSubject = () => {
@@ -375,7 +385,10 @@ export default function AllUsers() {
                 <IconButton
                   edge="end"
                   aria-label="delete"
-                  onClick={() => handleDeleteUser(user.reg_id)}
+                  onClick={() => {
+                    setOpen(true)
+                    setTeacher(user.reg_id)
+                  }}
                 >
                   <DeleteIcon />
                 </IconButton>
@@ -417,7 +430,10 @@ export default function AllUsers() {
                   <IconButton
                     edge="end"
                     aria-label="delete"
-                    onClick={() => handleDeleteUser(user.reg_id)}
+                    onClick={() => {
+                      setOpen(true)
+                      setTeacher(user.reg_id)
+                    }}
                   >
                     <DeleteIcon />
                   </IconButton>
@@ -426,6 +442,25 @@ export default function AllUsers() {
             ))}
         </List>
       </Card>
+      <Dialog
+        open={open}
+        onClose={() => setOpen(false)}
+      >
+        <DialogTitle id="alert-dialog-title">Confirm Delete</DialogTitle>
+        <DialogContent>
+          <DialogContentText id="alert-dialog-description">
+            Are you sure you want to delete user <b>{teacher}</b>?
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setOpen(false)} variant="primary" style={{ paddingTop: '8px'}}>
+            Cancel
+          </Button>
+          <Button onClick={() => handleDeleteUser(teacher)} variant='primary' style={{ backgroundColor: '#f50057', color: '#ffffff' }} >
+            Delete
+          </Button>
+        </DialogActions>
+      </Dialog>
     </>
   );
 }

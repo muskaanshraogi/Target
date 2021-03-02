@@ -171,10 +171,25 @@ const clearYear = (acadYear, callback) => {
     )
 }
 
+const getAcadYear = (callback) => {
+    db.query(
+        "SELECT DISTINCT(acadYear) FROM subject",
+        (err, res) => {
+            if(err) {
+                return callback(err, 500, null)
+            }
+            else {
+                return callback(null, 200, res)
+            }
+        }
+    )
+}
+
 module.exports = {
     calculateFinal,
     getAttainment,
     getAttainments,
     resetDB,
-    clearYear
+    clearYear,
+    getAcadYear
 }

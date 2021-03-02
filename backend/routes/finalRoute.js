@@ -74,4 +74,16 @@ router.delete('/clear/:acadYear', authenticateAdmin, (req, res, next) => {
     })
 })
 
+router.get('/acadYear', authenticateAdmin, (req, res, next) => {
+    finalModel.getAcadYear((err, status, data) => {
+        if(err) {
+            delete err.sql
+            res.status(status).send({ err: err, data: null })
+        }
+        else {
+            res.status(200).send({ err: null, data: data })
+        }
+    })
+})
+
 module.exports = router
