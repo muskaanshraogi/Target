@@ -7,14 +7,17 @@ import {
   TableContainer,
   Card,
   CardHeader,
+  CardContent,
   Table,
   TableHead,
   Paper,
   TableBody,
   Button,
   Typography,
-  CardContent,
   TextField,
+  Dialog,
+  DialogActions,
+  DialogTitle,
 } from "@material-ui/core";
 import Axios from "axios";
 import { useSnackbar } from "notistack";
@@ -35,14 +38,12 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 export default function Coordinator() {
-  const classes = useStyles();
-  const { dark } = React.useContext(ThemeContext);
   const { enqueueSnackbar } = useSnackbar();
   const [teachers, setTeachers] = useState([]);
-  const [reports, setReports] = useState([]);
-  const [attainment, setAttainment] = useState({ details: [] }, { final: {} });
+  const [attainment, setAttainment] = useState(null);
   const [coordinator, setCoordinator] = useState("");
   const [subId, setSubID] = useState("");
+  const [acadYear, setAcadYear] = useState("");
   const [total, setTotal] = useState({
     tco1: 0,
     tco2: 0,
@@ -63,16 +64,32 @@ export default function Coordinator() {
   const [totalBool, setTotalBool] = useState(false);
   const [targetBool, setTargetBool] = useState(false);
   const [submittedBool, setSubmittedBool] = useState(false);
+  const [totalModal, setTotalModal] = useState(false);
+  const [targetModal, setTargetModal] = useState(false);
+
+  const handleTotalModal = () => {
+    setTotalModal(!totalModal);
+  };
+
+  const handleTargetModal = () => {
+    setTargetModal(!targetModal);
+  };
 
   const handleTotal = () => {
-    Axios.post(`http://localhost:8000/api/subject/set/total/${subId}`, total, {
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${sessionStorage.getItem("usertoken")}`,
-      },
-    })
+    Axios.post(
+      `http://localhost:8000/api/subject/set/total/${subId}/${acadYear}`,
+      total,
+      {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${sessionStorage.getItem("usertoken")}`,
+        },
+      }
+    )
       .then((res) => {
         setTotal(total);
+        setTotalBool(true);
+        setTotalModal(false);
         enqueueSnackbar("Added Total Marks Successfully!", {
           variant: "success",
         });
@@ -84,7 +101,7 @@ export default function Coordinator() {
 
   const handleTarget = () => {
     Axios.post(
-      `http://localhost:8000/api/subject/set/target/${subId}`,
+      `http://localhost:8000/api/subject/set/target/${subId}/${acadYear}`,
       target,
       {
         headers: {
@@ -95,6 +112,8 @@ export default function Coordinator() {
     )
       .then((res) => {
         setTarget(target);
+        setTargetBool(true);
+        setTargetModal(false);
         enqueueSnackbar("Added Target Successfully!", {
           variant: "success",
         });
@@ -111,11 +130,10 @@ export default function Coordinator() {
 
   const handleTargetChange = (e) => {
     let value = e.target.value;
-    setTarget({ ...total, [e.target.name]: value });
+    setTarget({ ...target, [e.target.name]: value });
   };
 
   const handleCalculate = () => {
-    let acadYear = formatAcadYear(formatDate(new Date().toLocaleDateString()));
     Axios.get(
       `http://localhost:8000/api/final/calculate/${teachers[0].subId}/${acadYear}`,
       {
@@ -127,9 +145,7 @@ export default function Coordinator() {
     )
       .then((res) => {
         Axios.get(
-          `http://localhost:8000/api/final/attainment/${
-            JSON.parse(sessionStorage.getItem("user")).reg_id
-          }`,
+          `http://localhost:8000/api/final/attainment/${teachers[0].subId}/${acadYear}`,
           {
             headers: {
               "Content-Type": "application/json",
@@ -138,7 +154,7 @@ export default function Coordinator() {
           }
         )
           .then((res) => {
-            setAttainment(res.data.data);
+            setAttainment(res.data.data[0]);
             enqueueSnackbar("Calculated attainment successfully", {
               variant: "success",
             });
@@ -150,19 +166,6 @@ export default function Coordinator() {
       .catch((err) => {
         enqueueSnackbar("Could not calculate attainment", { variant: "error" });
       });
-  };
-
-  const formatDate = (date) => {
-    date = date.replace("/", "-");
-    date = date.replace("/", "-");
-    return date;
-  };
-
-  const formatAcadYear = (date) => {
-    let year = date.split("-").pop();
-    let next = parseInt(year) + 1;
-    let last = next.toString().slice(2, 4);
-    return `${year}-${last}`;
   };
 
   const getTeachers = () => {
@@ -189,10 +192,9 @@ export default function Coordinator() {
           setCoordinator(found.reg_id);
         }
         setSubID(data[0].subId);
+        setAcadYear(data[0].acadYear);
       })
-      .catch((err) => {
-        enqueueSnackbar("Could not fetch teachers", { variant: "error" });
-      });
+      .catch((err) => {});
   };
 
   const getSubmitted = (subId) => {
@@ -217,13 +219,16 @@ export default function Coordinator() {
       .catch((err) => console.log(err));
   };
 
-  const getTotalMarks = (subId) => {
-    Axios.get(`http://localhost:8000/api/subject/get/total/${subId}`, {
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${sessionStorage.getItem("usertoken")}`,
-      },
-    })
+  const getTotalMarks = (subId, acadYear) => {
+    Axios.get(
+      `http://localhost:8000/api/subject/get/total/${subId}/${acadYear}`,
+      {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${sessionStorage.getItem("usertoken")}`,
+        },
+      }
+    )
       .then((res) => {
         setTotal(res.data.data[0]);
         if (res.data.data[0].tco1 !== null) {
@@ -233,13 +238,16 @@ export default function Coordinator() {
       .catch((err) => console.log(err));
   };
 
-  const getTargetValues = (subId) => {
-    Axios.get(`http://localhost:8000/api/subject/get/target/${subId}`, {
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${sessionStorage.getItem("usertoken")}`,
-      },
-    })
+  const getTargetValues = (subId, acadYear) => {
+    Axios.get(
+      `http://localhost:8000/api/subject/get/target/${subId}/${acadYear}`,
+      {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${sessionStorage.getItem("usertoken")}`,
+        },
+      }
+    )
       .then((res) => {
         setTarget(res.data.data[0]);
         if (res.data.data[0].mt1 !== null) {
@@ -249,62 +257,39 @@ export default function Coordinator() {
       .catch((err) => console.log(err));
   };
 
+  const getAttainment = (subId, acadYear) => {
+    Axios.get(
+      `http://localhost:8000/api/final/attainment/${subId}/${acadYear}`,
+      {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${sessionStorage.getItem("usertoken")}`,
+        },
+      }
+    )
+      .then((res) => {
+        console.log(res.data.data[0]);
+        setAttainment(res.data.data[0]);
+      })
+      .catch((err) => {
+        setAttainment(null);
+      });
+  };
+
   useEffect(() => {
     getTeachers();
   }, []);
 
   useEffect(() => {
-    getSubmitted(subId);
-    getTotalMarks(subId);
-    getTargetValues(subId);
-  }, [subId]);
+    getSubmitted(subId, acadYear);
+    getTotalMarks(subId, acadYear);
+    getTargetValues(subId, acadYear);
+    getAttainment(subId, acadYear);
+  }, [subId, acadYear]);
 
   const createPdf = (html) => {
     Doc.createPdf(html, `${teachers[0].subName}_report`);
   };
-
-  // useEffect(() => {
-  //   Axios.get(
-  //     `http://localhost:8000/api/report/get/subject/${
-  //       JSON.parse(sessionStorage.getItem("user")).reg_id
-  //     }`,
-  //     {
-  //       headers: {
-  //         "Content-Type": "application/json",
-  //         Authorization: `Bearer ${sessionStorage.getItem("usertoken")}`,
-  //       },
-  //     }
-  //   )
-  //     .then((res) => {
-  //       let data = res.data.data;
-  //       let temp = teachers.map((t) => ({
-  //         reg_id: t.reg_id,
-  //         count: data.some((d) => t.reg_id === d.reg_id) ? 1 : 0,
-  //       }));
-  //       setFlags(temp);
-  //       setReports(res.data.data);
-  //     })
-  //     .catch((err) => {
-  //       enqueueSnackbar("Could not fetch teachers", { variant: "error" });
-  //     });
-  //   Axios.get(
-  //     `http://localhost:8000/api/final/attainment/${
-  //       JSON.parse(sessionStorage.getItem("user")).reg_id
-  //     }`,
-  //     {
-  //       headers: {
-  //         "Content-Type": "application/json",
-  //         Authorization: `Bearer ${sessionStorage.getItem("usertoken")}`,
-  //       },
-  //     }
-  //   )
-  //     .then((res) => {
-  //       setAttainment(res.data.data);
-  //     })
-  //     .catch((err) => {
-  //       setAttainment(null);
-  //     });
-  // }, [teachers, enqueueSnackbar]);
 
   return (
     <Grid container item spacing={1}>
@@ -405,7 +390,7 @@ export default function Coordinator() {
                             <Button
                               variant="contained"
                               color="primary"
-                              onClick={handleTotal}
+                              onClick={handleTotalModal}
                               disabled={totalBool}
                             >
                               Submit Total Marks
@@ -438,6 +423,7 @@ export default function Coordinator() {
                         <TableRow>
                           <TableCell align="center">
                             <TextField
+                              name="mt1"
                               variant="filled"
                               value={target.mt1}
                               disabled={targetBool}
@@ -446,6 +432,7 @@ export default function Coordinator() {
                           </TableCell>
                           <TableCell align="center">
                             <TextField
+                              name="mt2"
                               variant="filled"
                               value={target.mt2}
                               disabled={targetBool}
@@ -454,6 +441,7 @@ export default function Coordinator() {
                           </TableCell>
                           <TableCell align="center">
                             <TextField
+                              name="mt3"
                               variant="filled"
                               value={target.mt3}
                               disabled={targetBool}
@@ -462,6 +450,7 @@ export default function Coordinator() {
                           </TableCell>
                           <TableCell align="center">
                             <TextField
+                              name="sppu1"
                               variant="filled"
                               value={target.sppu1}
                               disabled={targetBool}
@@ -470,6 +459,7 @@ export default function Coordinator() {
                           </TableCell>
                           <TableCell align="center">
                             <TextField
+                              name="sppu2"
                               variant="filled"
                               value={target.sppu2}
                               disabled={targetBool}
@@ -478,6 +468,7 @@ export default function Coordinator() {
                           </TableCell>
                           <TableCell align="center">
                             <TextField
+                              name="sppu3"
                               variant="filled"
                               value={target.sppu3}
                               disabled={targetBool}
@@ -490,7 +481,7 @@ export default function Coordinator() {
                             <Button
                               variant="contained"
                               color="primary"
-                              onClick={handleTarget}
+                              onClick={handleTargetModal}
                               disabled={targetBool}
                             >
                               Submit Target Values
@@ -510,7 +501,7 @@ export default function Coordinator() {
                   margin: "2% 0% 0% 0%",
                 }}
               >
-                {attainment.details.length === 3 && attainment.final && (
+                {attainment && (
                   <>
                     <CardHeader
                       title="Attaiment stats"
@@ -520,37 +511,25 @@ export default function Coordinator() {
                       <Table>
                         <TableHead>
                           <TableRow>
-                            <TableCell align="center">Division</TableCell>
+                            <TableCell align="center">Academic Year</TableCell>
                             <TableCell align="center">UT</TableCell>
                             <TableCell align="center">SPPU</TableCell>
                             <TableCell align="center">Total</TableCell>
                           </TableRow>
                         </TableHead>
                         <TableBody>
-                          {attainment.details.map((att, index) => (
-                            <TableRow key={index}>
-                              <TableCell align="center">
-                                {att.division}
-                              </TableCell>
-                              <TableCell align="center">{att.ut}</TableCell>
-                              <TableCell align="center">{att.sppu}</TableCell>
-                              <TableCell align="center">{att.total}</TableCell>
-                            </TableRow>
-                          ))}
-                          <TableRow
-                            className={
-                              dark ? classes.tableDark : classes.tableLight
-                            }
-                          >
-                            <TableCell align="center">Total</TableCell>
+                          <TableRow>
                             <TableCell align="center">
-                              {attainment.final.ut}
+                              {attainment.acadYear}
                             </TableCell>
                             <TableCell align="center">
-                              {attainment.final.sppu}
+                              {attainment.ut}
                             </TableCell>
                             <TableCell align="center">
-                              {attainment.final.total}
+                              {attainment.sppu}
+                            </TableCell>
+                            <TableCell align="center">
+                              {attainment.total}
                             </TableCell>
                           </TableRow>
                         </TableBody>
@@ -566,7 +545,7 @@ export default function Coordinator() {
                 color="primary"
                 style={{ margin: "2% 2% 0% 0%" }}
                 onClick={handleCalculate}
-                disabled={!targetBool && !totalBool && !submittedBool}
+                disabled={targetBool && totalBool && submittedBool}
               >
                 Calculate Attainment
               </Button>
@@ -581,6 +560,44 @@ export default function Coordinator() {
           </Card>
         )}
       </Grid>
+      <Dialog
+        open={totalModal}
+        onClose={handleTotalModal}
+        aria-labelledby="alert-dialog-title"
+        aria-describedby="alert-dialog-description"
+      >
+        <DialogTitle id="alert-dialog-title">
+          Are you sure you want to save the total marks? This step is
+          irreversible.
+        </DialogTitle>
+        <DialogActions>
+          <Button onClick={handleTotalModal} color="primary">
+            No
+          </Button>
+          <Button onClick={handleTotal} color="primary" autoFocus>
+            Yes
+          </Button>
+        </DialogActions>
+      </Dialog>
+      <Dialog
+        open={targetModal}
+        onClose={handleTargetModal}
+        aria-labelledby="alert-dialog-title"
+        aria-describedby="alert-dialog-description"
+      >
+        <DialogTitle id="alert-dialog-title">
+          Are you sure you want to save the target attainment? This step is
+          irreversible.
+        </DialogTitle>
+        <DialogActions>
+          <Button onClick={handleTargetModal} color="primary">
+            No
+          </Button>
+          <Button onClick={handleTarget} color="primary" autoFocus>
+            Yes
+          </Button>
+        </DialogActions>
+      </Dialog>
     </Grid>
   );
 }

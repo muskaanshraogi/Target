@@ -90,7 +90,7 @@ export default function Subjects({ user }) {
                   <TableCell align="center">Year</TableCell>
                   <TableCell align="center">Division</TableCell>
                   <TableCell align="center">Role</TableCell>
-                  <TableCell align="center">Delete</TableCell>
+                  {/* <TableCell align="center">Delete</TableCell> */}
                 </TableRow>
               </TableHead>
               <TableBody>
@@ -103,7 +103,7 @@ export default function Subjects({ user }) {
                     <TableCell align="center">
                       {subject.role_id === 1 ? "Teacher" : "Coordinator"}
                     </TableCell>
-                    <TableCell align="center">
+                    {/* <TableCell align="center">
                       <IconButton
                         edge="end"
                         aria-label="delete"
@@ -111,7 +111,7 @@ export default function Subjects({ user }) {
                       >
                         <DeleteIcon />
                       </IconButton>
-                    </TableCell>
+                    </TableCell> */}
                   </TableRow>
                 ))}
               </TableBody>

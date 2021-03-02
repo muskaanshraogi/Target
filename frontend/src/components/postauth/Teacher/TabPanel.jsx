@@ -195,7 +195,7 @@ export default function TabPanel({ subject }) {
         row.sppu === "" || row.sppu === "A" ? null : parseInt(row.sppu);
     });
     Axios.post(
-      `http://localhost:8000/api/marks/submit/${subject.subId}/${subject.division}`,
+      `http://localhost:8000/api/marks/submit/${subject.subId}/${subject.division}/${subject.acadYear}`,
       { marks: final },
       {
         headers: {
@@ -328,7 +328,8 @@ export default function TabPanel({ subject }) {
         <DialogTitle id="alert-dialog-title">{"Save your data?"}</DialogTitle>
         <DialogContent>
           <DialogContentText id="alert-dialog-description">
-            Are you sure you want to save the marks? This step is irreversible.
+            Are you sure you want to submit the marks? This step is
+            irreversible.
           </DialogContentText>
         </DialogContent>
         <DialogActions>
