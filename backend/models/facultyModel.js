@@ -61,10 +61,24 @@ const deleteRelation = (relation, teacher, callback) => {
   );
 };
 
-const getSubjectTeacherDetails = (reg_id, callback) => {
+const getSubjectTeacherDetails = (subId, acadYear, callback) => {
   db.query(
-    "SELECT subject.subId, subject.subName, subject.year, subject.acadYear, staff.firstName, staff.lastName, role.roleName, faculty.division, faculty.reg_id, faculty.submitted FROM faculty JOIN staff JOIN role JOIN subject ON faculty.reg_id=staff.reg_id AND faculty.role_id=role.role_id AND faculty.subId=subject.subId AND faculty.acadYear=subject.acadYear WHERE faculty.subId IN (SELECT subId FROM faculty WHERE reg_id=? AND role_id=2) AND faculty.acadYear IN (SELECT acadYear FROM faculty WHERE reg_id=? AND role_id=2)",
-    [reg_id, reg_id],
+    "SELECT subject.subId, subject.subName, subject.year, subject.acadYear, staff.firstName, staff.lastName, role.roleName, faculty.division, faculty.reg_id, faculty.submitted FROM faculty JOIN staff JOIN role JOIN subject ON faculty.reg_id=staff.reg_id AND faculty.role_id=role.role_id AND faculty.subId=subject.subId AND faculty.acadYear=subject.acadYear WHERE faculty.subId=? AND faculty.acadYear=?",
+    [subId, acadYear],
+    (err, res) => {
+      if (err) {
+        return callback(err, 500, null);
+      } else {
+        return callback(null, 200, res);
+      }
+    }
+  );
+};
+
+const checkCoordinator = (reg_id, callback) => {
+  db.query(
+    "SELECT subject.subId, subject.subName, subject.acadYear FROM faculty JOIN subject ON faculty.subId=subject.subId AND faculty.acadYear=subject.acadYear WHERE faculty.reg_id=? AND faculty.role_id=2",
+    [reg_id],
     (err, res) => {
       if (err) {
         return callback(err, 500, null);
@@ -136,4 +150,5 @@ module.exports = {
   deleteRelation,
   getSubjectTeacherDetails,
   sendMail,
+  checkCoordinator
 };

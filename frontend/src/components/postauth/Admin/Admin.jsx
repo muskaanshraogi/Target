@@ -14,6 +14,7 @@ import {
   DialogContent,
   DialogContentText,
 } from "@material-ui/core";
+import { Redirect } from 'react-router-dom'
 import Axios from "axios";
 import AllUsers from "./AllUsers";
 import Subjects from "./Subjects";
@@ -77,6 +78,7 @@ export default function Admin() {
   const [acadYear, setAcadYear] = React.useState("");
   const [clearYear, setClearYear] = React.useState(false);
   const [resetDb, setResetDb] = React.useState(false);
+  const [redirect, setRedirect] = React.useState(false);
 
   const handleChange = (event, newValue) => {
     setValue(newValue);
@@ -114,6 +116,7 @@ export default function Admin() {
       })
         .then((res) => {
           enqueueSnackbar(`Database reset`, { variant: "success" });
+          setRedirect(true)
         })
         .catch((error) => {
           enqueueSnackbar("Could not reset database", { variant: "error" });
@@ -136,6 +139,7 @@ export default function Admin() {
 
   return (
     <div className={classes.root}>
+      { redirect ? <Redirect to='/'/> : null }
       <div
         style={{
           float: "right",
