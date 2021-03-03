@@ -10,6 +10,12 @@ import {
   DialogContent,
   DialogContentText,
   DialogActions,
+  TableContainer,
+  TableCell,
+  TableRow,
+  TableHead,
+  TableBody,
+  Table,
 } from "@material-ui/core";
 import Axios from "axios";
 import React, { useState, useEffect } from "react";
@@ -38,6 +44,16 @@ export default function TabPanel({ subject }) {
   const [rows, setRows] = useState([]);
   const [open, setOpen] = useState(false);
   const [submitted, setSubmitted] = useState(false);
+  const [totalBool, setTotalBool] = useState(false);
+  const [total, setTotal] = useState({
+    tco1: 0,
+    tco2: 0,
+    tco3: 0,
+    tco4: 0,
+    tco5: 0,
+    tco6: 0,
+    tsppu: 0,
+  });
 
   const columns = [
     { key: "roll_no", name: "Roll Number", editable: false },
@@ -216,6 +232,25 @@ export default function TabPanel({ subject }) {
       });
   };
 
+  const getTotalMarks = (subId, acadYear) => {
+    Axios.get(
+      `http://localhost:8000/api/subject/get/total/${subId}/${acadYear}`,
+      {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${sessionStorage.getItem("usertoken")}`,
+        },
+      }
+    )
+      .then((res) => {
+        setTotal(res.data.data[0]);
+        if (res.data.data[0].tco1 !== null) {
+          setTotalBool(true);
+        }
+      })
+      .catch((err) => console.log(err));
+  };
+
   useEffect(() => {
     setToken(sessionStorage.getItem("usertoken"));
     setSub(subject);
@@ -227,6 +262,7 @@ export default function TabPanel({ subject }) {
     setText(false);
     setSubmitted(false);
     getMarks(sub);
+    getTotalMarks(sub.subId, sub.acadYear);
   }, [token, sub]);
 
   useEffect(() => {
@@ -247,17 +283,60 @@ export default function TabPanel({ subject }) {
             Subject Name : {subject.subName}
           </Paper>
         </Grid>
-        <Grid item xs={3}>
+        <Grid item xs={4}>
           <Paper className={classes.paper}>Year : {subject.year}</Paper>
         </Grid>
-        <Grid item xs={3}>
+        <Grid item xs={4}>
           <Paper className={classes.paper}>Divison : {subject.division}</Paper>
         </Grid>
-        <Grid item xs={6}>
+        <Grid item xs={4}>
           <Paper className={classes.paper}>
             Coordinator : {parseInt(subject.role_id) === 2 ? "Yes" : "No"}
           </Paper>
         </Grid>
+        <Grid item xs={12}>
+          <TableContainer component={Paper}>
+            <Table aria-label="caption table">
+              <TableHead>
+                <TableRow>
+                  <TableCell align="center">CO 1</TableCell>
+                  <TableCell align="center">CO 2</TableCell>
+                  <TableCell align="center">CO 3</TableCell>
+                  <TableCell align="center">CO 4</TableCell>
+                  <TableCell align="center">CO 5</TableCell>
+                  <TableCell align="center">CO 6</TableCell>
+                  <TableCell align="center">SPPU</TableCell>
+                </TableRow>
+              </TableHead>
+              {!total.tco1 ? (
+                <TableBody>
+                  <TableRow>
+                    <TableCell align="center">N/A</TableCell>
+                    <TableCell align="center">N/A</TableCell>
+                    <TableCell align="center">N/A</TableCell>
+                    <TableCell align="center">N/A</TableCell>
+                    <TableCell align="center">N/A</TableCell>
+                    <TableCell align="center">N/A</TableCell>
+                    <TableCell align="center">N/A</TableCell>
+                  </TableRow>
+                </TableBody>
+              ) : (
+                <TableBody>
+                  <TableRow>
+                    <TableCell align="center">{total.tco1}</TableCell>
+                    <TableCell align="center">{total.tco2}</TableCell>
+                    <TableCell align="center">{total.tco3}</TableCell>
+                    <TableCell align="center">{total.tco4}</TableCell>
+                    <TableCell align="center">{total.tco5}</TableCell>
+                    <TableCell align="center">{total.tco6}</TableCell>
+                    <TableCell align="center">{total.tsppu}</TableCell>
+                  </TableRow>
+                </TableBody>
+              )}
+            </Table>
+          </TableContainer>
+        </Grid>
+
         <Grid item xs={8}>
           <TextField
             variant="outlined"

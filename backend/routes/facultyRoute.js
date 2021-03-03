@@ -55,20 +55,24 @@ router.post("/delete/:reg_id", authenticate, (req, res, next) => {
   );
 });
 
-router.get("/subject/teacher/:subId/:acadYear", authenticate, (req, res, next) => {
-  facultyModel.getSubjectTeacherDetails(
-    req.params.subId,
-    req.params.acadYear,
-    (err, status, data) => {
-      if (err) {
-        delete err.sql;
-        res.status(status).send({ err: err, data: null });
-      } else {
-        res.status(200).send({ err: null, data: data });
+router.get(
+  "/subject/teacher/:subId/:acadYear",
+  authenticate,
+  (req, res, next) => {
+    facultyModel.getSubjectTeacherDetails(
+      req.params.subId,
+      req.params.acadYear,
+      (err, status, data) => {
+        if (err) {
+          delete err.sql;
+          res.status(status).send({ err: err, data: null });
+        } else {
+          res.status(200).send({ err: null, data: data });
+        }
       }
-    }
-  );
-});
+    );
+  }
+);
 
 router.post("/email/:teacher/:coordinator", authenticate, (req, res, next) => {
   facultyModel.sendMail(
@@ -86,17 +90,14 @@ router.post("/email/:teacher/:coordinator", authenticate, (req, res, next) => {
 });
 
 router.get("/check/coordinator/:reg_id", authenticate, (req, res, next) => {
-  facultyModel.checkCoordinator(
-    req.params.reg_id,
-    (err, status, data) => {
-      if (err) {
-        delete err.sql;
-        res.status(status).send({ err: err, data: null });
-      } else {
-        res.status(200).send({ err: null, data: data });
-      }
+  facultyModel.checkCoordinator(req.params.reg_id, (err, status, data) => {
+    if (err) {
+      delete err.sql;
+      res.status(status).send({ err: err, data: null });
+    } else {
+      res.status(200).send({ err: null, data: data });
     }
-  );
+  });
 });
 
 module.exports = router;
