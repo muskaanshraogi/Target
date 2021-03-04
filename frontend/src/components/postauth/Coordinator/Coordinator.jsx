@@ -46,7 +46,7 @@ export default function Coordinator() {
             }}
           >
             {subjects.map((sub, index) => (
-              <Tab label={sub.subName} />
+              <Tab label={`${sub.subName} - ${sub.acadYear}`} />
             ))}
           </Tabs>
           <TabPanel subject={subject} />

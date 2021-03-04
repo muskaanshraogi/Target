@@ -56,14 +56,18 @@ const useStyles = makeStyles((theme) => ({
   header: {
     padding: "1%",
   },
+  backDrop: {
+    backdropFilter: "blur(3px)",
+    backgroundColor: "rgba(69,69,69,0.9)",
+  },
 }));
 
 export default function AllUsers() {
   const classes = useStyles();
   const { enqueueSnackbar } = useSnackbar();
 
-  const [open, setOpen] = useState(false)
-  const [teacher, setTeacher] = useState("")
+  const [open, setOpen] = useState(false);
+  const [teacher, setTeacher] = useState("");
   const [allUsers, setAllUsers] = useState([]);
   const [subjects, setSubjects] = useState([]);
   const [addSubjects, setAddSubjects] = useState([
@@ -88,7 +92,7 @@ export default function AllUsers() {
       enqueueSnackbar("Deleted!", { variant: "success" });
     });
 
-    setOpen(false)
+    setOpen(false);
   };
 
   const handleAddSubject = () => {
@@ -386,8 +390,8 @@ export default function AllUsers() {
                   edge="end"
                   aria-label="delete"
                   onClick={() => {
-                    setOpen(true)
-                    setTeacher(user.reg_id)
+                    setOpen(true);
+                    setTeacher(user.reg_id);
                   }}
                 >
                   <DeleteIcon />
@@ -431,8 +435,8 @@ export default function AllUsers() {
                     edge="end"
                     aria-label="delete"
                     onClick={() => {
-                      setOpen(true)
-                      setTeacher(user.reg_id)
+                      setOpen(true);
+                      setTeacher(user.reg_id);
                     }}
                   >
                     <DeleteIcon />
@@ -445,6 +449,11 @@ export default function AllUsers() {
       <Dialog
         open={open}
         onClose={() => setOpen(false)}
+        BackdropProps={{
+          classes: {
+            root: classes.backDrop,
+          },
+        }}
       >
         <DialogTitle id="alert-dialog-title">Confirm Delete</DialogTitle>
         <DialogContent>
@@ -453,10 +462,18 @@ export default function AllUsers() {
           </DialogContentText>
         </DialogContent>
         <DialogActions>
-          <Button onClick={() => setOpen(false)} variant="primary" style={{ paddingTop: '8px'}}>
+          <Button
+            onClick={() => setOpen(false)}
+            variant="primary"
+            style={{ paddingTop: "8px" }}
+          >
             Cancel
           </Button>
-          <Button onClick={() => handleDeleteUser(teacher)} variant='primary' style={{ backgroundColor: '#f50057', color: '#ffffff' }} >
+          <Button
+            onClick={() => handleDeleteUser(teacher)}
+            variant="primary"
+            style={{ backgroundColor: "#f50057", color: "#ffffff" }}
+          >
             Delete
           </Button>
         </DialogActions>

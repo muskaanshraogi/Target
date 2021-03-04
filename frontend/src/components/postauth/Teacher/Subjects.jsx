@@ -90,7 +90,6 @@ export default function Subjects({ user }) {
                   <TableCell align="center">Year</TableCell>
                   <TableCell align="center">Division</TableCell>
                   <TableCell align="center">Role</TableCell>
-                  {/* <TableCell align="center">Delete</TableCell> */}
                 </TableRow>
               </TableHead>
               <TableBody>
@@ -103,15 +102,6 @@ export default function Subjects({ user }) {
                     <TableCell align="center">
                       {subject.role_id === 1 ? "Teacher" : "Coordinator"}
                     </TableCell>
-                    {/* <TableCell align="center">
-                      <IconButton
-                        edge="end"
-                        aria-label="delete"
-                        onClick={() => handleDeleteSubject(subject)}
-                      >
-                        <DeleteIcon />
-                      </IconButton>
-                    </TableCell> */}
                   </TableRow>
                 ))}
               </TableBody>
@@ -130,7 +120,7 @@ export default function Subjects({ user }) {
               }}
             >
               {mySubjects.map((sub, index) => (
-                <Tab label={sub.subName} />
+                <Tab label={`${sub.subName} - ${sub.acadYear}`} />
               ))}
             </Tabs>
             <TabPanel subject={subject} />

@@ -14,7 +14,7 @@ import {
   DialogContent,
   DialogContentText,
 } from "@material-ui/core";
-import { Redirect } from 'react-router-dom'
+import { Redirect } from "react-router-dom";
 import Axios from "axios";
 import AllUsers from "./AllUsers";
 import Subjects from "./Subjects";
@@ -39,6 +39,10 @@ const useStyles = makeStyles((theme) => ({
   },
   button: {
     margin: "1% 2% 0 0",
+  },
+  backDrop: {
+    backdropFilter: "blur(3px)",
+    backgroundColor: "rgba(69,69,69,0.9)",
   },
 }));
 
@@ -116,7 +120,7 @@ export default function Admin() {
       })
         .then((res) => {
           enqueueSnackbar(`Database reset`, { variant: "success" });
-          setRedirect(true)
+          setRedirect(true);
         })
         .catch((error) => {
           enqueueSnackbar("Could not reset database", { variant: "error" });
@@ -139,7 +143,7 @@ export default function Admin() {
 
   return (
     <div className={classes.root}>
-      { redirect ? <Redirect to='/'/> : null }
+      {redirect ? <Redirect to="/" /> : null}
       <div
         style={{
           float: "right",
@@ -198,7 +202,15 @@ export default function Admin() {
       <TabPanel value={value} index={1}>
         <Subjects />
       </TabPanel>
-      <Dialog open={resetDb || clearYear} onClose={handleClose}>
+      <Dialog
+        open={resetDb || clearYear}
+        onClose={handleClose}
+        BackdropProps={{
+          classes: {
+            root: classes.backDrop,
+          },
+        }}
+      >
         <DialogTitle id="alert-dialog-title">Confirm Delete</DialogTitle>
         <DialogContent>
           <DialogContentText id="alert-dialog-description">

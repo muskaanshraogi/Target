@@ -50,6 +50,10 @@ const useStyles = makeStyles((theme) => ({
   header: {
     padding: "1%",
   },
+  backDrop: {
+    backdropFilter: "blur(3px)",
+    backgroundColor: "rgba(69,69,69,0.9)",
+  },
 }));
 
 export default function Subjects() {
@@ -57,9 +61,9 @@ export default function Subjects() {
   const { enqueueSnackbar } = useSnackbar();
 
   const [allSubjects, setAllSubjects] = useState([]);
-  const [open, setOpen] = useState(false)
-  const [subject, setSubject] = useState("")
-  const [acadYear, setAcadYear] = useState("")
+  const [open, setOpen] = useState(false);
+  const [subject, setSubject] = useState("");
+  const [acadYear, setAcadYear] = useState("");
   const [addSubjects, setAddSubjects] = useState([
     {
       subId: "",
@@ -178,7 +182,7 @@ export default function Subjects() {
       .catch(() => {
         enqueueSnackbar("Could not delete subject");
       });
-      setOpen(false)
+    setOpen(false);
   };
 
   useEffect(() => {
@@ -192,8 +196,7 @@ export default function Subjects() {
 
   return (
     <Grid item>
-      <Card 
-       style={{ width: '100%' }}>
+      <Card style={{ width: "100%" }}>
         <Typography variant="h5" className={classes.header}>
           New Subject(s)
         </Typography>
@@ -324,9 +327,9 @@ export default function Subjects() {
                     edge="end"
                     aria-label="delete"
                     onClick={() => {
-                      setOpen(true)
-                      setSubject(subject.subId)
-                      setAcadYear(subject.acadYear)
+                      setOpen(true);
+                      setSubject(subject.subId);
+                      setAcadYear(subject.acadYear);
                     }}
                   >
                     <DeleteIcon />
@@ -372,9 +375,9 @@ export default function Subjects() {
                     edge="end"
                     aria-label="delete"
                     onClick={() => {
-                      setOpen(true)
-                      setSubject(subject.subId)
-                      setAcadYear(subject.acadYear)
+                      setOpen(true);
+                      setSubject(subject.subId);
+                      setAcadYear(subject.acadYear);
                     }}
                   >
                     <DeleteIcon />
@@ -387,18 +390,35 @@ export default function Subjects() {
       <Dialog
         open={open}
         onClose={() => setOpen(false)}
+        BackdropProps={{
+          classes: {
+            root: classes.backDrop,
+          },
+        }}
       >
         <DialogTitle id="alert-dialog-title">Confirm Delete</DialogTitle>
         <DialogContent>
           <DialogContentText id="alert-dialog-description">
-            Are you sure you want to delete <b>{subject} for {acadYear}</b>?
+            Are you sure you want to delete{" "}
+            <b>
+              {subject} for {acadYear}
+            </b>
+            ?
           </DialogContentText>
         </DialogContent>
         <DialogActions>
-          <Button onClick={() => setOpen(false)} variant="primary" style={{ paddingTop: '8px'}}>
+          <Button
+            onClick={() => setOpen(false)}
+            variant="primary"
+            style={{ paddingTop: "8px" }}
+          >
             Cancel
           </Button>
-          <Button onClick={() => handleDeleteSubject(subject, acadYear)} variant='primary' style={{ backgroundColor: '#f50057', color: '#ffffff' }} >
+          <Button
+            onClick={() => handleDeleteSubject(subject, acadYear)}
+            variant="primary"
+            style={{ backgroundColor: "#f50057", color: "#ffffff" }}
+          >
             Delete
           </Button>
         </DialogActions>

@@ -18,6 +18,7 @@ import {
   Dialog,
   DialogActions,
   DialogTitle,
+  colors,
 } from "@material-ui/core";
 import Axios from "axios";
 import { useSnackbar } from "notistack";
@@ -25,7 +26,15 @@ import PDF from "../PDF/pdfContainer";
 import Doc from "../PDF/docService";
 import Teachers from "./Teachers";
 
+const useStyles = makeStyles((theme) => ({
+  backDrop: {
+    backdropFilter: "blur(3px)",
+    backgroundColor: "rgba(69,69,69,0.9)",
+  },
+}));
+
 export default function TabPanel({ subject }) {
+  const classes = useStyles();
   const { enqueueSnackbar } = useSnackbar();
   const [teachers, setTeachers] = useState([]);
   const [attainment, setAttainment] = useState(null);
@@ -183,8 +192,8 @@ export default function TabPanel({ subject }) {
       .catch((err) => {});
   };
 
-  const getSubmitted = (subId) => {
-    Axios.get(`http://localhost:8000/api/marks/submit/${subId}`, {
+  const getSubmitted = (subId, acadYear) => {
+    Axios.get(`http://localhost:8000/api/marks/submit/${subId}/${acadYear}`, {
       headers: {
         "Content-Type": "application/json",
         Authorization: `Bearer ${sessionStorage.getItem("usertoken")}`,
@@ -217,6 +226,7 @@ export default function TabPanel({ subject }) {
     )
       .then((res) => {
         setTotal(res.data.data[0]);
+        console.log(res.data.data[0]);
         if (res.data.data[0].tco1 !== null) {
           setTotalBool(true);
         }
@@ -254,7 +264,6 @@ export default function TabPanel({ subject }) {
       }
     )
       .then((res) => {
-        console.log(res.data.data[0]);
         setAttainment(res.data.data[0]);
       })
       .catch((err) => {
@@ -527,8 +536,11 @@ export default function TabPanel({ subject }) {
       <Dialog
         open={totalModal}
         onClose={handleTotalModal}
-        aria-labelledby="alert-dialog-title"
-        aria-describedby="alert-dialog-description"
+        BackdropProps={{
+          classes: {
+            root: classes.backDrop,
+          },
+        }}
       >
         <DialogTitle id="alert-dialog-title">
           Are you sure you want to save the total marks? This step is
@@ -546,8 +558,11 @@ export default function TabPanel({ subject }) {
       <Dialog
         open={targetModal}
         onClose={handleTargetModal}
-        aria-labelledby="alert-dialog-title"
-        aria-describedby="alert-dialog-description"
+        BackdropProps={{
+          classes: {
+            root: classes.backDrop,
+          },
+        }}
       >
         <DialogTitle id="alert-dialog-title">
           Are you sure you want to save the target attainment? This step is

@@ -18,6 +18,12 @@ import {
   CardHeader,
   colors,
   ListItemAvatar,
+  Button,
+  Dialog,
+  DialogTitle,
+  DialogActions,
+  DialogContent,
+  TextField,
 } from "@material-ui/core";
 import {
   SupervisorAccount,
@@ -26,6 +32,7 @@ import {
   Brightness4,
   AccountCircle,
   ExitToApp,
+  EditAttributes,
 } from "@material-ui/icons";
 import SupervisedUserCircleIcon from "@material-ui/icons/SupervisedUserCircle";
 import { ThemeContext } from "../../context/useTheme";
@@ -35,6 +42,7 @@ import { useHistory, useLocation } from "react-router-dom";
 import Axios from "axios";
 import { VpnKey, AccessibilityNew } from "@material-ui/icons";
 import EmailIcon from "@material-ui/icons/Email";
+import { useSnackbar } from "notistack";
 
 const drawerWidth = 400;
 
@@ -136,6 +144,10 @@ const useStyles = makeStyles((theme) => ({
   nested: {
     paddingLeft: theme.spacing(4),
   },
+  backDrop: {
+    backdropFilter: "blur(3px)",
+    backgroundColor: "rgba(69,69,69,0.9)",
+  },
 }));
 
 const drawerItems = [
@@ -159,7 +171,12 @@ export default function ClippedDrawer() {
   const location = useLocation();
   const history = useHistory();
 
+  const { enqueueSnackbar } = useSnackbar();
   const { dark, toggleTheme } = React.useContext(ThemeContext);
+
+  const [open, setOpen] = useState(true);
+  const [isAdmin, setIsAdmin] = useState(false);
+  const [dialog, setDialog] = useState(false);
 
   const [user, setUser] = useState({
     firstName: "",
@@ -172,17 +189,59 @@ export default function ClippedDrawer() {
     subName: null,
     year: null,
   });
-  const [open, setOpen] = useState(true);
-  const [isAdmin, setIsAdmin] = useState(false);
 
   const toggleDrawer = () => setOpen(!open);
+
+  const handleEdit = (e) => {
+    const et = e.target;
+    if (!!et.id) {
+      setUser({ ...user, [et.id]: et.value });
+    } else {
+      setUser({ ...user, [et.name]: et.value });
+    }
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    Axios.post(
+      `http://localhost:8000/api/staff/update/${
+        JSON.parse(sessionStorage.getItem("user")).reg_id
+      }`,
+      user,
+      {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${sessionStorage.getItem("usertoken")}`,
+        },
+      }
+    )
+      .then((res) => {
+        setUser(user);
+        let jsonObj = JSON.parse(sessionStorage.getItem("user"));
+        jsonObj.firstName = user.firstName;
+        jsonObj.lastName = user.lastName;
+        jsonObj.email = user.email;
+        sessionStorage.setItem("user", JSON.stringify(user));
+        handleDialog(false);
+        enqueueSnackbar("Update Successful", { variant: "success" });
+      })
+      .catch((err) => {
+        console.log(err.message);
+        enqueueSnackbar("Could not update", { variant: "error" });
+      });
+  };
+
   const handleLogout = () => {
     sessionStorage.removeItem("usertoken");
     sessionStorage.removeItem("user");
     history.push("");
   };
 
-  useEffect(() => {
+  const handleDialog = () => {
+    setDialog(!dialog);
+  };
+
+  const getDetails = () => {
     Axios.get(
       `http://localhost:8000/api/staff/${
         JSON.parse(sessionStorage.getItem("user")).reg_id
@@ -197,7 +256,17 @@ export default function ClippedDrawer() {
       setUser(res.data.data[0]);
       setIsAdmin(() => (res.data.data[0].is_admin === 0 ? false : true));
     });
+  };
+  useEffect(() => {
+    getDetails();
   }, []);
+
+  useEffect(() => {
+    let user = sessionStorage.getItem("user");
+    if (!user) {
+      history.push("/");
+    }
+  });
 
   return (
     <div className={classes.root}>
@@ -309,6 +378,24 @@ export default function ClippedDrawer() {
                   }
                 />
               </ListItem>
+              <ListItem>
+                <ListItemAvatar>
+                  <Avatar className={classes.avatar}>
+                    <EditAttributes />
+                  </Avatar>
+                </ListItemAvatar>
+                <ListItemText
+                  primary={
+                    <Button
+                      variant="contained"
+                      color="primary"
+                      onClick={handleDialog}
+                    >
+                      Edit Profile
+                    </Button>
+                  }
+                />
+              </ListItem>
             </List>
           </Card>
           <List>
@@ -375,6 +462,68 @@ export default function ClippedDrawer() {
           <Routes />
         </Grid>
       </main>
+      <Dialog
+        open={dialog}
+        onClose={handleDialog}
+        BackdropProps={{
+          classes: {
+            root: classes.backDrop,
+          },
+        }}
+      >
+        <DialogTitle id="alert-dialog-title">
+          Edit Your Profile Here
+        </DialogTitle>
+        <DialogContent>
+          <form className={classes.form} noValidate onSubmit={handleSubmit}>
+            <TextField
+              variant="outlined"
+              margin="normal"
+              required
+              fullWidth
+              id="firstName"
+              label="First name"
+              name="firstName"
+              autoComplete="firstName"
+              value={user.firstName}
+              autoFocus
+              onChange={handleEdit}
+            />
+            <TextField
+              variant="outlined"
+              margin="normal"
+              required
+              fullWidth
+              id="lastName"
+              label="Last name"
+              name="lastName"
+              autoComplete="lastName"
+              value={user.lastName}
+              onChange={handleEdit}
+            />
+            <TextField
+              variant="outlined"
+              margin="normal"
+              required
+              fullWidth
+              id="email"
+              label="Email Address"
+              name="email"
+              autoComplete="email"
+              value={user.email}
+              onChange={handleEdit}
+            />
+          </form>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleDialog} color="primary">
+            Cancel
+          </Button>
+          <Button onClick={handleSubmit} color="primary" autoFocus>
+            Edit
+          </Button>
+        </DialogActions>
+      </Dialog>
     </div>
   );
 }

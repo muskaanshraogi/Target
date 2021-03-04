@@ -30,6 +30,10 @@ const useStyles = makeStyles((theme) => ({
     padding: theme.spacing(2),
     fontSize: "20px",
   },
+  backDrop: {
+    backdropFilter: "blur(3px)",
+    backgroundColor: "rgba(69,69,69,0.9)",
+  },
 }));
 
 export default function TabPanel({ subject }) {
@@ -401,8 +405,11 @@ export default function TabPanel({ subject }) {
       <Dialog
         open={open}
         onClose={handleOpen}
-        aria-labelledby="alert-dialog-title"
-        aria-describedby="alert-dialog-description"
+        BackdropProps={{
+          classes: {
+            root: classes.backDrop,
+          },
+        }}
       >
         <DialogTitle id="alert-dialog-title">{"Save your data?"}</DialogTitle>
         <DialogContent>
