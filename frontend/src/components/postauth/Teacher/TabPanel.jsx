@@ -243,9 +243,9 @@ export default function TabPanel({ subject }) {
       }
     )
       .then((res) => {
-        setTotal(res.data.data[0]);
         if (res.data.data[0].tco1 !== null) {
           setTotalBool(true);
+          setTotal(res.data.data[0]);
         }
       })
       .catch((err) => console.log(err));
