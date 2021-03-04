@@ -151,9 +151,6 @@ export default function Register() {
         <Paper elevation={3}>
           <CssBaseline />
           <div className={classes.paper}>
-            <Avatar className={classes.avatar}>
-              <LockOpenOutlined />
-            </Avatar>
             <Typography component="h1" variant="h3">
               Register
             </Typography>

@@ -230,6 +230,9 @@ export default function TabPanel({ subject }) {
         if (res.data.data[0].tco1 !== null) {
           setTotalBool(true);
         }
+        else {
+          setTotalBool(false)
+        }
       })
       .catch((err) => console.log(err));
   };
@@ -248,6 +251,9 @@ export default function TabPanel({ subject }) {
         setTarget(res.data.data[0]);
         if (res.data.data[0].mt1 !== null) {
           setTargetBool(true);
+        }
+        else {
+          setTargetBool(false)
         }
       })
       .catch((err) => console.log(err));
@@ -272,6 +278,23 @@ export default function TabPanel({ subject }) {
   };
 
   useEffect(() => {
+    setTotal({
+      tco1: 0,
+      tco2: 0,
+      tco3: 0,
+      tco4: 0,
+      tco5: 0,
+      tco6: 0,
+      tsppu: 0,
+    });
+    setTarget({
+      mt1: 0,
+      mt2: 0,
+      mt3: 0,
+      sppu1: 0,
+      sppu2: 0,
+      sppu3: 0,
+    });
     getSubmitted(subject.subId, subject.acadYear);
     getTotalMarks(subject.subId, subject.acadYear);
     getTargetValues(subject.subId, subject.acadYear);
@@ -527,7 +550,7 @@ export default function TabPanel({ subject }) {
             color="primary"
             style={{ margin: "2% 2% 0% 0%" }}
             onClick={handleCalculate}
-            disabled={targetBool && totalBool && submittedBool}
+            disabled={!targetBool || !totalBool || !submittedBool}
           >
             Calculate Attainment
           </Button>
