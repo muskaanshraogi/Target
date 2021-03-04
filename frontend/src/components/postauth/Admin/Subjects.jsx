@@ -109,12 +109,16 @@ export default function Subjects() {
         enqueueSnackbar("Please fill all fields", { variant: "error" });
         return;
       }
-      Axios.post("http://localhost:8000/api/subject/add", addSubjects[0], {
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${sessionStorage.getItem("usertoken")}`,
-        },
-      })
+      Axios.post(
+        `${process.env.REACT_APP_HOST}/api/subject/add`,
+        addSubjects[0],
+        {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${sessionStorage.getItem("usertoken")}`,
+          },
+        }
+      )
         .then((res) => {
           setAddSubjects([
             {
@@ -133,7 +137,7 @@ export default function Subjects() {
         });
     } else {
       Axios.post(
-        "http://localhost:8000/api/subject/add/multiple",
+        `${process.env.REACT_APP_HOST}/api/subject/add/multiple`,
         {
           subjects: addSubjects,
         },
@@ -163,7 +167,7 @@ export default function Subjects() {
 
   const handleDeleteSubject = (subId, acadYear) => {
     Axios.delete(
-      `http://localhost:8000/api/subject/delete/${subId}/${acadYear}`,
+      `${process.env.REACT_APP_HOST}/api/subject/delete/${subId}/${acadYear}`,
       {
         headers: {
           "Content-Type": "application/json",
@@ -186,7 +190,7 @@ export default function Subjects() {
   };
 
   useEffect(() => {
-    Axios.get("http://localhost:8000/api/subject/all", {
+    Axios.get(`${process.env.REACT_APP_HOST}/api/subject/all`, {
       headers: {
         "Content-Type": "application/json",
         Authorization: `Bearer ${sessionStorage.getItem("usertoken")}`,

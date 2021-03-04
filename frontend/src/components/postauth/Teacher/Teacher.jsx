@@ -25,7 +25,7 @@ export default function Teacher() {
   useEffect(() => {
     if (token) {
       Axios.get(
-        `http://localhost:8000/api/staff/${
+        `${process.env.REACT_APP_HOST}/api/staff/${
           JSON.parse(sessionStorage.getItem("user")).reg_id
         }`,
         {

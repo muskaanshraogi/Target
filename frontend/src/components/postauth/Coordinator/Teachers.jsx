@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import {
   TableCell,
   TableRow,
@@ -17,7 +17,7 @@ const Teachers = ({ teachers, coordinator }) => {
   const { enqueueSnackbar } = useSnackbar();
   const handleEmail = (reg_id) => {
     Axios.post(
-      `http://localhost:8000/api/faculty/email/${reg_id}/${coordinator}`,
+      `${process.env.REACT_APP_HOST}/api/faculty/email/${reg_id}/${coordinator}`,
       {},
       {
         headers: {

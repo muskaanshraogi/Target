@@ -2,7 +2,6 @@ import React, { useState, useContext } from "react";
 import {
   Fab,
   Container,
-  Avatar,
   Typography,
   Button,
   CssBaseline,
@@ -13,7 +12,7 @@ import {
   FormControlLabel,
   Checkbox,
 } from "@material-ui/core";
-import { Brightness4, Brightness7, LockOpenOutlined } from "@material-ui/icons";
+import { Brightness4, Brightness7 } from "@material-ui/icons";
 import { makeStyles } from "@material-ui/styles";
 import { Link as RRDLink, useHistory } from "react-router-dom";
 import { useSnackbar } from "notistack";
@@ -129,7 +128,7 @@ export default function Register() {
       enqueueSnackbar("1 Phone numer is mandatory!", { variant: "error" });
       return;
     }
-    Axios.post("http://localhost:8000/api/staff/register", details, {
+    Axios.post(`${process.env.REACT_APP_HOST}/api/staff/register`, details, {
       headers: {
         "Content-Type": "application/json",
       },

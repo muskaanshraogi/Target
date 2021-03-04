@@ -99,7 +99,7 @@ export default function TabPanel({ subject }) {
       else if (parseInt(sub.year) === 3) final += "TE" + div;
       else final += "BE" + div;
       Axios.get(
-        `http://localhost:8000/api/marks/get/${final}/${sub.subId}/${sub.acadYear}`,
+        `${process.env.REACT_APP_HOST}/api/marks/get/${final}/${sub.subId}/${sub.acadYear}`,
         {
           headers: {
             "Content-Type": "application/json",
@@ -115,11 +115,9 @@ export default function TabPanel({ subject }) {
             setRows(res.data.data);
           }
         })
-        .catch((err) => {
-          console.log(err);
-        });
+        .catch((err) => {});
       Axios.get(
-        `http://localhost:8000/api/marks/submit/${sub.subId}/${sub.division}/${sub.acadYear}`,
+        `${process.env.REACT_APP_HOST}/api/marks/submit/${sub.subId}/${sub.division}/${sub.acadYear}`,
         {
           headers: {
             "Content-Type": "application/json",
@@ -132,9 +130,7 @@ export default function TabPanel({ subject }) {
             setSubmitted(true);
           }
         })
-        .catch((err) => {
-          console.log(err);
-        });
+        .catch((err) => {});
     }
   };
 
@@ -178,7 +174,7 @@ export default function TabPanel({ subject }) {
         row.sppu === "" || row.sppu === "A" ? null : parseInt(row.sppu);
     });
     Axios.post(
-      `http://localhost:8000/api/marks/add/${subject.subId}/${subject.acadYear}`,
+      `${process.env.REACT_APP_HOST}/api/marks/add/${subject.subId}/${subject.acadYear}`,
       { marks: final },
       {
         headers: {
@@ -215,7 +211,7 @@ export default function TabPanel({ subject }) {
         row.sppu === "" || row.sppu === "A" ? null : parseInt(row.sppu);
     });
     Axios.post(
-      `http://localhost:8000/api/marks/submit/${subject.subId}/${subject.division}/${subject.acadYear}`,
+      `${process.env.REACT_APP_HOST}/api/marks/submit/${subject.subId}/${subject.division}/${subject.acadYear}`,
       { marks: final },
       {
         headers: {
@@ -238,7 +234,7 @@ export default function TabPanel({ subject }) {
 
   const getTotalMarks = (subId, acadYear) => {
     Axios.get(
-      `http://localhost:8000/api/subject/get/total/${subId}/${acadYear}`,
+      `${process.env.REACT_APP_HOST}/api/subject/get/total/${subId}/${acadYear}`,
       {
         headers: {
           "Content-Type": "application/json",
@@ -252,7 +248,7 @@ export default function TabPanel({ subject }) {
           setTotal(res.data.data[0]);
         }
       })
-      .catch((err) => console.log(err));
+      .catch((err) => {});
   };
 
   useEffect(() => {

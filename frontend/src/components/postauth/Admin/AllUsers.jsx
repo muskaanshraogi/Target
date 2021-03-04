@@ -80,7 +80,7 @@ export default function AllUsers() {
   ]);
 
   const handleDeleteUser = (reg_id) => {
-    Axios.delete(`http://localhost:8000/api/staff/delete/${reg_id}`, {
+    Axios.delete(`${process.env.REACT_APP_HOST}/api/staff/delete/${reg_id}`, {
       headers: {
         "Content-Type": "application/json",
         Authorization: `Bearer ${sessionStorage.getItem("usertoken")}`,
@@ -121,7 +121,6 @@ export default function AllUsers() {
     let value = et.value;
     let newAddSubjects = [...addSubjects];
     newAddSubjects[index] = { ...newAddSubjects[index], [property]: value };
-    console.log(newAddSubjects);
     setAddSubjects(newAddSubjects);
   };
 
@@ -148,7 +147,7 @@ export default function AllUsers() {
     e.preventDefault();
     if (addSubjects.length === 1) {
       Axios.post(
-        `http://localhost:8000/api/faculty/add/${addSubjects[0].reg_id}`,
+        `${process.env.REACT_APP_HOST}/api/faculty/add/${addSubjects[0].reg_id}`,
         addSubjects[0],
         {
           headers: {
@@ -165,7 +164,7 @@ export default function AllUsers() {
         });
     } else {
       Axios.post(
-        `http://localhost:8000/api/faculty/add/multiple/${addSubjects[0].reg_id}`,
+        `${process.env.REACT_APP_HOST}/api/faculty/add/multiple/${addSubjects[0].reg_id}`,
         {
           relations: addSubjects,
         },
@@ -186,7 +185,7 @@ export default function AllUsers() {
   };
 
   useEffect(() => {
-    Axios.get("http://localhost:8000/api/subject/all", {
+    Axios.get(`${process.env.REACT_APP_HOST}/api/subject/all`, {
       headers: {
         "Content-Type": "application/json",
         Authorization: `Bearer ${sessionStorage.getItem("usertoken")}`,
@@ -198,7 +197,7 @@ export default function AllUsers() {
       .catch((err) => {
         enqueueSnackbar("Could not fetch subjects", { variant: "error" });
       });
-    Axios.get("http://localhost:8000/api/staff/all", {
+    Axios.get(`${process.env.REACT_APP_HOST}/api/staff/all`, {
       headers: {
         "Content-Type": "application/json",
         Authorization: `Bearer ${sessionStorage.getItem("usertoken")}`,

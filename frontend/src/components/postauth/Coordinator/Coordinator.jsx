@@ -10,7 +10,7 @@ export default function Coordinator() {
 
   const checkCoordinator = () => {
     Axios.get(
-      `http://localhost:8000/api/faculty/check/coordinator/${
+      `${process.env.REACT_APP_HOST}/api/faculty/check/coordinator/${
         JSON.parse(sessionStorage.getItem("user")).reg_id
       }`,
       {
@@ -19,14 +19,10 @@ export default function Coordinator() {
           Authorization: `Bearer ${sessionStorage.getItem("usertoken")}`,
         },
       }
-    )
-      .then((res) => {
-        setSubjects(res.data.data);
-        setSubject(res.data.data[0]);
-      })
-      .catch((err) => {
-        console.log(err);
-      });
+    ).then((res) => {
+      setSubjects(res.data.data);
+      setSubject(res.data.data[0]);
+    });
   };
 
   useEffect(() => {

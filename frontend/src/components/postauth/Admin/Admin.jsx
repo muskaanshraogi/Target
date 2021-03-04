@@ -99,12 +99,15 @@ export default function Admin() {
 
   const handleDelete = () => {
     if (clearYear) {
-      Axios.delete(`http://localhost:8000/api/final/clear/${acadYear}`, {
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${sessionStorage.getItem("usertoken")}`,
-        },
-      })
+      Axios.delete(
+        `${process.env.REACT_APP_HOST}/api/final/clear/${acadYear}`,
+        {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${sessionStorage.getItem("usertoken")}`,
+          },
+        }
+      )
         .then((res) => {
           enqueueSnackbar(`Delete successful`, { variant: "success" });
         })
@@ -112,7 +115,7 @@ export default function Admin() {
           enqueueSnackbar("Could not delete data", { variant: "error" });
         });
     } else if (resetDb) {
-      Axios.delete(`http://localhost:8000/api/final/reset`, {
+      Axios.delete(`${process.env.REACT_APP_HOST}/api/final/reset`, {
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${sessionStorage.getItem("usertoken")}`,
@@ -131,7 +134,7 @@ export default function Admin() {
   };
 
   useEffect(() => {
-    Axios.get("http://localhost:8000/api/final/acadYear", {
+    Axios.get(`${process.env.REACT_APP_HOST}/api/final/acadYear`, {
       headers: {
         "Content-Type": "application/json",
         Authorization: `Bearer ${sessionStorage.getItem("usertoken")}`,

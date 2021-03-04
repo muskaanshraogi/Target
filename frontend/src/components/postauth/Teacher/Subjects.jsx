@@ -10,11 +10,9 @@ import {
   TableContainer,
   TableHead,
   Paper,
-  IconButton,
   Tabs,
   Tab,
 } from "@material-ui/core";
-import DeleteIcon from "@material-ui/icons/Delete";
 import Axios from "axios";
 import { useSnackbar } from "notistack";
 import TabPanel from "./TabPanel";
@@ -25,36 +23,9 @@ export default function Subjects({ user }) {
   const [mySubjects, setMySubjects] = useState([]);
   const [subject, setSubject] = useState({});
 
-  const handleDeleteSubject = (data) => {
-    let reg_id = JSON.parse(sessionStorage.getItem("user")).reg_id;
-    let token = sessionStorage.getItem("usertoken");
-    Axios.post(
-      `http://localhost:8000/api/faculty/delete/${reg_id}`,
-      {
-        subject: data.subName,
-        division: data.division,
-      },
-      {
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-      }
-    )
-      .then((res) => {
-        let newAllSubjects = [...mySubjects];
-        newAllSubjects = mySubjects.filter((s) => s.subId !== data.subId);
-        setMySubjects(newAllSubjects);
-        enqueueSnackbar("Deleted entry", { variant: "success" });
-      })
-      .catch((err) => {
-        enqueueSnackbar("Could not delete entry", { variant: "error" });
-      });
-  };
-
   useEffect(() => {
     Axios.get(
-      `http://localhost:8000/api/subject/teacher/${
+      `${process.env.REACT_APP_HOST}/api/subject/teacher/${
         JSON.parse(sessionStorage.getItem("user")).reg_id
       }`,
       {

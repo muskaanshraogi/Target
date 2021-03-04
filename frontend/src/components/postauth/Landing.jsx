@@ -204,7 +204,7 @@ export default function ClippedDrawer() {
   const handleSubmit = (e) => {
     e.preventDefault();
     Axios.post(
-      `http://localhost:8000/api/staff/update/${
+      `${process.env.REACT_APP_HOST}/api/staff/update/${
         JSON.parse(sessionStorage.getItem("user")).reg_id
       }`,
       user,
@@ -226,7 +226,6 @@ export default function ClippedDrawer() {
         enqueueSnackbar("Update Successful", { variant: "success" });
       })
       .catch((err) => {
-        console.log(err.message);
         enqueueSnackbar("Could not update", { variant: "error" });
       });
   };
@@ -243,7 +242,7 @@ export default function ClippedDrawer() {
 
   const getDetails = () => {
     Axios.get(
-      `http://localhost:8000/api/staff/${
+      `${process.env.REACT_APP_HOST}/api/staff/${
         JSON.parse(sessionStorage.getItem("user")).reg_id
       }`,
       {

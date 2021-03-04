@@ -18,7 +18,6 @@ import {
   Dialog,
   DialogActions,
   DialogTitle,
-  colors,
 } from "@material-ui/core";
 import Axios from "axios";
 import { useSnackbar } from "notistack";
@@ -74,7 +73,7 @@ export default function TabPanel({ subject }) {
 
   const handleTotal = () => {
     Axios.post(
-      `http://localhost:8000/api/subject/set/total/${subId}/${acadYear}`,
+      `${process.env.REACT_APP_HOST}/api/subject/set/total/${subId}/${acadYear}`,
       total,
       {
         headers: {
@@ -98,7 +97,7 @@ export default function TabPanel({ subject }) {
 
   const handleTarget = () => {
     Axios.post(
-      `http://localhost:8000/api/subject/set/target/${subId}/${acadYear}`,
+      `${process.env.REACT_APP_HOST}/api/subject/set/target/${subId}/${acadYear}`,
       target,
       {
         headers: {
@@ -132,7 +131,7 @@ export default function TabPanel({ subject }) {
 
   const handleCalculate = () => {
     Axios.get(
-      `http://localhost:8000/api/final/calculate/${teachers[0].subId}/${acadYear}`,
+      `${process.env.REACT_APP_HOST}/api/final/calculate/${teachers[0].subId}/${acadYear}`,
       {
         headers: {
           "Content-Type": "application/json",
@@ -142,7 +141,7 @@ export default function TabPanel({ subject }) {
     )
       .then((res) => {
         Axios.get(
-          `http://localhost:8000/api/final/attainment/${teachers[0].subId}/${acadYear}`,
+          `${process.env.REACT_APP_HOST}/api/final/attainment/${teachers[0].subId}/${acadYear}`,
           {
             headers: {
               "Content-Type": "application/json",
@@ -167,7 +166,7 @@ export default function TabPanel({ subject }) {
 
   const getTeachers = (subId, acadYear) => {
     Axios.get(
-      `http://localhost:8000/api/faculty/subject/teacher/${subId}/${acadYear}`,
+      `${process.env.REACT_APP_HOST}/api/faculty/subject/teacher/${subId}/${acadYear}`,
       {
         headers: {
           "Content-Type": "application/json",
@@ -193,12 +192,15 @@ export default function TabPanel({ subject }) {
   };
 
   const getSubmitted = (subId, acadYear) => {
-    Axios.get(`http://localhost:8000/api/marks/submit/${subId}/${acadYear}`, {
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${sessionStorage.getItem("usertoken")}`,
-      },
-    })
+    Axios.get(
+      `${process.env.REACT_APP_HOST}/api/marks/submit/${subId}/${acadYear}`,
+      {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${sessionStorage.getItem("usertoken")}`,
+        },
+      }
+    )
       .then((res) => {
         let data = res.data.data;
         let temp = [...teachers];
@@ -211,12 +213,12 @@ export default function TabPanel({ subject }) {
         if (count === 3) setSubmittedBool(true);
         setTeachers(temp);
       })
-      .catch((err) => console.log(err));
+      .catch((err) => {});
   };
 
   const getTotalMarks = (subId, acadYear) => {
     Axios.get(
-      `http://localhost:8000/api/subject/get/total/${subId}/${acadYear}`,
+      `${process.env.REACT_APP_HOST}/api/subject/get/total/${subId}/${acadYear}`,
       {
         headers: {
           "Content-Type": "application/json",
@@ -229,17 +231,16 @@ export default function TabPanel({ subject }) {
         console.log(res.data.data[0]);
         if (res.data.data[0].tco1 !== null) {
           setTotalBool(true);
-        }
-        else {
-          setTotalBool(false)
+        } else {
+          setTotalBool(false);
         }
       })
-      .catch((err) => console.log(err));
+      .catch((err) => {});
   };
 
   const getTargetValues = (subId, acadYear) => {
     Axios.get(
-      `http://localhost:8000/api/subject/get/target/${subId}/${acadYear}`,
+      `${process.env.REACT_APP_HOST}/api/subject/get/target/${subId}/${acadYear}`,
       {
         headers: {
           "Content-Type": "application/json",
@@ -251,17 +252,16 @@ export default function TabPanel({ subject }) {
         setTarget(res.data.data[0]);
         if (res.data.data[0].mt1 !== null) {
           setTargetBool(true);
-        }
-        else {
-          setTargetBool(false)
+        } else {
+          setTargetBool(false);
         }
       })
-      .catch((err) => console.log(err));
+      .catch((err) => {});
   };
 
   const getAttainment = (subId, acadYear) => {
     Axios.get(
-      `http://localhost:8000/api/final/attainment/${subId}/${acadYear}`,
+      `${process.env.REACT_APP_HOST}/api/final/attainment/${subId}/${acadYear}`,
       {
         headers: {
           "Content-Type": "application/json",
