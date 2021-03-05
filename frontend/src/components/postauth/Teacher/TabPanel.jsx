@@ -164,14 +164,34 @@ export default function TabPanel({ subject }) {
     let final = [...rows];
     final.map((row) => {
       row.roll_no = parseInt(row.roll_no);
-      row.co1 = row.co1 === "" || row.co1 === "A" ? null : parseInt(row.co1);
-      row.co2 = row.co2 === "" || row.co2 === "A" ? null : parseInt(row.co2);
-      row.co3 = row.co3 === "" || row.co3 === "A" ? null : parseInt(row.co3);
-      row.co4 = row.co4 === "" || row.co4 === "A" ? null : parseInt(row.co4);
-      row.co5 = row.co5 === "" || row.co5 === "A" ? null : parseInt(row.co5);
-      row.co6 = row.co6 === "" || row.co6 === "A" ? null : parseInt(row.co6);
+      row.co1 =
+        row.co1 === "" || row.co1 === "A" || row.co1 === "FF"
+          ? null
+          : parseInt(row.co1);
+      row.co2 =
+        row.co2 === "" || row.co2 === "A" || row.co2 === "FF"
+          ? null
+          : parseInt(row.co2);
+      row.co3 =
+        row.co3 === "" || row.co3 === "A" || row.co3 === "FF"
+          ? null
+          : parseInt(row.co3);
+      row.co4 =
+        row.co4 === "" || row.co4 === "A" || row.co4 === "FF"
+          ? null
+          : parseInt(row.co4);
+      row.co5 =
+        row.co5 === "" || row.co5 === "A" || row.co5 === "FF"
+          ? null
+          : parseInt(row.co5);
+      row.co6 =
+        row.co6 === "" || row.co6 === "A" || row.co6 === "FF"
+          ? null
+          : parseInt(row.co6);
       row.sppu =
-        row.sppu === "" || row.sppu === "A" ? null : parseInt(row.sppu);
+        row.sppu === "" || row.sppu === "A" || row.sppu === "FF"
+          ? null
+          : parseInt(row.sppu);
     });
     Axios.post(
       `${process.env.REACT_APP_HOST}/api/marks/add/${subject.subId}/${subject.acadYear}`,
@@ -189,7 +209,6 @@ export default function TabPanel({ subject }) {
         });
       })
       .catch((err) => {
-        console.log(err);
         enqueueSnackbar("Could Not Save Your Data", { variant: "error" });
       });
   };
@@ -201,14 +220,34 @@ export default function TabPanel({ subject }) {
     let final = [...rows];
     final.map((row) => {
       row.roll_no = parseInt(row.roll_no);
-      row.co1 = row.co1 === "" || row.co1 === "A" ? null : parseInt(row.co1);
-      row.co2 = row.co2 === "" || row.co2 === "A" ? null : parseInt(row.co2);
-      row.co3 = row.co3 === "" || row.co3 === "A" ? null : parseInt(row.co3);
-      row.co4 = row.co4 === "" || row.co4 === "A" ? null : parseInt(row.co4);
-      row.co5 = row.co5 === "" || row.co5 === "A" ? null : parseInt(row.co5);
-      row.co6 = row.co6 === "" || row.co6 === "A" ? null : parseInt(row.co6);
+      row.co1 =
+        row.co1 === "" || row.co1 === "A" || row.co1 === "FF"
+          ? null
+          : parseInt(row.co1);
+      row.co2 =
+        row.co2 === "" || row.co2 === "A" || row.co2 === "FF"
+          ? null
+          : parseInt(row.co2);
+      row.co3 =
+        row.co3 === "" || row.co3 === "A" || row.co3 === "FF"
+          ? null
+          : parseInt(row.co3);
+      row.co4 =
+        row.co4 === "" || row.co4 === "A" || row.co4 === "FF"
+          ? null
+          : parseInt(row.co4);
+      row.co5 =
+        row.co5 === "" || row.co5 === "A" || row.co5 === "FF"
+          ? null
+          : parseInt(row.co5);
+      row.co6 =
+        row.co6 === "" || row.co6 === "A" || row.co6 === "FF"
+          ? null
+          : parseInt(row.co6);
       row.sppu =
-        row.sppu === "" || row.sppu === "A" ? null : parseInt(row.sppu);
+        row.sppu === "" || row.sppu === "A" || row.sppu === "FF"
+          ? null
+          : parseInt(row.sppu);
     });
     Axios.post(
       `${process.env.REACT_APP_HOST}/api/marks/submit/${subject.subId}/${subject.division}/${subject.acadYear}`,

@@ -228,7 +228,6 @@ export default function TabPanel({ subject }) {
     )
       .then((res) => {
         setTotal(res.data.data[0]);
-        console.log(res.data.data[0]);
         if (res.data.data[0].tco1 !== null) {
           setTotalBool(true);
         } else {
@@ -550,7 +549,7 @@ export default function TabPanel({ subject }) {
             color="primary"
             style={{ margin: "2% 2% 0% 0%" }}
             onClick={handleCalculate}
-            disabled={!targetBool || !totalBool || !submittedBool}
+            disabled={!targetBool || !totalBool}
           >
             Calculate Attainment
           </Button>

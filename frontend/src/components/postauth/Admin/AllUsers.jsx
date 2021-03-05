@@ -20,7 +20,6 @@ import {
   DialogContent,
   DialogContentText,
   FormControlLabel,
-  TextField,
   Button,
   Checkbox,
 } from "@material-ui/core";
@@ -75,7 +74,7 @@ export default function AllUsers() {
       subject: "",
       role: "Subject Teacher",
       division: 9,
-      acadYear: "2020-21",
+      acadYear: "",
     },
   ]);
 
@@ -103,7 +102,7 @@ export default function AllUsers() {
         role: "Subject Teacher",
         division: "",
         reg_id: "",
-        acadYear: "2020-21",
+        acadYear: "",
       },
     ]);
   };
@@ -120,6 +119,13 @@ export default function AllUsers() {
     let property = et.name.split(" ")[0];
     let value = et.value;
     let newAddSubjects = [...addSubjects];
+    if (property === "subject") {
+      let obj = subjects.find((sub) => sub.subName === value);
+      newAddSubjects[index] = {
+        ...newAddSubjects[index],
+        acadYear: obj.acadYear,
+      };
+    }
     newAddSubjects[index] = { ...newAddSubjects[index], [property]: value };
     setAddSubjects(newAddSubjects);
   };
@@ -259,7 +265,7 @@ export default function AllUsers() {
                 >
                   {subjects.map((subject, index) => (
                     <MenuItem key={index} value={subject.subName}>
-                      {subject.subId} - {subject.subName}
+                      {subject.subId} - {subject.subName} - {subject.acadYear}
                     </MenuItem>
                   ))}
                 </Select>
@@ -287,19 +293,6 @@ export default function AllUsers() {
                     </MenuItem>
                   ))}
                 </Select>
-              </Grid>
-              <Grid item>
-                <TextField
-                  variant="outlined"
-                  style={{ margin: "0% 5% 0% 6%" }}
-                  required
-                  fullWidth
-                  defaultValue={subject.acadYear}
-                  label="Enter academic year(YYYY-YY)"
-                  name={"acadYear " + index}
-                  onChange={handleChange}
-                  autoComplete="acadYear"
-                />
               </Grid>
               <Grid
                 container

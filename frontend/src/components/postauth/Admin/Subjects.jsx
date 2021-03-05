@@ -161,7 +161,9 @@ export default function Subjects() {
           setAllSubjects(newAllSubjects);
           enqueueSnackbar("Added subjects", { variant: "success" });
         })
-        .catch((err) => enqueueSnackbar("Invalid", { variant: "error" }));
+        .catch((err) =>
+          enqueueSnackbar("Duplicate entry!", { variant: "error" })
+        );
     }
   };
 
