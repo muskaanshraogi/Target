@@ -160,7 +160,9 @@ export default function TabPanel({ subject }) {
           });
       })
       .catch((err) => {
-        enqueueSnackbar("Could not calculate attainment", { variant: "error" });
+        enqueueSnackbar("Attainment has already been calculated", {
+          variant: "info",
+        });
       });
   };
 
@@ -205,7 +207,7 @@ export default function TabPanel({ subject }) {
         let data = res.data.data;
         let temp = [...teachers];
         let count = 0;
-        temp.map((obj) => {
+        temp.forEach((obj) => {
           let t = data.find((d) => d.division === obj.division);
           obj.submitted = t.submitted;
           if (t.submitted === 1) count++;
