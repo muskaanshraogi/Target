@@ -23,6 +23,8 @@ const addRelation = (relation, teacher, callback) => {
 
 const addMultipleRelations = (data, teacher, callback) => {
   let count = 0;
+  let err = false;
+  let er
   data.relations.forEach((relation) => {
     db.query(
       "CALL teacher_subject(?, ?, ?, ?, ?)",
@@ -34,11 +36,17 @@ const addMultipleRelations = (data, teacher, callback) => {
         relation.acadYear,
       ],
       (err, res) => {
+        count++
         if (err) {
-          return callback(err, 500, null);
-        } else {
-          count++;
-          if (count === data.relations.length) {
+          error = true
+          er = err
+        } 
+
+        if (count === data.relations.length) {
+          if(error) {
+            return callback(er, 500, null);
+          }
+          else {
             return callback(null, 201, res);
           }
         }

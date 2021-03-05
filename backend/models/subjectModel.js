@@ -16,16 +16,24 @@ const addSubject = (subject, callback) => {
 
 const addMultipleSubjects = (data, callback) => {
   let count = 0;
+  let error = false
+  let er
   data.subjects.forEach((subject) => {
     db.query(
       "INSERT INTO subject(subId, subName, year, acadYear) VALUES(?, ?, ?, ?)",
       [subject.subId, subject.subName, subject.year, subject.acadYear],
       (err, res) => {
+        count++;
         if (err) {
-          return callback(err, 500, null);
-        } else {
-          count++;
-          if (count === data.subjects.length) {
+          error = true
+          er = err 
+        } 
+
+        if (count === data.subjects.length) {
+          if(error) {
+            return callback(er, 500, null);
+          }
+          else {
             return callback(null, 201, true);
           }
         }

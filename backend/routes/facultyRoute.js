@@ -29,8 +29,7 @@ router.post("/add/multiple/:reg_id", authenticate, (req, res, next) => {
     req.body,
     req.params.reg_id,
     (err, status, data) => {
-      if (err) {
-        console.log(err);
+      if (err) {;
         delete err.sql;
         res.status(status).send({ err: err, data: null });
       } else {
