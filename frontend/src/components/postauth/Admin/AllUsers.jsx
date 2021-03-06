@@ -31,8 +31,8 @@ const division = [9, 10, 11];
 
 const useStyles = makeStyles((theme) => ({
   avatar: {
-    color: theme.palette.getContrastText(colors.blue[600]),
-    backgroundColor: colors.blue[600],
+    color: '#FFFFFF',
+    backgroundColor: '#193B55',
   },
   card: {
     marginTop: "1%",
@@ -326,8 +326,8 @@ export default function AllUsers() {
             Submit
           </Button>
           <Button
-            color="secondary"
-            variant="contained"
+            color="primary"
+            variant="outlined"
             onClick={handleAddSubject}
             style={{ margin: "2% 0% 1% 1%" }}
           >
@@ -380,6 +380,7 @@ export default function AllUsers() {
               <ListItemSecondaryAction>
                 <IconButton
                   edge="end"
+                  color='primary'
                   aria-label="delete"
                   onClick={() => {
                     setOpen(true);
@@ -425,6 +426,7 @@ export default function AllUsers() {
                 <ListItemSecondaryAction>
                   <IconButton
                     edge="end"
+                    color='primary'
                     aria-label="delete"
                     onClick={() => {
                       setOpen(true);

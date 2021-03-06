@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import {
+  makeStyles,
   Grid,
   Card,
   CardHeader,
@@ -17,8 +18,20 @@ import Axios from "axios";
 import { useSnackbar } from "notistack";
 import TabPanel from "./TabPanel";
 
+const useStyles = makeStyles((theme) => ({
+  title: {
+    fontSize: '17px'
+  },
+  text: {
+    fontSize: '15px'
+  }
+}));
+
 export default function Subjects({ user }) {
+  const classes = useStyles();
+
   const { enqueueSnackbar } = useSnackbar();
+
   const [value, setValue] = useState(0);
   const [mySubjects, setMySubjects] = useState([]);
   const [subject, setSubject] = useState({});
@@ -49,28 +62,28 @@ export default function Subjects({ user }) {
       <Grid item spacing={2}>
         <Card>
           <CardHeader
-            title="Your Subjects"
-            titleTypographyProps={{ variant: "h3" }}
+            title="My Subjects"
+            titleTypographyProps={{ variant: "h4" }}
           />
           <TableContainer component={Paper}>
             <Table aria-label="caption table">
               <TableHead>
                 <TableRow>
-                  <TableCell align="center">Subject ID</TableCell>
-                  <TableCell align="center">Subject Name</TableCell>
-                  <TableCell align="center">Year</TableCell>
-                  <TableCell align="center">Division</TableCell>
-                  <TableCell align="center">Role</TableCell>
+                  <TableCell align="center" className={classes.title}>Subject ID</TableCell>
+                  <TableCell align="center" className={classes.title}>Subject Name</TableCell>
+                  <TableCell align="center" className={classes.title}>Year</TableCell>
+                  <TableCell align="center" className={classes.title}>Division</TableCell>
+                  <TableCell align="center" className={classes.title}>Role</TableCell>
                 </TableRow>
               </TableHead>
               <TableBody>
                 {mySubjects.map((subject, index) => (
                   <TableRow key={subject.subId}>
-                    <TableCell align="center">{subject.subId}</TableCell>
-                    <TableCell align="center">{subject.subName}</TableCell>
-                    <TableCell align="center">{subject.year}</TableCell>
-                    <TableCell align="center">{subject.division}</TableCell>
-                    <TableCell align="center">
+                    <TableCell align="center" className={classes.text}>{subject.subId}</TableCell>
+                    <TableCell align="center" className={classes.text}>{subject.subName}</TableCell>
+                    <TableCell align="center" className={classes.text}>{subject.year}</TableCell>
+                    <TableCell align="center" className={classes.text}>{subject.division}</TableCell>
+                    <TableCell align="center" className={classes.text}>
                       {subject.role_id === 1 ? "Teacher" : "Coordinator"}
                     </TableCell>
                   </TableRow>

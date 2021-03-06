@@ -33,7 +33,7 @@ const useStyles = makeStyles((theme) => ({
     backgroundColor: colors.grey[900],
   },
   buttonDg: {
-    backgroundColor: "#f50057",
+    backgroundColor: "#193B55",
     color: "#ffffff",
     margin: "1% 2% 0 0",
   },
@@ -182,6 +182,7 @@ export default function Admin() {
         <Button
           className={classes.buttonDg}
           variant="contained"
+          color='secondary'
           onClick={() => {
             setResetDb(true);
           }}

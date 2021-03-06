@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react";
 import {
   makeStyles,
-  fade,
   Drawer,
   AppBar,
   CssBaseline,
@@ -16,9 +15,9 @@ import {
   Avatar,
   Card,
   CardHeader,
-  colors,
   ListItemAvatar,
   Button,
+  Tooltip,
   Dialog,
   DialogTitle,
   DialogActions,
@@ -28,14 +27,9 @@ import {
 import {
   SupervisorAccount,
   Menu,
-  Brightness7,
-  Brightness4,
   AccountCircle,
-  ExitToApp,
-  EditAttributes,
-} from "@material-ui/icons";
+  ExitToApp } from "@material-ui/icons";
 import SupervisedUserCircleIcon from "@material-ui/icons/SupervisedUserCircle";
-import { ThemeContext } from "../../context/useTheme";
 import Routes from "./Routes";
 import clsx from "clsx";
 import { useHistory, useLocation } from "react-router-dom";
@@ -47,9 +41,13 @@ import { useSnackbar } from "notistack";
 const drawerWidth = 400;
 
 const useStyles = makeStyles((theme) => ({
+  avatar2: {
+    color: '#FFFFFF',
+    backgroundColor: '#F38630',
+  },
   avatar: {
-    color: theme.palette.getContrastText(colors.blue[600]),
-    backgroundColor: colors.blue[600],
+    color: '#FFFFFF',
+    backgroundColor: '#193B55',
   },
   root: {
     display: "flex",
@@ -59,56 +57,12 @@ const useStyles = makeStyles((theme) => ({
   },
   logo: { marginRight: theme.spacing(2) },
   title: {
+    fontFamily: "'Pacifico', cursive",
     flexGrow: 1,
     display: "none",
     [theme.breakpoints.up("sm")]: {
       display: "block",
     },
-  },
-  search: {
-    position: "relative",
-    borderRadius: theme.shape.borderRadius,
-    backgroundColor: fade(theme.palette.common.white, 0.15),
-    "&:hover": {
-      backgroundColor: fade(theme.palette.common.white, 0.25),
-    },
-    marginLeft: 0,
-    width: "100%",
-    [theme.breakpoints.up("sm")]: {
-      marginLeft: theme.spacing(1),
-      width: "auto",
-    },
-  },
-  searchIcon: {
-    padding: theme.spacing(0, 2),
-    height: "100%",
-    position: "absolute",
-    pointerEvents: "none",
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  inputRoot: {
-    color: "inherit",
-  },
-  inputInput: {
-    padding: theme.spacing(1, 1, 1, 0),
-    // vertical padding + font size from searchIcon
-    paddingLeft: `calc(1em + ${theme.spacing(4)}px)`,
-    transition: theme.transitions.create("width"),
-    width: "100%",
-    [theme.breakpoints.up("sm")]: {
-      width: "12ch",
-      "&:focus": {
-        width: "20ch",
-      },
-    },
-  },
-  toggleIcon: { marginLeft: theme.spacing(3), float: "right" },
-  drawer: {
-    width: drawerWidth,
-    flexShrink: 0,
-    whiteSpace: "nowrap",
   },
   drawerOpen: {
     width: drawerWidth,
@@ -141,27 +95,27 @@ const useStyles = makeStyles((theme) => ({
   list: {
     paddingLeft: theme.spacing(1),
   },
-  nested: {
-    paddingLeft: theme.spacing(4),
-  },
   backDrop: {
     backdropFilter: "blur(3px)",
-    backgroundColor: "rgba(69,69,69,0.9)",
+    backgroundColor: "rgba(69,69,69,0.8)",
   },
+  listItem: {
+    padding: '0 auto',
+  }
 }));
 
 const drawerItems = [
   {
     name: "Admin Interface",
-    icon: <SupervisorAccount />,
+    icon: <SupervisorAccount color='primary'/>,
   },
   {
     name: "Teacher Interface",
-    icon: <AccountCircle />,
+    icon: <AccountCircle color='primary'/>,
   },
   {
     name: "Coordinator Interface",
-    icon: <SupervisedUserCircleIcon />,
+    icon: <SupervisedUserCircleIcon color='primary'/>,
   },
 ];
 
@@ -172,7 +126,6 @@ export default function ClippedDrawer() {
   const history = useHistory();
 
   const { enqueueSnackbar } = useSnackbar();
-  const { dark, toggleTheme } = React.useContext(ThemeContext);
 
   const [open, setOpen] = useState(true);
   const [isAdmin, setIsAdmin] = useState(false);
@@ -270,7 +223,7 @@ export default function ClippedDrawer() {
   return (
     <div className={classes.root}>
       <CssBaseline />
-      <AppBar position="fixed" className={classes.appBar} color="inherit">
+      <AppBar position="fixed" className={classes.appBar} color='primary'>
         <Toolbar>
           <IconButton
             edge="start"
@@ -283,11 +236,10 @@ export default function ClippedDrawer() {
           <Typography variant="h4" className={classes.title}>
             Target
           </Typography>
-          <IconButton onClick={toggleTheme} className={classes.toggleIcon}>
-            {dark ? <Brightness7 /> : <Brightness4 />}
-          </IconButton>
           <IconButton onClick={handleLogout}>
-            <ExitToApp />
+            <Tooltip title='Logout'>
+              <ExitToApp style={{ height: '25px', color: '#ffffff' }}/>
+            </Tooltip>
           </IconButton>
         </Toolbar>
       </AppBar>
@@ -307,20 +259,15 @@ export default function ClippedDrawer() {
         <Toolbar />
         <div className={classes.drawerContainer}>
           <Card>
-            {user && (
+            {user && open && (
               <CardHeader
                 title={`${user.firstName} ${user.lastName}`}
-                avatar={
-                  <Avatar className={classes.avatar}>{`${user.firstName.charAt(
-                    0
-                  )}${user.lastName.charAt(0)}`}</Avatar>
-                }
                 titleTypographyProps={{ variant: "h4" }}
                 subheaderTypographyProps={{ variant: "h6" }}
               />
             )}
             <List dense>
-              <ListItem>
+              <ListItem className={classes.listItem}>
                 <ListItemAvatar>
                   <Avatar className={classes.avatar}>
                     <EmailIcon />
@@ -339,7 +286,7 @@ export default function ClippedDrawer() {
                   }
                 />
               </ListItem>
-              <ListItem>
+              <ListItem className={classes.listItem}>
                 <ListItemAvatar>
                   <Avatar className={classes.avatar}>
                     <VpnKey />
@@ -358,7 +305,7 @@ export default function ClippedDrawer() {
                   }
                 />
               </ListItem>
-              <ListItem>
+              <ListItem className={classes.listItem}>
                 <ListItemAvatar>
                   <Avatar className={classes.avatar}>
                     <AccessibilityNew />
@@ -377,23 +324,18 @@ export default function ClippedDrawer() {
                   }
                 />
               </ListItem>
-              <ListItem>
-                <ListItemAvatar>
-                  <Avatar className={classes.avatar}>
-                    <EditAttributes />
-                  </Avatar>
-                </ListItemAvatar>
-                <ListItemText
+              <ListItem className={classes.listItem}>
+                {open ? <ListItemText
                   primary={
                     <Button
-                      variant="contained"
+                      variant="outlined"
                       color="primary"
                       onClick={handleDialog}
                     >
                       Edit Profile
                     </Button>
                   }
-                />
+                /> : null}
               </ListItem>
             </List>
           </Card>
@@ -471,7 +413,7 @@ export default function ClippedDrawer() {
         }}
       >
         <DialogTitle id="alert-dialog-title">
-          Edit Your Profile Here
+          Edit My Profile 
         </DialogTitle>
         <DialogContent>
           <form className={classes.form} noValidate onSubmit={handleSubmit}>

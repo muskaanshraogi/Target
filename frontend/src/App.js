@@ -1,38 +1,25 @@
-import React, { useContext } from "react";
+import React from "react";
 import Routes from "./components/Routes";
 import {
-  colors,
   MuiThemeProvider,
   createMuiTheme,
   CssBaseline,
 } from "@material-ui/core";
-import { ThemeContext } from "./context/useTheme";
 
 const lightPallete = {
   palette: {
     type: "light",
-    primary: { main: colors.blue[500] },
-    secondary: { main: colors.blue[300] },
-    background: { paper: colors.grey[100], default: colors.grey[200] },
-  },
-};
-
-const darkPallette = {
-  palette: {
-    type: "dark",
-    primary: { main: colors.blue[500] },
-    secondary: { main: colors.blue[300] },
-    background: { paper: colors.grey[800], default: colors.grey[900] },
+    primary: { main: '#E50058', light: '#FFBE36', contrastText: '#FFFFFF' },
+    secondary: { main: '#193B55', light: '#69D2E7', contrastText: '#000000' },
+    background: { paper: '#FCFCFC', default: '#F5F5F5' },
   },
 };
 
 function App() {
-  const { dark } = useContext(ThemeContext);
 
   const theme = React.useMemo(
-    () => (dark ? createMuiTheme(darkPallette) : createMuiTheme(lightPallete)),
-    [dark]
-  );
+    () => (createMuiTheme(lightPallete)), []
+  )
 
   return (
     <MuiThemeProvider theme={theme}>
