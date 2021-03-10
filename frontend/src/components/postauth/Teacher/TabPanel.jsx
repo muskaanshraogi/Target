@@ -36,28 +36,18 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-export default function TabPanel({ subject }) {
+export default function TabPanel(props) {
   const classes = useStyles();
   const { enqueueSnackbar } = useSnackbar();
   const [token, setToken] = useState(null);
   const [table, setTable] = useState(true);
   const [text, setText] = useState(false);
   const [number, setNumber] = useState(0);
-  const [sub, setSub] = useState(subject);
+  const [sub, setSub] = useState(null);
   let [rollNumber, setRollNumber] = useState("");
   const [rows, setRows] = useState([]);
   const [open, setOpen] = useState(false);
   const [submitted, setSubmitted] = useState(false);
-  const [totalBool, setTotalBool] = useState(false);
-  const [total, setTotal] = useState({
-    tco1: 0,
-    tco2: 0,
-    tco3: 0,
-    tco4: 0,
-    tco5: 0,
-    tco6: 0,
-    tsppu: 0,
-  });
 
   const columns = [
     { key: "roll_no", name: "Roll Number", editable: false },
@@ -194,7 +184,7 @@ export default function TabPanel({ subject }) {
           : parseInt(row.sppu);
     });
     Axios.post(
-      `${process.env.REACT_APP_HOST}/api/marks/add/${subject.subId}/${subject.acadYear}`,
+      `${process.env.REACT_APP_HOST}/api/marks/add/${props.match.params.subject}/${props.match.params.acadYear}`,
       { marks: final },
       {
         headers: {
@@ -216,6 +206,7 @@ export default function TabPanel({ subject }) {
   const handleOpen = () => {
     setOpen(!open);
   };
+
   const handleSubmit = () => {
     let final = [...rows];
     final.map((row) => {
@@ -250,7 +241,7 @@ export default function TabPanel({ subject }) {
           : parseInt(row.sppu);
     });
     Axios.post(
-      `${process.env.REACT_APP_HOST}/api/marks/submit/${subject.subId}/${subject.division}/${subject.acadYear}`,
+      `${process.env.REACT_APP_HOST}/api/marks/submit/${sub.subId}/${sub.division}/${sub.acadYear}`,
       { marks: final },
       {
         headers: {
@@ -271,9 +262,11 @@ export default function TabPanel({ subject }) {
       });
   };
 
-  const getTotalMarks = (subId, acadYear) => {
+  useEffect(() => {
     Axios.get(
-      `${process.env.REACT_APP_HOST}/api/subject/get/total/${subId}/${acadYear}`,
+      `${process.env.REACT_APP_HOST}/api/subject/${props.match.params.subject}/${props.match.params.acadYear}/${
+        JSON.parse(sessionStorage.getItem("user")).reg_id
+      }`,
       {
         headers: {
           "Content-Type": "application/json",
@@ -282,18 +275,18 @@ export default function TabPanel({ subject }) {
       }
     )
       .then((res) => {
-        if (res.data.data[0].tco1 !== null) {
-          setTotalBool(true);
-          setTotal(res.data.data[0]);
-        }
+        console.log(res.data.data[0])
+        setSub(res.data.data[0]);
+        setRollNumber(
+          generateRoll(parseInt(res.data.data[0].division), parseInt(res.data.data[0].year))
+        );
       })
-      .catch((err) => {});
-  };
+      .catch((err) => {
+        enqueueSnackbar("Could not fetch my subjects", { variant: "error" });
+      });
 
-  useEffect(() => {
     setToken(sessionStorage.getItem("usertoken"));
-    setSub(subject);
-  }, [subject]);
+  }, [enqueueSnackbar, props]);
 
   useEffect(() => {
     setRows([]);
@@ -301,167 +294,164 @@ export default function TabPanel({ subject }) {
     setText(false);
     setSubmitted(false);
     getMarks(sub);
-    getTotalMarks(sub.subId, sub.acadYear);
-  }, [token, sub]);
-
-  useEffect(() => {
-    setRollNumber(
-      generateRoll(parseInt(subject.division), parseInt(subject.year))
-    );
-  }, [subject.division, subject.year]);
+  }, [sub]);
 
   return (
-    <div style={{ padding: "2%" }}>
-      <Typography variant="h3">Subject Details</Typography>
-      <Grid container spacing={1} style={{ padding: "2%", paddingLeft: "0" }}>
-        <Grid item xs={6}>
-          <Paper className={classes.paper}>Subject ID : {subject.subId}</Paper>
-        </Grid>
-        <Grid item xs={6}>
-          <Paper className={classes.paper}>
-            Subject Name : {subject.subName}
-          </Paper>
-        </Grid>
-        <Grid item xs={4}>
-          <Paper className={classes.paper}>Year : {subject.year}</Paper>
-        </Grid>
-        <Grid item xs={4}>
-          <Paper className={classes.paper}>Divison : {subject.division}</Paper>
-        </Grid>
-        <Grid item xs={4}>
-          <Paper className={classes.paper}>
-            Coordinator : {parseInt(subject.role_id) === 2 ? "Yes" : "No"}
-          </Paper>
-        </Grid>
-        <Grid item xs={12}>
-          <TableContainer component={Paper}>
-            <Table aria-label="caption table">
-              <TableHead>
-                <TableRow>
-                  <TableCell align="center">CO 1</TableCell>
-                  <TableCell align="center">CO 2</TableCell>
-                  <TableCell align="center">CO 3</TableCell>
-                  <TableCell align="center">CO 4</TableCell>
-                  <TableCell align="center">CO 5</TableCell>
-                  <TableCell align="center">CO 6</TableCell>
-                  <TableCell align="center">SPPU</TableCell>
-                </TableRow>
-              </TableHead>
-              {!total.tco1 ? (
-                <TableBody>
+    <div>
+      {
+        sub &&
+        (<div style={{ padding: "2%" }}>
+        <Grid container spacing={1} style={{ padding: "2%", paddingLeft: "0" }}>
+          <Grid item xs={6}>
+            <Paper className={classes.paper}>Subject ID : <b style={{ color: '#E50058'}}>{sub.subId}</b></Paper>
+          </Grid>
+          <Grid item xs={6}>
+            <Paper className={classes.paper}>
+              Subject Name : <b style={{ color: '#E50058'}}>{sub.subName}</b>
+            </Paper>
+          </Grid>
+          <Grid item xs={4}>
+            <Paper className={classes.paper}>Year : {sub.year}</Paper>
+          </Grid>
+          <Grid item xs={4}>
+            <Paper className={classes.paper}>Divison : {sub.division}</Paper>
+          </Grid>
+          <Grid item xs={4}>
+            <Paper className={classes.paper}>
+              Coordinator : {parseInt(sub.role_id) === 2 ? "Yes" : "No"}
+            </Paper>
+          </Grid>
+          <Grid item xs={12} style={{ marginTop: '2%' }}>
+            <Typography variant='h5' style={{ padding: '1px 0', color: '#193B55'}}><b>Marks Distribution:</b></Typography>
+            <TableContainer component={Paper}>
+              <Table aria-label="caption table">
+                <TableHead>
                   <TableRow>
-                    <TableCell align="center">N/A</TableCell>
-                    <TableCell align="center">N/A</TableCell>
-                    <TableCell align="center">N/A</TableCell>
-                    <TableCell align="center">N/A</TableCell>
-                    <TableCell align="center">N/A</TableCell>
-                    <TableCell align="center">N/A</TableCell>
-                    <TableCell align="center">N/A</TableCell>
+                    <TableCell align="center" style={{ color: '#193B55' }}><b>CO 1</b></TableCell>
+                    <TableCell align="center" style={{ color: '#193B55' }}><b>CO 2</b></TableCell>
+                    <TableCell align="center" style={{ color: '#193B55' }}><b>CO 3</b></TableCell>
+                    <TableCell align="center" style={{ color: '#193B55' }}><b>CO 4</b></TableCell>
+                    <TableCell align="center" style={{ color: '#193B55' }}><b>CO 5</b></TableCell>
+                    <TableCell align="center" style={{ color: '#193B55' }}><b>CO 6</b></TableCell>
+                    <TableCell align="center" style={{ color: '#193B55' }}><b>SPPU</b></TableCell>
                   </TableRow>
-                </TableBody>
-              ) : (
-                <TableBody>
-                  <TableRow>
-                    <TableCell align="center">{total.tco1}</TableCell>
-                    <TableCell align="center">{total.tco2}</TableCell>
-                    <TableCell align="center">{total.tco3}</TableCell>
-                    <TableCell align="center">{total.tco4}</TableCell>
-                    <TableCell align="center">{total.tco5}</TableCell>
-                    <TableCell align="center">{total.tco6}</TableCell>
-                    <TableCell align="center">{total.tsppu}</TableCell>
-                  </TableRow>
-                </TableBody>
-              )}
-            </Table>
-          </TableContainer>
-        </Grid>
+                </TableHead>
+                {!sub.tco1 ? (
+                  <TableBody>
+                    <TableRow>
+                      <TableCell align="center">N/A</TableCell>
+                      <TableCell align="center">N/A</TableCell>
+                      <TableCell align="center">N/A</TableCell>
+                      <TableCell align="center">N/A</TableCell>
+                      <TableCell align="center">N/A</TableCell>
+                      <TableCell align="center">N/A</TableCell>
+                      <TableCell align="center">N/A</TableCell>
+                    </TableRow>
+                  </TableBody>
+                ) : (
+                  <TableBody>
+                    <TableRow>
+                      <TableCell align="center">{sub.tco1}</TableCell>
+                      <TableCell align="center">{sub.tco2}</TableCell>
+                      <TableCell align="center">{sub.tco3}</TableCell>
+                      <TableCell align="center">{sub.tco4}</TableCell>
+                      <TableCell align="center">{sub.tco5}</TableCell>
+                      <TableCell align="center">{sub.tco6}</TableCell>
+                      <TableCell align="center">{sub.tsppu}</TableCell>
+                    </TableRow>
+                  </TableBody>
+                )}
+              </Table>
+            </TableContainer>
+          </Grid>
 
-        <Grid item xs={8}>
-          <TextField
-            variant="outlined"
-            margin="normal"
-            required
-            fullWidth
-            id="nos"
-            label={`Enter number of students in ${
-              subject.year === 2 ? "SE" : subject.year === 3 ? "TE" : "BE"
-            } ${subject.division}`}
-            name="students"
-            autoComplete="students"
-            value={number}
-            disabled={text}
-            onChange={handleChange}
-          />
+          <Grid item xs={8} style={{ marginTop: '3%' }}>
+            <TextField
+              variant="outlined"
+              margin="normal"
+              required
+              fullWidth
+              id="nos"
+              label={`Enter number of students in ${
+                sub.year === 2 ? "SE" : sub.year === 3 ? "TE" : "BE"
+              } ${sub.division}`}
+              name="students"
+              autoComplete="students"
+              value={number}
+              disabled={text}
+              onChange={handleChange}
+            />
+          </Grid>
+          <Grid item xs={4} style={{ marginTop: '3%' }}>
+            <Button
+              disabled={table}
+              variant="contained"
+              color="primary"
+              style={{ padding: "2%", marginTop: "5%" }}
+              onClick={handleAdd}
+            >
+              Add Table
+            </Button>
+          </Grid>
+          <Grid item xs={12}>
+            <Typography variant="h6">
+              Enter marks here: {submitted ? "(Marks have been submitted)" : ""}
+            </Typography>
+            <DataGrid
+              columns={columns}
+              rows={rows}
+              rowKeyGetter={(row) => row.id}
+              onRowsChange={setRows}
+            />
+          </Grid>
+          <Grid item xs={12}>
+            <Button
+              disabled={number === 0 || submitted ? true : false}
+              variant="contained"
+              color="primary"
+              style={{ marginTop: "2%" }}
+              onClick={handleSave}
+            >
+              Save marks
+            </Button>
+            <Button
+              disabled={number === 0 || submitted ? true : false}
+              variant="contained"
+              color="primary"
+              style={{ margin: "2% 0% 0% 1%" }}
+              onClick={handleOpen}
+            >
+              Submit Marks
+            </Button>
+          </Grid>
         </Grid>
-        <Grid item xs={4}>
-          <Button
-            disabled={table}
-            variant="contained"
-            color="primary"
-            style={{ padding: "2%", marginTop: "5%" }}
-            onClick={handleAdd}
-          >
-            Add Table
-          </Button>
-        </Grid>
-        <Grid item xs={12}>
-          <Typography variant="h6">
-            Enter marks here: {submitted ? "(Marks have been submitted)" : ""}
-          </Typography>
-          <br />
-          <DataGrid
-            columns={columns}
-            rows={rows}
-            rowKeyGetter={(row) => row.id}
-            onRowsChange={setRows}
-          />
-        </Grid>
-        <Grid item xs={12}>
-          <Button
-            disabled={number === 0 || submitted ? true : false}
-            variant="contained"
-            color="primary"
-            style={{ marginTop: "2%" }}
-            onClick={handleSave}
-          >
-            Save marks
-          </Button>
-          <Button
-            disabled={number === 0 || submitted ? true : false}
-            variant="contained"
-            color="primary"
-            style={{ margin: "2% 0% 0% 2%" }}
-            onClick={handleOpen}
-          >
-            Submit Marks
-          </Button>
-        </Grid>
-      </Grid>
-      <Dialog
-        open={open}
-        onClose={handleOpen}
-        BackdropProps={{
-          classes: {
-            root: classes.backDrop,
-          },
-        }}
-      >
-        <DialogTitle id="alert-dialog-title">{"Save your data?"}</DialogTitle>
-        <DialogContent>
-          <DialogContentText id="alert-dialog-description">
-            Are you sure you want to submit the marks? This step is
-            irreversible.
-          </DialogContentText>
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={handleOpen} color="primary">
-            No
-          </Button>
-          <Button onClick={handleSubmit} color="primary" autoFocus>
-            Yes
-          </Button>
-        </DialogActions>
-      </Dialog>
+        <Dialog
+          open={open}
+          onClose={handleOpen}
+          BackdropProps={{
+            classes: {
+              root: classes.backDrop,
+            },
+          }}
+        >
+          <DialogTitle id="alert-dialog-title">{"Save your data?"}</DialogTitle>
+          <DialogContent>
+            <DialogContentText id="alert-dialog-description">
+              Are you sure you want to submit the marks? This step is
+              irreversible.
+            </DialogContentText>
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={handleOpen} color="primary">
+              No
+            </Button>
+            <Button onClick={handleSubmit} color="primary" autoFocus>
+              Yes
+            </Button>
+          </DialogActions>
+        </Dialog>
+      </div>)
+      }
     </div>
   );
 }

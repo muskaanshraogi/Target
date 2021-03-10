@@ -104,7 +104,6 @@ const submitMarks = (subId, division, acadYear, callback) => {
     )
 }
 
-
 const checkSubmitted = (subId, division, acadYear, callback) => {
     db.query(
         "SELECT submitted FROM faculty WHERE subId=? AND division=? AND acadYear=?",

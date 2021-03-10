@@ -80,6 +80,18 @@ const getAllSubjects = (callback) => {
   });
 };
 
+const getSubject = (subId, acadYear,reg_id, callback) => {
+  db.query("SELECT * FROM subject JOIN faculty ON subject.subId=faculty.subId AND subject.acadYear=faculty.acadYear WHERE subject.subId=? AND subject.acadYear=? AND faculty.reg_id=?",
+  [subId, acadYear, reg_id],
+  (err, res) => {
+    if (err) {
+      return callback(err, 500, null);
+    } else {
+      return callback(null, 200, res);
+    }
+  });
+};
+
 const getTeacherSubjects = (reg_id, callback) => {
   db.query(
     "SELECT subject.subId, subject.subName, subject.acadYear, faculty.division, subject.year, faculty.role_id FROM subject JOIN faculty ON subject.subId=faculty.subId AND subject.acadYear=faculty.acadYear WHERE subject.subId IN (SELECT subId FROM faculty WHERE reg_id=?) AND faculty.reg_id=?",
@@ -175,6 +187,7 @@ module.exports = {
   updateSubject,
   deleteSubject,
   getAllSubjects,
+  getSubject,
   getTeacherSubjects,
   setTotalMarks,
   setTarget,

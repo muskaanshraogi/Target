@@ -11,10 +11,12 @@ import {
   TableContainer,
   TableHead,
   Paper,
+  Button,
   Tabs,
   Tab,
 } from "@material-ui/core";
 import Axios from "axios";
+import { useHistory } from "react-router";
 import { useSnackbar } from "notistack";
 import TabPanel from "./TabPanel";
 
@@ -28,7 +30,9 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 export default function Subjects({ user }) {
+
   const classes = useStyles();
+  const history = useHistory();
 
   const { enqueueSnackbar } = useSnackbar();
 
@@ -49,6 +53,7 @@ export default function Subjects({ user }) {
       }
     )
       .then((res) => {
+        console.log(res.data.data)
         setMySubjects(res.data.data);
         setSubject(res.data.data[0]);
       })
@@ -56,6 +61,11 @@ export default function Subjects({ user }) {
         enqueueSnackbar("Could not fetch my subjects", { variant: "error" });
       });
   }, [enqueueSnackbar]);
+
+  const handleClick = (e) => {
+    let values = e.currentTarget.value.split(",")
+    history.push(`/home/teacher/${values[0]}/${values[1]}`)
+  }
 
   return (
     <>
@@ -70,7 +80,8 @@ export default function Subjects({ user }) {
               <TableHead>
                 <TableRow>
                   <TableCell align="center" className={classes.title}>Subject ID</TableCell>
-                  <TableCell align="center" className={classes.title}>Subject Name</TableCell>
+                  <TableCell align="center" className={classes.title}>Name</TableCell>
+                  <TableCell align="center" className={classes.title}>Academic Year</TableCell>
                   <TableCell align="center" className={classes.title}>Year</TableCell>
                   <TableCell align="center" className={classes.title}>Division</TableCell>
                   <TableCell align="center" className={classes.title}>Role</TableCell>
@@ -80,7 +91,16 @@ export default function Subjects({ user }) {
                 {mySubjects.map((subject, index) => (
                   <TableRow key={subject.subId}>
                     <TableCell align="center" className={classes.text}>{subject.subId}</TableCell>
-                    <TableCell align="center" className={classes.text}>{subject.subName}</TableCell>
+                    <TableCell align="center" className={classes.text}>
+                      <Button
+                       color='secondary'
+                       className={classes.button}
+                       onClick={handleClick}
+                       value={`${subject.subId},${subject.acadYear}`}>
+                        <b>{subject.subName}</b>
+                      </Button>
+                    </TableCell>
+                    <TableCell align="center" className={classes.text}>{subject.acadYear}</TableCell>
                     <TableCell align="center" className={classes.text}>{subject.year}</TableCell>
                     <TableCell align="center" className={classes.text}>{subject.division}</TableCell>
                     <TableCell align="center" className={classes.text}>
@@ -93,7 +113,7 @@ export default function Subjects({ user }) {
           </TableContainer>
         </Card>
       </Grid>
-      {subject && (
+      {/* {subject && (
         <Grid item>
           <Card>
             <Tabs
@@ -110,7 +130,7 @@ export default function Subjects({ user }) {
             <TabPanel subject={subject} />
           </Card>
         </Grid>
-      )}
+      )} */}
     </>
   );
 }

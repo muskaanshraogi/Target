@@ -158,4 +158,15 @@ router.get("/get/target/:subject/:acadYear", authenticate, (req, res, next) => {
   );
 });
 
+router.get("/:subId/:acadYear/:reg_id", authenticate, (req, res, next) => {
+  subjectModel.getSubject(req.params.subId, req.params.acadYear, req.params.reg_id, (err, status, data) => {
+    if (err) {
+      delete err.sql;
+      res.status(status).send({ err: err, data: null });
+    } else {
+      res.status(200).send({ err: null, data: data });
+    }
+  });
+});
+
 module.exports = router;

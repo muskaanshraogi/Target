@@ -43,7 +43,7 @@ const drawerWidth = 400;
 const useStyles = makeStyles((theme) => ({
   avatar2: {
     color: '#FFFFFF',
-    backgroundColor: '#F38630',
+    backgroundColor: '#E50058',
   },
   avatar: {
     color: '#FFFFFF',
@@ -262,6 +262,7 @@ export default function ClippedDrawer() {
             {user && open && (
               <CardHeader
                 title={`${user.firstName} ${user.lastName}`}
+                avatar={<Avatar className={classes.avatar2}>{`${user.firstName.charAt(0)}${user.lastName.charAt(0)}`}</Avatar>}
                 titleTypographyProps={{ variant: "h4" }}
                 subheaderTypographyProps={{ variant: "h6" }}
               />
