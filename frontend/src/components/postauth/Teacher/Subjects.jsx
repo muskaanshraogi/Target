@@ -11,14 +11,11 @@ import {
   TableContainer,
   TableHead,
   Paper,
-  Button,
-  Tabs,
-  Tab,
+  Button
 } from "@material-ui/core";
 import Axios from "axios";
 import { useHistory } from "react-router";
 import { useSnackbar } from "notistack";
-import TabPanel from "./TabPanel";
 
 const useStyles = makeStyles((theme) => ({
   title: {
@@ -36,9 +33,7 @@ export default function Subjects({ user }) {
 
   const { enqueueSnackbar } = useSnackbar();
 
-  const [value, setValue] = useState(0);
   const [mySubjects, setMySubjects] = useState([]);
-  const [subject, setSubject] = useState({});
 
   useEffect(() => {
     Axios.get(
@@ -53,9 +48,7 @@ export default function Subjects({ user }) {
       }
     )
       .then((res) => {
-        console.log(res.data.data)
         setMySubjects(res.data.data);
-        setSubject(res.data.data[0]);
       })
       .catch((err) => {
         enqueueSnackbar("Could not fetch my subjects", { variant: "error" });

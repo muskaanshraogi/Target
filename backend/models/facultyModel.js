@@ -85,7 +85,7 @@ const getSubjectTeacherDetails = (subId, acadYear, callback) => {
 
 const checkCoordinator = (reg_id, callback) => {
   db.query(
-    "SELECT subject.subId, subject.subName, subject.acadYear FROM faculty JOIN subject ON faculty.subId=subject.subId AND faculty.acadYear=subject.acadYear WHERE faculty.reg_id=? AND faculty.role_id=2",
+    "SELECT subject.subId, subject.subName, subject.acadYear, subject.year FROM faculty JOIN subject ON faculty.subId=subject.subId AND faculty.acadYear=subject.acadYear WHERE faculty.reg_id=? AND faculty.role_id=2",
     [reg_id],
     (err, res) => {
       if (err) {
