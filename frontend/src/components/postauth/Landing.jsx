@@ -13,6 +13,9 @@ import {
   IconButton,
   Grid,
   Avatar,
+  Card,
+  CardHeader,
+  ListItemAvatar,
   Button,
   Tooltip,
   Dialog,
@@ -32,18 +35,13 @@ import Routes from "./Routes";
 import clsx from "clsx";
 import { useHistory, useLocation } from "react-router-dom";
 import Axios from "axios";
+import { VpnKey, AccessibilityNew } from "@material-ui/icons";
+import EmailIcon from "@material-ui/icons/Email";
 import { useSnackbar } from "notistack";
 
 const drawerWidth = 400;
 
 const useStyles = makeStyles((theme) => ({
-  edit: {
-    color: "#FFFFFF",
-    backgroundColor: "#E50058",
-    height: theme.spacing(8),
-    width: theme.spacing(8),
-    marginLeft: "40%",
-  },
   avatar2: {
     color: "#FFFFFF",
     backgroundColor: "#E50058",
@@ -133,7 +131,6 @@ export default function ClippedDrawer() {
   const [open, setOpen] = useState(true);
   const [isAdmin, setIsAdmin] = useState(false);
   const [dialog, setDialog] = useState(false);
-  const [profile, setProfile] = useState(false);
 
   const [user, setUser] = useState({
     firstName: "",
@@ -213,11 +210,6 @@ export default function ClippedDrawer() {
       setIsAdmin(() => (res.data.data[0].is_admin === 0 ? false : true));
     });
   };
-
-  const handleClick = () => {
-    setProfile(!profile);
-  };
-
   useEffect(() => {
     getDetails();
   }, []);
@@ -245,16 +237,14 @@ export default function ClippedDrawer() {
           <Typography variant="h4" className={classes.title}>
             Target
           </Typography>
-          <Button aria-controls="simple-menu" onClick={handleClick}>
-            <Avatar className={classes.avatar}>{`${user.firstName.charAt(
-              0
-            )}${user.lastName.charAt(0)}`}</Avatar>
-          </Button>
           <IconButton onClick={handleLogout}>
             <Tooltip title="Logout">
               <ExitToApp style={{ height: "25px", color: "#ffffff" }} />
             </Tooltip>
-            <Typography style={{ height: "25px", color: "#ffffff" }}>
+            <Typography
+              variant="body1"
+              style={{ paddingLeft: "2%", color: "#fff" }}
+            >
               Logout
             </Typography>
           </IconButton>
@@ -275,6 +265,94 @@ export default function ClippedDrawer() {
       >
         <Toolbar />
         <div className={classes.drawerContainer}>
+          <Card>
+            {user && open && (
+              <CardHeader
+                title={`${user.firstName} ${user.lastName}`}
+                avatar={
+                  <Avatar className={classes.avatar2}>{`${user.firstName.charAt(
+                    0
+                  )}${user.lastName.charAt(0)}`}</Avatar>
+                }
+                titleTypographyProps={{ variant: "h4" }}
+                subheaderTypographyProps={{ variant: "h6" }}
+              />
+            )}
+            <List dense>
+              <ListItem className={classes.listItem}>
+                <ListItemAvatar>
+                  <Avatar className={classes.avatar}>
+                    <EmailIcon />
+                  </Avatar>
+                </ListItemAvatar>
+                <ListItemText
+                  primary={
+                    <Typography variant="h6" color="textPrimary">
+                      Email
+                    </Typography>
+                  }
+                  secondary={
+                    <Typography variant="body1" color="textPrimary">
+                      {user.email}
+                    </Typography>
+                  }
+                />
+              </ListItem>
+              <ListItem className={classes.listItem}>
+                <ListItemAvatar>
+                  <Avatar className={classes.avatar}>
+                    <VpnKey />
+                  </Avatar>
+                </ListItemAvatar>
+                <ListItemText
+                  primary={
+                    <Typography variant="h6" color="textPrimary">
+                      Registration ID
+                    </Typography>
+                  }
+                  secondary={
+                    <Typography variant="body1" color="textPrimary">
+                      {user.reg_id}
+                    </Typography>
+                  }
+                />
+              </ListItem>
+              <ListItem className={classes.listItem}>
+                <ListItemAvatar>
+                  <Avatar className={classes.avatar}>
+                    <AccessibilityNew />
+                  </Avatar>
+                </ListItemAvatar>
+                <ListItemText
+                  primary={
+                    <Typography variant="h6" color="textPrimary">
+                      Admin User
+                    </Typography>
+                  }
+                  secondary={
+                    <Typography variant="body1" color="textPrimary">
+                      {user.is_admin === 1 ? "Yes" : "No"}
+                    </Typography>
+                  }
+                />
+              </ListItem>
+              <ListItem className={classes.listItem}>
+                {open ? (
+                  <ListItemText
+                    primary={
+                      <Button
+                        variant="outlined"
+                        color="primary"
+                        onClick={handleDialog}
+                      >
+                        Edit Profile
+                      </Button>
+                    }
+                  />
+                ) : null}
+              </ListItem>
+            </List>
+          </Card>
           <List>
             {isAdmin && (
               <ListItem
@@ -340,24 +418,17 @@ export default function ClippedDrawer() {
         </Grid>
       </main>
       <Dialog
-        open={profile}
-        onClose={handleClick}
+        open={dialog}
+        onClose={handleDialog}
         BackdropProps={{
           classes: {
             root: classes.backDrop,
           },
         }}
       >
-        <DialogTitle id="alert-dialog-title">
-          <Avatar className={classes.edit}>{`${user.firstName.charAt(
-            0
-          )}${user.lastName.charAt(0)}`}</Avatar>
-          <Typography variant="h3">
-            {`${user.firstName} ${user.lastName}`}
-          </Typography>
-        </DialogTitle>
+        <DialogTitle id="alert-dialog-title">Edit My Profile</DialogTitle>
         <DialogContent>
-          {/* <form className={classes.form} noValidate onSubmit={handleSubmit}>
+          <form className={classes.form} noValidate onSubmit={handleSubmit}>
             <TextField
               variant="outlined"
               margin="normal"
@@ -395,10 +466,10 @@ export default function ClippedDrawer() {
               value={user.email}
               onChange={handleEdit}
             />
-          </form> */}
+          </form>
         </DialogContent>
         <DialogActions>
-          <Button onClick={handleClick} color="primary">
+          <Button onClick={handleDialog} color="primary">
             Cancel
           </Button>
           <Button onClick={handleSubmit} color="primary" autoFocus>
