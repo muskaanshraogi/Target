@@ -68,6 +68,11 @@ router.get("/all", authenticateAdmin, (req, res, next) => {
   });
 });
 
+router.get("/download", authenticate, (req, res, next) => {
+  const baseURL = "./files/spreadsheet.xlsx";
+  res.download(baseURL);
+});
+
 router.get("/:reg_id", authenticate, (req, res, next) => {
   staffModel.getTeacherDetails(req.params.reg_id, (err, status, data) => {
     if (err) {
@@ -77,11 +82,6 @@ router.get("/:reg_id", authenticate, (req, res, next) => {
       res.status(200).send({ err: null, data: data });
     }
   });
-});
-
-router.get("/download", authenticate, (req, res, next) => {
-  const baseURL = "../files/spreadsheet.xlsx";
-  res.download(baseURL);
 });
 
 module.exports = router;

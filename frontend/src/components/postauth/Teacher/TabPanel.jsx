@@ -230,9 +230,13 @@ export default function TabPanel(props) {
         "Content-Type": "multipart/form-data",
         Authorization: `Bearer ${sessionStorage.getItem("usertoken")}`,
       },
+      responseType: "arraybuffer",
     })
       .then((res) => {
-        console.log(res);
+        const blob = new Blob([res.data], {
+          type: "application/vnd.ms-excel;charset=utf-8",
+        });
+        saveAs(blob, "Sample.xlsx");
       })
       .catch((err) => {
         console.log(err);
