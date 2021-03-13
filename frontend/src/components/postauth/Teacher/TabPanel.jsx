@@ -39,8 +39,11 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 export default function TabPanel(props) {
+
   const classes = useStyles();
+
   const { enqueueSnackbar } = useSnackbar();
+  
   const [token, setToken] = useState(null);
   const [table, setTable] = useState(true);
   const [text, setText] = useState(false);
@@ -315,20 +318,25 @@ export default function TabPanel(props) {
     <div>
       {sub && (
         <div style={{ padding: "2%" }}>
-          <Typography variant="h3">Subject Details:</Typography>
+          <Typography variant="h4" style={{ color: '#193B55' }}><b>Subject Details:</b></Typography>
           <Grid
             container
             spacing={1}
-            style={{ padding: "2%", paddingLeft: "0" }}
+            style={{ paddingBottom: "2%", marginTop: '1px', paddingLeft: "0" }}
           >
-            <Grid item xs={6}>
+            <Grid item xs={4}>
               <Paper className={classes.paper}>
                 Subject ID : <b style={{ color: "#E50058" }}>{sub.subId}</b>
               </Paper>
             </Grid>
-            <Grid item xs={6}>
+            <Grid item xs={4}>
               <Paper className={classes.paper}>
                 Subject Name : <b style={{ color: "#E50058" }}>{sub.subName}</b>
+              </Paper>
+            </Grid>
+            <Grid item xs={4}>
+              <Paper className={classes.paper}>
+                Academic Year : <b style={{ color: "#E50058" }}>{sub.acadYear}</b>
               </Paper>
             </Grid>
             <Grid item xs={4}>
@@ -458,19 +466,11 @@ export default function TabPanel(props) {
               <Button
                 disabled={number === 0 || submitted ? true : false}
                 variant="contained"
-                color="primary"
+                color="secondary"
                 style={{ margin: "2% 0% 0% 1%" }}
                 onClick={handleOpen}
               >
                 Submit Marks
-              </Button>
-              <Button
-                variant="contained"
-                color="primary"
-                style={{ margin: "2% 0% 0% 1%" }}
-                onClick={handleDownload}
-              >
-                Download Sample File
               </Button>
               <>
                 <input
@@ -482,15 +482,23 @@ export default function TabPanel(props) {
                 <label htmlFor={"fileUploadButton"}>
                   <Button
                     disabled={number === 0 || submitted ? true : false}
-                    variant="contained"
+                    variant="outlined"
                     color="primary"
-                    style={{ margin: "2% 0% 0% 1%" }}
+                    style={{ margin: "2% 0% 0% 1%", float: 'right' }}
                     onClick={handleUpload}
                   >
-                    Upload Sample File
+                    Upload File
                   </Button>
                 </label>
               </>
+              <Button
+                variant="outlined"
+                color="primary"
+                style={{ margin: "2% 0% 0% 1%", float: "right" }}
+                onClick={handleDownload}
+              >
+                Download Sample File
+              </Button>
             </Grid>
           </Grid>
           <Dialog

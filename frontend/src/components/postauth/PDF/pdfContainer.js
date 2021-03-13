@@ -8,10 +8,10 @@ export default function PDF(props) {
     <section>
       <section ref={bodyRef}>{props.children}</section>
       <Button
-        color="primary"
+        color="secondary"
         variant="contained"
         onClick={createPdf}
-        style={{ marginTop: "1%" }}
+        style={{ marginTop: "1%", marginLeft: '2%' }}
       >
         Download PDF
       </Button>

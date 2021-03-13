@@ -44,8 +44,12 @@ const useStyles = makeStyles((theme) => ({
     margin: 0,
   },
   list: {
-    padding: "0 1% 1% 1%",
+    padding: "0",
     margin: "0",
+  },
+  listItem: {
+    padding: "1% 4%",
+    borderBottom: '1px solid #bbbbbb'
   },
   header: {
     padding: "1%",
@@ -302,21 +306,16 @@ export default function Subjects() {
           {allSubjects
             .slice(0, allSubjects.length / 2 + 1)
             .map((subject, index) => (
-              <ListItem id={subject.subId} key={index}>
-                <ListItemAvatar>
-                  <Avatar className={classes.avatar}>
-                    {subject.subName.charAt(0)}
-                  </Avatar>
-                </ListItemAvatar>
+              <ListItem id={subject.subId} key={index} className={classes.listItem}>
                 <ListItemText
                   primary={
-                    <Typography variant="h6" color="textPrimary">
-                      {subject.subName}
+                    <Typography variant="h6" color="secondary">
+                      <b>{subject.subName}</b>
                     </Typography>
                   }
                   secondary={
                     <React.Fragment>
-                      <Typography variant="body1" color="textPrimary">
+                      <Typography variant="body1" color="primary">
                         {subject.subId}
                       </Typography>
                       <Typography variant="body2" color="textSecondary">
@@ -350,21 +349,16 @@ export default function Subjects() {
           {allSubjects
             .slice(allSubjects.length / 2 + 1, allSubjects.length)
             .map((subject, index) => (
-              <ListItem id={subject.subId} key={index}>
-                <ListItemAvatar>
-                  <Avatar className={classes.avatar}>
-                    {subject.subName.charAt(0)}
-                  </Avatar>
-                </ListItemAvatar>
+              <ListItem id={subject.subId} key={index} className={classes.listItem}>
                 <ListItemText
                   primary={
-                    <Typography variant="h6" color="textPrimary">
-                      {subject.subName}
+                    <Typography variant="h6" color="secondary">
+                      <b>{subject.subName}</b>
                     </Typography>
                   }
                   secondary={
                     <React.Fragment>
-                      <Typography variant="body1" color="textPrimary">
+                      <Typography variant="body1" color="primary">
                         {subject.subId}
                       </Typography>
                       <Typography variant="body2" color="textSecondary">

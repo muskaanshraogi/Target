@@ -86,7 +86,7 @@ export default function Subjects({ user }) {
                     <TableCell align="center" className={classes.text}>{subject.subId}</TableCell>
                     <TableCell align="center" className={classes.text}>
                       <Button
-                       color='secondary'
+                       color='primary'
                        className={classes.button}
                        onClick={handleClick}
                        value={`${subject.subId},${subject.acadYear}`}>

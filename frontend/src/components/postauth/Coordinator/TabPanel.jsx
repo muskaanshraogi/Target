@@ -26,9 +26,16 @@ import Doc from "../PDF/docService";
 import Teachers from "./Teachers";
 
 const useStyles = makeStyles((theme) => ({
+  root: {
+    flexGrow: 1,
+  },
   backDrop: {
     backdropFilter: "blur(3px)",
     backgroundColor: "rgba(69,69,69,0.9)",
+  },
+  paper: {
+    padding: theme.spacing(2),
+    fontSize: "20px",
   },
 }));
 
@@ -133,7 +140,7 @@ export default function CoordinatorPanel(props) {
 
   const handleCalculate = () => {
     Axios.get(
-      `${process.env.REACT_APP_HOST}/api/final/calculate/${teachers[0].subId}/${acadYear}`,
+      `${process.env.REACT_APP_HOST}/api/final/calculate/${subject.subId}/${subject.acadYear}`,
       {
         headers: {
           "Content-Type": "application/json",
@@ -180,11 +187,16 @@ export default function CoordinatorPanel(props) {
     )
       .then((res) => {
         let data = res.data.data;
-        let temp = [];
+        let subCount = 0
         data.forEach((d, index) => {
-          temp.push({ reg_id: d.reg_id, count: 0 });
+          if(d.submitted) {
+            subCount++
+          }
         });
         setTeachers(data);
+        if(subCount === 3) {
+          setSubmittedBool(true)
+        }
         let found = data.find((d) => d.roleName === "Subject Coordinator");
         if (found) {
           setCoordinator(found.reg_id);
@@ -333,18 +345,49 @@ export default function CoordinatorPanel(props) {
 
   return (
     <div>
-      {subject ? (
-        <Grid container item spacing={1}>
-          <PDF createPdf={createPdf}>
-            <Card>
-              <CardHeader
-                title={`${subject.subName} - ${subject.acadYear} Staff`}
-                titleTypographyProps={{ variant: "h4" }}
-              />
-              <Teachers teachers={teachers} coordinator={coordinator} />
-              {total && (
-                <>
-                  <Typography variant="h6" style={{ padding: "1% 2% 0% 1%" }}>
+      {
+        subject ?
+          (<Grid container item spacing={1}>
+            <PDF createPdf={createPdf}>
+            <div style={{ padding: '2% 2% 0 2%' }}>
+            <Typography variant="h4" style={{ color: '#193B55' }}><b>Coordinator {subject.subName} : {subject.acadYear}</b></Typography>
+              <Grid
+                container
+                spacing={1}
+                style={{ paddingTop: '1px', paddingLeft: "0" }}
+              >
+                <Grid item xs={4}>
+                  <Paper className={classes.paper}>
+                    Subject ID : <b style={{ color: "#E50058" }}>{subject.subId}</b>
+                  </Paper>
+                </Grid>
+                <Grid item xs={4}>
+                  <Paper className={classes.paper}>
+                    Subject Name : <b style={{ color: "#E50058" }}>{subject.subName}</b>
+                  </Paper>
+                </Grid>
+                <Grid item xs={4}>
+                  <Paper className={classes.paper}>
+                    Academic Year : <b style={{ color: "#E50058" }}>{subject.acadYear}</b>
+                  </Paper>
+                </Grid>
+                <Grid item xs={4}>
+                  <Paper className={classes.paper}>Year : {subject.year}</Paper>
+                </Grid>
+              </Grid>
+              <Typography
+                  variant="h5"
+                  style={{ marginTop: "2%", padding: "1px 0", color: "#193B55" }}
+                >
+                  <b>Staff:</b>
+              </Typography>
+              <Card item xs={12}>
+                <Teachers teachers={teachers} coordinator={coordinator} />
+              </Card> 
+              <Card  style={{ marginTop: '2%' }}>
+                {total && (
+                  <div>
+                    <Typography variant="h6" style={{ padding: "1% 2% 0% 1%" }}>
                     Enter Total Marks:
                   </Typography>
                   <TableContainer component={Paper}>
@@ -440,201 +483,195 @@ export default function CoordinatorPanel(props) {
                       </TableBody>
                     </Table>
                   </TableContainer>
-                </>
-              )}
-              {target && (
-                <>
-                  <Typography variant="h6" style={{ padding: "1% 2% 0% 1%" }}>
-                    Enter Target Values:
-                  </Typography>
-                  <TableContainer component={Paper}>
-                    <Table aria-label="caption table">
-                      <TableHead>
-                        <TableRow>
-                          <TableCell align="center">MT 1</TableCell>
-                          <TableCell align="center">MT 2</TableCell>
-                          <TableCell align="center">MT 3</TableCell>
-                          <TableCell align="center">SPPU 1</TableCell>
-                          <TableCell align="center">SPPU 2</TableCell>
-                          <TableCell align="center">SPPU 3</TableCell>
-                          <TableCell align="center">Submit</TableCell>
-                        </TableRow>
-                      </TableHead>
-                      <TableBody>
-                        <TableRow>
-                          <TableCell align="center">
-                            <TextField
-                              name="mt1"
-                              variant="filled"
-                              value={target.mt1}
-                              disabled={targetBool}
-                              onChange={handleTargetChange}
-                            />
-                          </TableCell>
-                          <TableCell align="center">
-                            <TextField
-                              name="mt2"
-                              variant="filled"
-                              value={target.mt2}
-                              disabled={targetBool}
-                              onChange={handleTargetChange}
-                            />
-                          </TableCell>
-                          <TableCell align="center">
-                            <TextField
-                              name="mt3"
-                              variant="filled"
-                              value={target.mt3}
-                              disabled={targetBool}
-                              onChange={handleTargetChange}
-                            />
-                          </TableCell>
-                          <TableCell align="center">
-                            <TextField
-                              name="sppu1"
-                              variant="filled"
-                              value={target.sppu1}
-                              disabled={targetBool}
-                              onChange={handleTargetChange}
-                            />
-                          </TableCell>
-                          <TableCell align="center">
-                            <TextField
-                              name="sppu2"
-                              variant="filled"
-                              value={target.sppu2}
-                              disabled={targetBool}
-                              onChange={handleTargetChange}
-                            />
-                          </TableCell>
-                          <TableCell align="center">
-                            <TextField
-                              name="sppu3"
-                              variant="filled"
-                              value={target.sppu3}
-                              disabled={targetBool}
-                              onChange={handleTargetChange}
-                            />
-                          </TableCell>
-                          <TableCell align="center">
-                            <Button
-                              variant="contained"
-                              color="primary"
-                              onClick={handleTargetModal}
-                              disabled={targetBool}
-                            >
-                              Submit
-                            </Button>
-                          </TableCell>
-                        </TableRow>
-                      </TableBody>
-                    </Table>
-                  </TableContainer>
-                </>
-              )}
-            </Card>
-            {
-              <Card
-                style={{
-                  margin: "2% 0% 0% 0%",
-                }}
-              >
-                {attainment && (
+                  </div>
+                )}
+                {target && (
                   <>
-                    <CardHeader
-                      title="Attainment statistics"
-                      titleTypographyProps={{ variant: "h4" }}
-                    />
-                    <CardContent>
-                      <Table>
+                    <Typography variant="h6" color='secondary' style={{ padding: "1% 2% 0% 1%" }}>
+                      Enter Target Values:
+                    </Typography>
+                    <TableContainer component={Paper}>
+                      <Table aria-label="caption table">
                         <TableHead>
                           <TableRow>
-                            <TableCell align="center">Academic Year</TableCell>
-                            <TableCell align="center">UT</TableCell>
-                            <TableCell align="center">SPPU</TableCell>
-                            <TableCell align="center">Total</TableCell>
+                            <TableCell align="center">MT 1</TableCell>
+                            <TableCell align="center">MT 2</TableCell>
+                            <TableCell align="center">MT 3</TableCell>
+                            <TableCell align="center">SPPU 1</TableCell>
+                            <TableCell align="center">SPPU 2</TableCell>
+                            <TableCell align="center">SPPU 3</TableCell>
                           </TableRow>
                         </TableHead>
                         <TableBody>
                           <TableRow>
                             <TableCell align="center">
-                              {attainment.acadYear}
+                              <TextField
+                                name="mt1"
+                                variant="filled"
+                                value={target.mt1}
+                                disabled={targetBool}
+                                onChange={handleTargetChange}
+                              />
                             </TableCell>
                             <TableCell align="center">
-                              {attainment.ut}
+                              <TextField
+                                name="mt2"
+                                variant="filled"
+                                value={target.mt2}
+                                disabled={targetBool}
+                                onChange={handleTargetChange}
+                              />
                             </TableCell>
                             <TableCell align="center">
-                              {attainment.sppu}
+                              <TextField
+                                name="mt3"
+                                variant="filled"
+                                value={target.mt3}
+                                disabled={targetBool}
+                                onChange={handleTargetChange}
+                              />
                             </TableCell>
                             <TableCell align="center">
-                              {attainment.total}
+                              <TextField
+                                name="sppu1"
+                                variant="filled"
+                                value={target.sppu1}
+                                disabled={targetBool}
+                                onChange={handleTargetChange}
+                              />
+                            </TableCell>
+                            <TableCell align="center">
+                              <TextField
+                                name="sppu2"
+                                variant="filled"
+                                value={target.sppu2}
+                                disabled={targetBool}
+                                onChange={handleTargetChange}
+                              />
+                            </TableCell>
+                            <TableCell align="center">
+                              <TextField
+                                name="sppu3"
+                                variant="filled"
+                                value={target.sppu3}
+                                disabled={targetBool}
+                                onChange={handleTargetChange}
+                              />
+                            </TableCell>
+                            <TableCell align="center">
+                              <Button
+                                variant="contained"
+                                color="primary"
+                                onClick={handleTargetModal}
+                                disabled={targetBool}
+                              >
+                                Submit
+                              </Button>
                             </TableCell>
                           </TableRow>
                         </TableBody>
                       </Table>
-                    </CardContent>
+                    </TableContainer>
                   </>
                 )}
               </Card>
-            }
-            <Grid>
-              <Button
-                variant="contained"
-                color="primary"
-                style={{ margin: "2% 2% 0% 0%" }}
-                onClick={handleCalculate}
-                disabled={!targetBool || !totalBool}
-              >
-                Calculate Attainment
-              </Button>
-            </Grid>
-          </PDF>
-          <Dialog
-            open={totalModal}
-            onClose={handleTotalModal}
-            BackdropProps={{
-              classes: {
-                root: classes.backDrop,
-              },
-            }}
-          >
-            <DialogTitle id="alert-dialog-title">
-              Are you sure you want to save the total marks? This step is
-              irreversible.
-            </DialogTitle>
-            <DialogActions>
-              <Button onClick={handleTotalModal} color="primary">
-                No
-              </Button>
-              <Button onClick={handleTotal} color="primary" autoFocus>
-                Yes
-              </Button>
-            </DialogActions>
-          </Dialog>
-          <Dialog
-            open={targetModal}
-            onClose={handleTargetModal}
-            BackdropProps={{
-              classes: {
-                root: classes.backDrop,
-              },
-            }}
-          >
-            <DialogTitle id="alert-dialog-title">
-              Are you sure you want to save the target attainment? This step is
-              irreversible.
-            </DialogTitle>
-            <DialogActions>
-              <Button onClick={handleTargetModal} color="primary">
-                No
-              </Button>
-              <Button onClick={handleTarget} color="primary" autoFocus>
-                Yes
-              </Button>
-            </DialogActions>
-          </Dialog>
-        </Grid>
-      ) : null}
+              { attainment ? 
+                (<div>
+                  <Typography
+                    variant="h5"
+                    style={{ marginTop: "2%", padding: "1px 0", color: "#193B55" }}
+                  >
+                    <b>Attainment:</b>
+                  </Typography>
+                  <Card item xs={12}>
+                  <TableContainer component={Paper}>
+                    <Table>
+                      <TableHead>
+                        <TableRow>
+                          <TableCell align="center" style={{ fontSize: '16px' }}>UT</TableCell>
+                          <TableCell align="center" style={{ fontSize: '16px' }}>SPPU</TableCell>
+                          <TableCell align="center" style={{ fontSize: '16px' }}>Total</TableCell>
+                        </TableRow>
+                      </TableHead>
+                      <TableBody>
+                        <TableRow>
+                          <TableCell align="center" style={{ color: "#E50058", fontSize: '16px' }}>
+                            <b>{attainment.ut}</b>
+                          </TableCell>
+                          <TableCell align="center" style={{ color: "#E50058", fontSize: '16px' }}>
+                            <b>{attainment.sppu}</b>
+                          </TableCell>
+                          <TableCell align="center" style={{ color: "#E50058", fontSize: '16px' }}>
+                            <b>{attainment.total}</b>
+                          </TableCell>
+                        </TableRow>
+                      </TableBody>
+                    </Table>
+                  </TableContainer>
+                </Card>
+                </div>) :
+                null
+              } 
+              <Grid>
+                <Button
+                  variant="contained"
+                  color="primary"
+                  style={{ margin: "2% 2% 0% 0%" }}
+                  onClick={handleCalculate}
+                  disabled={!targetBool || !totalBool || !submittedBool || attainment}
+                >
+                  Calculate Attainment
+                </Button>
+              </Grid>
+              </div>
+            </PDF>
+            <Dialog
+              open={totalModal}
+              onClose={handleTotalModal}
+              BackdropProps={{
+                classes: {
+                  root: classes.backDrop,
+                },
+              }}
+            >
+              <DialogTitle id="alert-dialog-title">
+                Are you sure you want to save the total marks? This step is
+                irreversible.
+              </DialogTitle>
+              <DialogActions>
+                <Button onClick={handleTotalModal} color="primary">
+                  No
+                </Button>
+                <Button onClick={handleTotal} color="primary" autoFocus>
+                  Yes
+                </Button>
+              </DialogActions>
+            </Dialog>
+            <Dialog
+              open={targetModal}
+              onClose={handleTargetModal}
+              BackdropProps={{
+                classes: {
+                  root: classes.backDrop,
+                },
+              }}
+            >
+              <DialogTitle id="alert-dialog-title">
+                Are you sure you want to save the target attainment? This step is
+                irreversible.
+              </DialogTitle>
+              <DialogActions>
+                <Button onClick={handleTargetModal} color="primary">
+                  No
+                </Button>
+                <Button onClick={handleTarget} color="primary" autoFocus>
+                  Yes
+                </Button>
+              </DialogActions>
+            </Dialog>
+          </Grid>) : 
+          null
+      }
     </div>
   );
 }

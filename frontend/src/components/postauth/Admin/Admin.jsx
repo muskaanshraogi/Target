@@ -30,7 +30,6 @@ const useStyles = makeStyles((theme) => ({
     margin: 0,
     position: "relative",
     width: "100%",
-    backgroundColor: colors.grey[900],
   },
   buttonDg: {
     backgroundColor: "#193B55",
@@ -74,7 +73,9 @@ function a11yProps(index) {
 }
 
 export default function Admin() {
+
   const classes = useStyles();
+
   const { enqueueSnackbar } = useSnackbar();
 
   const [value, setValue] = React.useState(0);
@@ -190,22 +191,7 @@ export default function Admin() {
           Reset Database
         </Button>
       </div>
-      <Tabs
-        variant="fullWidth"
-        value={value}
-        onChange={handleChange}
-        aria-label="simple tabs example"
-        className={classes.tab}
-      >
-        <Tab label="Staff" {...a11yProps(0)} />
-        <Tab label="Subjects" {...a11yProps(1)} />
-      </Tabs>
-      <TabPanel value={value} index={0}>
-        <AllUsers />
-      </TabPanel>
-      <TabPanel value={value} index={1}>
-        <Subjects />
-      </TabPanel>
+      <Subjects />
       <Dialog
         open={resetDb || clearYear}
         onClose={handleClose}

@@ -21,6 +21,11 @@ const useStyles = makeStyles((theme) => ({
   },
   text: {
     fontSize: '15px'
+  },
+  card: {
+    width: "100vh",
+    textTransform: 'uppercase',
+    color: '#193B55'
   }
 }));
 
@@ -82,7 +87,7 @@ export default function Coordinator() {
                       <TableCell align="center" className={classes.text}>{subject.subId}</TableCell>
                       <TableCell align="center" className={classes.text}>
                         <Button
-                        color='secondary'
+                        color='primary'
                         className={classes.button}
                         onClick={handleClick}
                         value={`${subject.subId},${subject.acadYear}`}>
@@ -102,7 +107,7 @@ export default function Coordinator() {
         <Card>
           <CardHeader
             title={`You are not a coordinator`}
-            titleTypographyProps={{ variant: "h4" }}
+            className={classes.card}
           />
         </Card>
       )}
