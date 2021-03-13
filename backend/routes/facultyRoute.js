@@ -24,10 +24,9 @@ router.post("/add/:reg_id", authenticate, (req, res, next) => {
   });
 });
 
-router.post("/add/multiple/:reg_id", authenticate, (req, res, next) => {
+router.post("/add/multiple/relations", authenticate, (req, res, next) => {
   facultyModel.addMultipleRelations(
     req.body,
-    req.params.reg_id,
     (err, status, data) => {
       if (err) {;
         delete err.sql;

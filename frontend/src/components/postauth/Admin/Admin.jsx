@@ -1,12 +1,7 @@
 import React, { useEffect } from "react";
 import {
   makeStyles,
-  colors,
-  Tabs,
-  Tab,
-  Box,
   Button,
-  Typography,
   Select,
   Dialog,
   DialogActions,
@@ -15,9 +10,9 @@ import {
   DialogContentText,
 } from "@material-ui/core";
 import { Redirect } from "react-router-dom";
+import { useLocation, useHistory } from 'react-router'
 import Axios from "axios";
-import AllUsers from "./AllUsers";
-import Subjects from "./Subjects";
+import Routes from './Routes'
 import { useSnackbar } from "notistack";
 
 const useStyles = makeStyles((theme) => ({
@@ -45,53 +40,32 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-function TabPanel(props) {
-  const { children, value, index, ...other } = props;
-
-  return (
-    <div
-      role="tabpanel"
-      hidden={value !== index}
-      id={`simple-tabpanel-${index}`}
-      aria-labelledby={`simple-tab-${index}`}
-      {...other}
-    >
-      {value === index && (
-        <Box p={3}>
-          <Typography>{children}</Typography>
-        </Box>
-      )}
-    </div>
-  );
-}
-
-function a11yProps(index) {
-  return {
-    id: `simple-tab-${index}`,
-    "aria-controls": `simple-tabpanel-${index}`,
-  };
-}
-
 export default function Admin() {
 
   const classes = useStyles();
 
+  const location = useLocation()
+  const history = useHistory()
+
   const { enqueueSnackbar } = useSnackbar();
 
-  const [value, setValue] = React.useState(0);
   const [year, setYear] = React.useState([]);
   const [acadYear, setAcadYear] = React.useState("");
   const [clearYear, setClearYear] = React.useState(false);
   const [resetDb, setResetDb] = React.useState(false);
   const [redirect, setRedirect] = React.useState(false);
 
-  const handleChange = (event, newValue) => {
-    setValue(newValue);
-  };
-
   const handleSelect = (e) => {
     setAcadYear(e.target.value);
   };
+
+  const handleStaff = () => {
+    history.push('/home/admin/staff')
+  }
+
+  const handleSubjects = () => {
+    history.push('/home/admin/subjects')
+  }
 
   const handleClose = () => {
     setResetDb(false);
@@ -148,6 +122,23 @@ export default function Admin() {
   return (
     <div className={classes.root}>
       {redirect ? <Redirect to="/" /> : null}
+      {
+        location.pathname.includes("subjects") ?
+          <Button 
+           color='secondary'
+           variant='outlined'
+           className={classes.button}
+           onClick={handleStaff}>
+            View Staff
+          </Button> :
+          <Button
+           color='secondary'
+           variant='outlined'
+           className={classes.button}
+           onClick={handleSubjects}>
+            View Subjects
+          </Button>
+      }
       <div
         style={{
           float: "right",
@@ -191,7 +182,7 @@ export default function Admin() {
           Reset Database
         </Button>
       </div>
-      <Subjects />
+      <Routes />
       <Dialog
         open={resetDb || clearYear}
         onClose={handleClose}

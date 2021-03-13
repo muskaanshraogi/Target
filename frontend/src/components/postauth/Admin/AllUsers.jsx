@@ -170,7 +170,7 @@ export default function AllUsers() {
         });
     } else {
       Axios.post(
-        `${process.env.REACT_APP_HOST}/api/faculty/add/multiple/${addSubjects[0].reg_id}`,
+        `${process.env.REACT_APP_HOST}/api/faculty/add/multiple/relations`,
         {
           relations: addSubjects,
         },
@@ -213,7 +213,7 @@ export default function AllUsers() {
 
   return (
     <>
-      <Card>
+      <Card style={{ width: "100%" }}>
         <Typography variant="h5" className={classes.header}>
           Teacher - Subject Relation
         </Typography>

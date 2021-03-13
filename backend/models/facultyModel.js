@@ -21,15 +21,15 @@ const addRelation = (relation, teacher, callback) => {
   );
 };
 
-const addMultipleRelations = (data, teacher, callback) => {
+const addMultipleRelations = (data, callback) => {
   let count = 0;
-  let err = false;
+  let error  = false
   let er
   data.relations.forEach((relation) => {
     db.query(
       "CALL teacher_subject(?, ?, ?, ?, ?)",
       [
-        teacher,
+        relation.reg_id,
         relation.subject,
         relation.role,
         relation.division,
