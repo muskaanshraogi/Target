@@ -21,20 +21,20 @@ import {
   FormControlLabel,
   Button,
   Tooltip,
-  Checkbox
+  Checkbox,
 } from "@material-ui/core";
 import DeleteIcon from "@material-ui/icons/Delete";
-import { RiEye2Line } from 'react-icons/ri'
+import { RiEye2Line } from "react-icons/ri";
 import Axios from "axios";
-import { useHistory } from 'react-router'
+import { useHistory } from "react-router";
 import { useSnackbar } from "notistack";
 
 const division = [9, 10, 11];
 
 const useStyles = makeStyles((theme) => ({
   avatar: {
-    color: '#FFFFFF',
-    backgroundColor: '#193B55',
+    color: "#FFFFFF",
+    backgroundColor: "#193B55",
   },
   card: {
     marginTop: "1%",
@@ -56,7 +56,7 @@ const useStyles = makeStyles((theme) => ({
   },
   listItem: {
     padding: "1% 4%",
-    borderBottom: '1px solid #bbbbbb'
+    borderBottom: "1px solid #bbbbbb",
   },
   header: {
     padding: "1%",
@@ -68,9 +68,8 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 export default function AllUsers() {
-
   const classes = useStyles();
-  const history = useHistory()
+  const history = useHistory();
 
   const { enqueueSnackbar } = useSnackbar();
 
@@ -387,29 +386,29 @@ export default function AllUsers() {
                 }
               />
               <ListItemSecondaryAction>
-                <Tooltip title='View'>
-                    <IconButton
-                      edge="end"
-                      color='secondary'
-                      onClick={() => {
-                        history.push(`/home/admin/staff/${user.reg_id}`)
-                      }}
-                    >
-                      <RiEye2Line />
-                    </IconButton>
-                  </Tooltip>
-                  <Tooltip title='Delete'>
-                    <IconButton
-                      edge="end"
-                      color='primary'
-                      onClick={() => {
-                        setOpen(true);
-                        setTeacher(user.reg_id);
-                      }}
-                    >
-                      <DeleteIcon />
-                    </IconButton>
-                  </Tooltip>
+                <Tooltip title="View">
+                  <IconButton
+                    edge="end"
+                    color="secondary"
+                    onClick={() => {
+                      history.push(`/home/admin/staff/${user.reg_id}`);
+                    }}
+                  >
+                    <RiEye2Line />
+                  </IconButton>
+                </Tooltip>
+                <Tooltip title="Delete">
+                  <IconButton
+                    edge="end"
+                    color="primary"
+                    onClick={() => {
+                      setOpen(true);
+                      setTeacher(user.reg_id);
+                    }}
+                  >
+                    <DeleteIcon />
+                  </IconButton>
+                </Tooltip>
               </ListItemSecondaryAction>
             </ListItem>
           ))}
@@ -445,21 +444,21 @@ export default function AllUsers() {
                   }
                 />
                 <ListItemSecondaryAction>
-                  <Tooltip title='View'>
+                  <Tooltip title="View">
                     <IconButton
                       edge="end"
-                      color='secondary'
+                      color="secondary"
                       onClick={() => {
-                        history.push(`/home/admin/staff/${user.reg_id}`)
+                        history.push(`/home/admin/staff/${user.reg_id}`);
                       }}
                     >
                       <RiEye2Line />
                     </IconButton>
                   </Tooltip>
-                  <Tooltip title='Delete'>
+                  <Tooltip title="Delete">
                     <IconButton
                       edge="end"
-                      color='primary'
+                      color="primary"
                       onClick={() => {
                         setOpen(true);
                         setTeacher(user.reg_id);

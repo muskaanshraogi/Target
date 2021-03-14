@@ -17,10 +17,13 @@ import {
   IconButton,
   makeStyles,
   colors,
+  Tooltip,
 } from "@material-ui/core";
 import DeleteIcon from "@material-ui/icons/Delete";
 import { useSnackbar } from "notistack";
 import Axios from "axios";
+import { RiEye2Line } from "react-icons/ri";
+import { useHistory } from "react-router";
 
 const useStyles = makeStyles((theme) => ({
   avatar: {
@@ -47,7 +50,7 @@ const useStyles = makeStyles((theme) => ({
   },
   listItem: {
     padding: "1% 4%",
-    borderBottom: '1px solid #bbbbbb'
+    borderBottom: "1px solid #bbbbbb",
   },
   header: {
     padding: "1%",
@@ -60,6 +63,7 @@ const useStyles = makeStyles((theme) => ({
 
 export default function Subjects() {
   const classes = useStyles();
+  const history = useHistory();
   const { enqueueSnackbar } = useSnackbar();
 
   const [allSubjects, setAllSubjects] = useState([]);
@@ -304,7 +308,11 @@ export default function Subjects() {
           {allSubjects
             .slice(0, allSubjects.length / 2 + 1)
             .map((subject, index) => (
-              <ListItem id={subject.subId} key={index} className={classes.listItem}>
+              <ListItem
+                id={subject.subId}
+                key={index}
+                className={classes.listItem}
+              >
                 <ListItemText
                   primary={
                     <Typography variant="h6" color="secondary">
@@ -326,17 +334,32 @@ export default function Subjects() {
                   }
                 />
                 <ListItemSecondaryAction>
-                  <IconButton
-                    edge="end"
-                    aria-label="delete"
-                    onClick={() => {
-                      setOpen(true);
-                      setSubject(subject.subId);
-                      setAcadYear(subject.acadYear);
-                    }}
-                  >
-                    <DeleteIcon />
-                  </IconButton>
+                  <Tooltip title="View">
+                    <IconButton
+                      edge="end"
+                      color="secondary"
+                      onClick={() => {
+                        history.push(
+                          `/home/admin/subjects/${subject.subId}/${subject.acadYear}`
+                        );
+                      }}
+                    >
+                      <RiEye2Line />
+                    </IconButton>
+                  </Tooltip>
+                  <Tooltip title="Delete">
+                    <IconButton
+                      edge="end"
+                      aria-label="delete"
+                      onClick={() => {
+                        setOpen(true);
+                        setSubject(subject.subId);
+                        setAcadYear(subject.acadYear);
+                      }}
+                    >
+                      <DeleteIcon />
+                    </IconButton>
+                  </Tooltip>
                 </ListItemSecondaryAction>
               </ListItem>
             ))}
@@ -347,7 +370,11 @@ export default function Subjects() {
           {allSubjects
             .slice(allSubjects.length / 2 + 1, allSubjects.length)
             .map((subject, index) => (
-              <ListItem id={subject.subId} key={index} className={classes.listItem}>
+              <ListItem
+                id={subject.subId}
+                key={index}
+                className={classes.listItem}
+              >
                 <ListItemText
                   primary={
                     <Typography variant="h6" color="secondary">
@@ -369,17 +396,24 @@ export default function Subjects() {
                   }
                 />
                 <ListItemSecondaryAction>
-                  <IconButton
-                    edge="end"
-                    aria-label="delete"
-                    onClick={() => {
-                      setOpen(true);
-                      setSubject(subject.subId);
-                      setAcadYear(subject.acadYear);
-                    }}
-                  >
-                    <DeleteIcon />
-                  </IconButton>
+                  <Tooltip title="View">
+                    <IconButton edge="end" color="secondary" onClick={() => {}}>
+                      <RiEye2Line />
+                    </IconButton>
+                  </Tooltip>
+                  <Tooltip title="Delete">
+                    <IconButton
+                      edge="end"
+                      aria-label="delete"
+                      onClick={() => {
+                        setOpen(true);
+                        setSubject(subject.subId);
+                        setAcadYear(subject.acadYear);
+                      }}
+                    >
+                      <DeleteIcon />
+                    </IconButton>
+                  </Tooltip>
                 </ListItemSecondaryAction>
               </ListItem>
             ))}
