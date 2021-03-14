@@ -46,6 +46,17 @@ router.post("/update/:reg_id", authenticate, (req, res, next) => {
   });
 });
 
+router.post("/admin/:status/:reg_id", authenticateAdmin, (req, res, next) => {
+  staffModel.adminStatus(req.params.status, req.params.reg_id, (err, status, data) => {
+    if (err) {
+      delete err.sql;
+      res.status(status).send({ err: err, data: null });
+    } else {
+      res.status(200).send({ err: null, data: data });
+    }
+  });
+});
+
 router.delete("/delete/:teacher", authenticateAdmin, (req, res, next) => {
   staffModel.deleteTeacher(req.params.teacher, (err, status, data) => {
     if (err) {

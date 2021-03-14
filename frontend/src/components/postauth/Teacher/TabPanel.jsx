@@ -53,7 +53,6 @@ export default function TabPanel(props) {
   const [rows, setRows] = useState([]);
   const [open, setOpen] = useState(false);
   const [submitted, setSubmitted] = useState(false);
-  const [selected, setSelected] = useState(null);
 
   const columns = [
     { key: "roll_no", name: "Roll Number", editable: false },

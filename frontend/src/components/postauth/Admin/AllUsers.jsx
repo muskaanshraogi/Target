@@ -9,7 +9,6 @@ import {
   Typography,
   ListItemSecondaryAction,
   IconButton,
-  colors,
   makeStyles,
   Grid,
   Select,
@@ -21,10 +20,13 @@ import {
   DialogContentText,
   FormControlLabel,
   Button,
-  Checkbox,
+  Tooltip,
+  Checkbox
 } from "@material-ui/core";
 import DeleteIcon from "@material-ui/icons/Delete";
+import { RiEye2Line } from 'react-icons/ri'
 import Axios from "axios";
+import { useHistory } from 'react-router'
 import { useSnackbar } from "notistack";
 
 const division = [9, 10, 11];
@@ -49,8 +51,12 @@ const useStyles = makeStyles((theme) => ({
     margin: 0,
   },
   list: {
-    padding: "0 1% 1% 1%",
+    padding: "0",
     margin: "0",
+  },
+  listItem: {
+    padding: "1% 4%",
+    borderBottom: '1px solid #bbbbbb'
   },
   header: {
     padding: "1%",
@@ -62,7 +68,10 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 export default function AllUsers() {
+
   const classes = useStyles();
+  const history = useHistory()
+
   const { enqueueSnackbar } = useSnackbar();
 
   const [open, setOpen] = useState(false);
@@ -353,7 +362,7 @@ export default function AllUsers() {
       <Card className={classes.card}>
         <List className={classes.list}>
           {allUsers.slice(0, allUsers.length / 2 + 1).map((user, index) => (
-            <ListItem id={index} key={index}>
+            <ListItem id={index} key={index} className={classes.listItem}>
               <ListItemAvatar>
                 <Avatar className={classes.avatar}>
                   {user.firstName.charAt(0)}
@@ -378,17 +387,29 @@ export default function AllUsers() {
                 }
               />
               <ListItemSecondaryAction>
-                <IconButton
-                  edge="end"
-                  color='primary'
-                  aria-label="delete"
-                  onClick={() => {
-                    setOpen(true);
-                    setTeacher(user.reg_id);
-                  }}
-                >
-                  <DeleteIcon />
-                </IconButton>
+                <Tooltip title='View'>
+                    <IconButton
+                      edge="end"
+                      color='secondary'
+                      onClick={() => {
+                        history.push(`/home/admin/staff/${user.reg_id}`)
+                      }}
+                    >
+                      <RiEye2Line />
+                    </IconButton>
+                  </Tooltip>
+                  <Tooltip title='Delete'>
+                    <IconButton
+                      edge="end"
+                      color='primary'
+                      onClick={() => {
+                        setOpen(true);
+                        setTeacher(user.reg_id);
+                      }}
+                    >
+                      <DeleteIcon />
+                    </IconButton>
+                  </Tooltip>
               </ListItemSecondaryAction>
             </ListItem>
           ))}
@@ -399,7 +420,7 @@ export default function AllUsers() {
           {allUsers
             .slice(allUsers.length / 2 + 1, allUsers.length)
             .map((user, index) => (
-              <ListItem id={index} key={index}>
+              <ListItem id={index} key={index} className={classes.listItem}>
                 <ListItemAvatar>
                   <Avatar className={classes.avatar}>
                     {user.firstName.charAt(0)}
@@ -424,17 +445,29 @@ export default function AllUsers() {
                   }
                 />
                 <ListItemSecondaryAction>
-                  <IconButton
-                    edge="end"
-                    color='primary'
-                    aria-label="delete"
-                    onClick={() => {
-                      setOpen(true);
-                      setTeacher(user.reg_id);
-                    }}
-                  >
-                    <DeleteIcon />
-                  </IconButton>
+                  <Tooltip title='View'>
+                    <IconButton
+                      edge="end"
+                      color='secondary'
+                      onClick={() => {
+                        history.push(`/home/admin/staff/${user.reg_id}`)
+                      }}
+                    >
+                      <RiEye2Line />
+                    </IconButton>
+                  </Tooltip>
+                  <Tooltip title='Delete'>
+                    <IconButton
+                      edge="end"
+                      color='primary'
+                      onClick={() => {
+                        setOpen(true);
+                        setTeacher(user.reg_id);
+                      }}
+                    >
+                      <DeleteIcon />
+                    </IconButton>
+                  </Tooltip>
                 </ListItemSecondaryAction>
               </ListItem>
             ))}
