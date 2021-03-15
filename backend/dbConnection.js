@@ -7,7 +7,7 @@ let PASSWORD = process.env.PASSWORD || ''
 const connection = mysql.createConnection({
     host: 'localhost',
     user: "root",
-    password: PASSWORD,
+    password: "tanelon1234",
     database: 'target'
 })
 

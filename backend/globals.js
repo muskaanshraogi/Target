@@ -6,7 +6,7 @@ const generateToken = (user) => {
     {
       id: user.reg_id,
     },
-    process.env.SECRET
+    "CNZMZFghycyrurxpvHlLsyiwhrQzGZ51"
   );
 
   return {
@@ -25,7 +25,7 @@ const authenticate = (req, res, next) => {
     const token = req.headers.authorization;
  
     if (token) {
-      const decoded = jwt.decode(token.split(" ")[1], process.env.SECRET);
+      const decoded = jwt.decode(token.split(" ")[1], "CNZMZFghycyrurxpvHlLsyiwhrQzGZ51");
       db.query(
           "SELECT * FROM staff WHERE reg_id=?",
           [decoded.id],
@@ -48,7 +48,7 @@ const authenticateAdmin = (req, res, next) => {
   const token = req.headers.authorization;
 
   if (token) {
-    const decoded = jwt.decode(token.split(" ")[1], process.env.SECRET);
+    const decoded = jwt.decode(token.split(" ")[1], "CNZMZFghycyrurxpvHlLsyiwhrQzGZ51");
     db.query(
         "SELECT * FROM staff WHERE reg_id=?",
         [decoded.id],

@@ -7,13 +7,13 @@ dotenv.config()
 
 const mailer = (email, subject, division, username) => {
     const oauth2Client = new OAuth2(
-        process.env.CLIENT_ID,
-        process.env.CLIENT_SECRET, 
+        "899017535404-i7macjals7j8bj95qtgnhqcetbk5h1rd.apps.googleusercontent.com",
+        "LcohwztQMS6hxq3-CuZFN063", 
         "https://developers.google.com/oauthplayground" 
     );
     
     oauth2Client.setCredentials({
-        refresh_token: process.env.REFRESH_TOKEN
+        refresh_token: "1//042SM2zQvNu_XCgYIARAAGAQSNwF-L9IrTO2Aj5T5aGCgC2HSj6gvdPvkHLqqpgSX82vPh2ye1GSqFLX_aR1xade5jLoB-mpcbRs"
     });
     const accessToken = oauth2Client.getAccessToken()
     
@@ -22,9 +22,9 @@ const mailer = (email, subject, division, username) => {
         auth: {
              type: "OAuth2",
              user: "pict.targetsolutions@gmail.com", 
-             clientId: process.env.CLIENT_ID,
-             clientSecret: process.env.CLIENT_SECRET,
-             refreshToken: process.env.REFRESH_TOKEN,
+             clientId: "899017535404-i7macjals7j8bj95qtgnhqcetbk5h1rd.apps.googleusercontent.com",
+             clientSecret: "LcohwztQMS6hxq3-CuZFN063",
+             refreshToken: "1//042SM2zQvNu_XCgYIARAAGAQSNwF-L9IrTO2Aj5T5aGCgC2HSj6gvdPvkHLqqpgSX82vPh2ye1GSqFLX_aR1xade5jLoB-mpcbRs",
              accessToken: accessToken
         },
         tls: {
