@@ -68,7 +68,7 @@ const mailer = (email, subject, division, username) => {
                   Please submit ${subject} marklist for division ${division} on the <b>Target Solutions<b> portal at the earliest.
                   <br><br>
                   You can access it, by signing in to the web console
-                  <a href="#0" target="_blank" rel="noopener noreferrer"
+                  <a href="https://www.targetsolutions.tk/" target="_blank" rel="noopener noreferrer"
                     style="color: #4285F4; text-decoration: none; background-color: transparent;">here.</a>
                   <br><br>
                 </th>
