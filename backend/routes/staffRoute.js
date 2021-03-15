@@ -4,7 +4,6 @@ const staffModel = require("./../models/staffModel");
 const { authenticate, authenticateAdmin } = require("../globals");
 
 router.use(function (req, res, next) {
-  res.header("Access-Control-Allow-Origin", "*");
   res.header("Access-Control-Allow-Methods", "PUT, OPTIONS, GET, POST, DELETE");
   res.header(
     "Access-Control-Allow-Headers",
