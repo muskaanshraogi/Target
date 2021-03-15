@@ -70,7 +70,7 @@ export default function Subject(props) {
       }
     )
       .then((res) => {
-        console.log(res.data.data[0]);
+        console.log(res.data.data);
       })
       .catch((err) => {
         enqueueSnackbar("Could not fetch user", { variant: "error" });
