@@ -23,8 +23,8 @@ const addRelation = (relation, teacher, callback) => {
 
 const addMultipleRelations = (data, callback) => {
   let count = 0;
-  let error  = false
-  let er
+  let error = false;
+  let er;
   data.relations.forEach((relation) => {
     db.query(
       "CALL teacher_subject(?, ?, ?, ?, ?)",
@@ -36,17 +36,16 @@ const addMultipleRelations = (data, callback) => {
         relation.acadYear,
       ],
       (err, res) => {
-        count++
+        count++;
         if (err) {
-          error = true
-          er = err
-        } 
+          error = true;
+          er = err;
+        }
 
         if (count === data.relations.length) {
-          if(error) {
+          if (error) {
             return callback(er, 500, null);
-          }
-          else {
+          } else {
             return callback(null, 201, res);
           }
         }
@@ -158,5 +157,5 @@ module.exports = {
   deleteRelation,
   getSubjectTeacherDetails,
   sendMail,
-  checkCoordinator
+  checkCoordinator,
 };

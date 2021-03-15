@@ -23,6 +23,8 @@ import { useSnackbar } from "notistack";
 import DataGrid, { TextEditor } from "react-data-grid";
 import { saveAs } from "file-saver";
 import readXlsxFile from "read-excel-file";
+import { BiArrowBack } from "react-icons/bi";
+import { useHistory } from "react-router";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -39,11 +41,11 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 export default function TabPanel(props) {
-
   const classes = useStyles();
+  const history = useHistory();
 
   const { enqueueSnackbar } = useSnackbar();
-  
+
   const [token, setToken] = useState(null);
   const [table, setTable] = useState(true);
   const [text, setText] = useState(false);
@@ -240,9 +242,7 @@ export default function TabPanel(props) {
         });
         saveAs(blob, "Sample.xlsx");
       })
-      .catch((err) => {
-        console.log(err);
-      });
+      .catch(() => {});
   };
 
   const hanldeFileUpload = (e) => {
@@ -317,11 +317,21 @@ export default function TabPanel(props) {
     <div>
       {sub && (
         <div style={{ padding: "2%" }}>
-          <Typography variant="h4" style={{ color: '#193B55' }}><b>Subject Details:</b></Typography>
+          <Typography variant="h4" style={{ color: "#193B55" }}>
+            <b>
+              <Button
+                style={{ padding: "0", width: "2%" }}
+                onClick={() => history.push("/home/teacher")}
+              >
+                <BiArrowBack style={{ fontSize: "20px" }} />
+              </Button>
+              Subject Details:
+            </b>
+          </Typography>
           <Grid
             container
             spacing={1}
-            style={{ paddingBottom: "2%", marginTop: '1px', paddingLeft: "0" }}
+            style={{ paddingBottom: "2%", marginTop: "1px", paddingLeft: "0" }}
           >
             <Grid item xs={4}>
               <Paper className={classes.paper}>
@@ -335,7 +345,8 @@ export default function TabPanel(props) {
             </Grid>
             <Grid item xs={4}>
               <Paper className={classes.paper}>
-                Academic Year : <b style={{ color: "#E50058" }}>{sub.acadYear}</b>
+                Academic Year :{" "}
+                <b style={{ color: "#E50058" }}>{sub.acadYear}</b>
               </Paper>
             </Grid>
             <Grid item xs={4}>
@@ -483,7 +494,7 @@ export default function TabPanel(props) {
                     disabled={number === 0 || submitted ? true : false}
                     variant="outlined"
                     color="primary"
-                    style={{ margin: "2% 0% 0% 1%", float: 'right' }}
+                    style={{ margin: "2% 0% 0% 1%", float: "right" }}
                     onClick={handleUpload}
                   >
                     Upload File

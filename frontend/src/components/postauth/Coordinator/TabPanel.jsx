@@ -6,8 +6,6 @@ import {
   TableRow,
   TableContainer,
   Card,
-  CardHeader,
-  CardContent,
   Table,
   TableHead,
   Paper,
@@ -24,6 +22,8 @@ import { useSnackbar } from "notistack";
 import PDF from "../PDF/pdfContainer";
 import Doc from "../PDF/docService";
 import Teachers from "./Teachers";
+import { BiArrowBack } from "react-icons/bi";
+import { useHistory } from "react-router";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -41,6 +41,7 @@ const useStyles = makeStyles((theme) => ({
 
 export default function CoordinatorPanel(props) {
   const classes = useStyles();
+  const history = useHistory();
 
   const { enqueueSnackbar } = useSnackbar();
 
@@ -187,15 +188,15 @@ export default function CoordinatorPanel(props) {
     )
       .then((res) => {
         let data = res.data.data;
-        let subCount = 0
+        let subCount = 0;
         data.forEach((d, index) => {
-          if(d.submitted) {
-            subCount++
+          if (d.submitted) {
+            subCount++;
           }
         });
         setTeachers(data);
-        if(subCount === 3) {
-          setSubmittedBool(true)
+        if (subCount === 3) {
+          setSubmittedBool(true);
         }
         let found = data.find((d) => d.roleName === "Subject Coordinator");
         if (found) {
@@ -331,7 +332,6 @@ export default function CoordinatorPanel(props) {
       }
     )
       .then((res) => {
-        console.log(res.data.data[0]);
         setSubject(res.data.data[0]);
       })
       .catch((err) => {
@@ -345,30 +345,42 @@ export default function CoordinatorPanel(props) {
 
   return (
     <div>
-      {
-        subject ?
-          (<Grid container item spacing={1}>
-            <PDF createPdf={createPdf}>
-            <div style={{ padding: '2% 2% 0 2%' }}>
-            <Typography variant="h4" style={{ color: '#193B55' }}><b>Coordinator {subject.subName} : {subject.acadYear}</b></Typography>
+      {subject ? (
+        <Grid container item spacing={1}>
+          <PDF createPdf={createPdf}>
+            <div style={{ padding: "2% 2% 0 2%" }}>
+              <Typography variant="h4" style={{ color: "#193B55" }}>
+                <b>
+                  <Button
+                    style={{ padding: "0", width: "2%" }}
+                    onClick={() => history.push("/home/coordinator")}
+                  >
+                    <BiArrowBack style={{ fontSize: "20px" }} />
+                  </Button>
+                  Coordinator {subject.subName} : {subject.acadYear}
+                </b>
+              </Typography>
               <Grid
                 container
                 spacing={1}
-                style={{ paddingTop: '1px', paddingLeft: "0" }}
+                style={{ paddingTop: "1px", paddingLeft: "0" }}
               >
                 <Grid item xs={4}>
                   <Paper className={classes.paper}>
-                    Subject ID : <b style={{ color: "#E50058" }}>{subject.subId}</b>
+                    Subject ID :{" "}
+                    <b style={{ color: "#E50058" }}>{subject.subId}</b>
                   </Paper>
                 </Grid>
                 <Grid item xs={4}>
                   <Paper className={classes.paper}>
-                    Subject Name : <b style={{ color: "#E50058" }}>{subject.subName}</b>
+                    Subject Name :{" "}
+                    <b style={{ color: "#E50058" }}>{subject.subName}</b>
                   </Paper>
                 </Grid>
                 <Grid item xs={4}>
                   <Paper className={classes.paper}>
-                    Academic Year : <b style={{ color: "#E50058" }}>{subject.acadYear}</b>
+                    Academic Year :{" "}
+                    <b style={{ color: "#E50058" }}>{subject.acadYear}</b>
                   </Paper>
                 </Grid>
                 <Grid item xs={4}>
@@ -376,118 +388,122 @@ export default function CoordinatorPanel(props) {
                 </Grid>
               </Grid>
               <Typography
-                  variant="h5"
-                  style={{ marginTop: "2%", padding: "1px 0", color: "#193B55" }}
-                >
-                  <b>Staff:</b>
+                variant="h5"
+                style={{ marginTop: "2%", padding: "1px 0", color: "#193B55" }}
+              >
+                <b>Staff:</b>
               </Typography>
               <Card item xs={12}>
                 <Teachers teachers={teachers} coordinator={coordinator} />
-              </Card> 
-              <Card  style={{ marginTop: '2%' }}>
+              </Card>
+              <Card style={{ marginTop: "2%" }}>
                 {total && (
                   <div>
                     <Typography variant="h6" style={{ padding: "1% 2% 0% 1%" }}>
-                    Enter Total Marks:
-                  </Typography>
-                  <TableContainer component={Paper}>
-                    <Table aria-label="caption table">
-                      <TableHead>
-                        <TableRow>
-                          <TableCell align="center">CO 1</TableCell>
-                          <TableCell align="center">CO 2</TableCell>
-                          <TableCell align="center">CO 3</TableCell>
-                          <TableCell align="center">CO 4</TableCell>
-                          <TableCell align="center">CO 5</TableCell>
-                          <TableCell align="center">CO 6</TableCell>
-                          <TableCell align="center">SPPU</TableCell>
-                          <TableCell align="center">Submit</TableCell>
-                        </TableRow>
-                      </TableHead>
-                      <TableBody>
-                        <TableRow>
-                          <TableCell align="center">
-                            <TextField
-                              name="tco1"
-                              variant="filled"
-                              value={total.tco1}
-                              disabled={totalBool}
-                              onChange={handleTotalChange}
-                            />
-                          </TableCell>
-                          <TableCell align="center">
-                            <TextField
-                              name="tco2"
-                              variant="filled"
-                              value={total.tco2}
-                              disabled={totalBool}
-                              onChange={handleTotalChange}
-                            />
-                          </TableCell>
-                          <TableCell align="center">
-                            <TextField
-                              name="tco3"
-                              variant="filled"
-                              value={total.tco3}
-                              disabled={totalBool}
-                              onChange={handleTotalChange}
-                            />
-                          </TableCell>
-                          <TableCell align="center">
-                            <TextField
-                              name="tco4"
-                              variant="filled"
-                              value={total.tco4}
-                              disabled={totalBool}
-                              onChange={handleTotalChange}
-                            />
-                          </TableCell>
-                          <TableCell align="center">
-                            <TextField
-                              name="tco5"
-                              variant="filled"
-                              value={total.tco5}
-                              disabled={totalBool}
-                              onChange={handleTotalChange}
-                            />
-                          </TableCell>
-                          <TableCell align="center">
-                            <TextField
-                              name="tco6"
-                              variant="filled"
-                              value={total.tco6}
-                              disabled={totalBool}
-                              onChange={handleTotalChange}
-                            />
-                          </TableCell>
-                          <TableCell align="center">
-                            <TextField
-                              name="tsppu"
-                              variant="filled"
-                              value={total.tsppu}
-                              disabled={totalBool}
-                              onChange={handleTotalChange}
-                            />
-                          </TableCell>
-                          <TableCell align="center">
-                            <Button
-                              variant="contained"
-                              color="primary"
-                              onClick={handleTotalModal}
-                              disabled={totalBool}
-                            >
-                              Submit
-                            </Button>
-                          </TableCell>
-                        </TableRow>
-                      </TableBody>
-                    </Table>
-                  </TableContainer>
+                      Enter Total Marks:
+                    </Typography>
+                    <TableContainer component={Paper}>
+                      <Table aria-label="caption table">
+                        <TableHead>
+                          <TableRow>
+                            <TableCell align="center">CO 1</TableCell>
+                            <TableCell align="center">CO 2</TableCell>
+                            <TableCell align="center">CO 3</TableCell>
+                            <TableCell align="center">CO 4</TableCell>
+                            <TableCell align="center">CO 5</TableCell>
+                            <TableCell align="center">CO 6</TableCell>
+                            <TableCell align="center">SPPU</TableCell>
+                            <TableCell align="center">Submit</TableCell>
+                          </TableRow>
+                        </TableHead>
+                        <TableBody>
+                          <TableRow>
+                            <TableCell align="center">
+                              <TextField
+                                name="tco1"
+                                variant="filled"
+                                value={total.tco1}
+                                disabled={totalBool}
+                                onChange={handleTotalChange}
+                              />
+                            </TableCell>
+                            <TableCell align="center">
+                              <TextField
+                                name="tco2"
+                                variant="filled"
+                                value={total.tco2}
+                                disabled={totalBool}
+                                onChange={handleTotalChange}
+                              />
+                            </TableCell>
+                            <TableCell align="center">
+                              <TextField
+                                name="tco3"
+                                variant="filled"
+                                value={total.tco3}
+                                disabled={totalBool}
+                                onChange={handleTotalChange}
+                              />
+                            </TableCell>
+                            <TableCell align="center">
+                              <TextField
+                                name="tco4"
+                                variant="filled"
+                                value={total.tco4}
+                                disabled={totalBool}
+                                onChange={handleTotalChange}
+                              />
+                            </TableCell>
+                            <TableCell align="center">
+                              <TextField
+                                name="tco5"
+                                variant="filled"
+                                value={total.tco5}
+                                disabled={totalBool}
+                                onChange={handleTotalChange}
+                              />
+                            </TableCell>
+                            <TableCell align="center">
+                              <TextField
+                                name="tco6"
+                                variant="filled"
+                                value={total.tco6}
+                                disabled={totalBool}
+                                onChange={handleTotalChange}
+                              />
+                            </TableCell>
+                            <TableCell align="center">
+                              <TextField
+                                name="tsppu"
+                                variant="filled"
+                                value={total.tsppu}
+                                disabled={totalBool}
+                                onChange={handleTotalChange}
+                              />
+                            </TableCell>
+                            <TableCell align="center">
+                              <Button
+                                variant="contained"
+                                color="primary"
+                                onClick={handleTotalModal}
+                                disabled={totalBool}
+                              >
+                                Submit
+                              </Button>
+                            </TableCell>
+                          </TableRow>
+                        </TableBody>
+                      </Table>
+                    </TableContainer>
                   </div>
                 )}
                 {target && (
                   <>
-                    <Typography variant="h6" color='secondary' style={{ padding: "1% 2% 0% 1%" }}>
+                    <Typography
+                      variant="h6"
+                      color="secondary"
+                      style={{ padding: "1% 2% 0% 1%" }}
+                    >
                       Enter Target Values:
                     </Typography>
                     <TableContainer component={Paper}>
@@ -575,103 +591,131 @@ export default function CoordinatorPanel(props) {
                   </>
                 )}
               </Card>
-              { attainment ? 
-                (<div>
+              {attainment ? (
+                <div>
                   <Typography
                     variant="h5"
-                    style={{ marginTop: "2%", padding: "1px 0", color: "#193B55" }}
+                    style={{
+                      marginTop: "2%",
+                      padding: "1px 0",
+                      color: "#193B55",
+                    }}
                   >
                     <b>Attainment:</b>
                   </Typography>
                   <Card item xs={12}>
-                  <TableContainer component={Paper}>
-                    <Table>
-                      <TableHead>
-                        <TableRow>
-                          <TableCell align="center" style={{ fontSize: '16px' }}>UT</TableCell>
-                          <TableCell align="center" style={{ fontSize: '16px' }}>SPPU</TableCell>
-                          <TableCell align="center" style={{ fontSize: '16px' }}>Total</TableCell>
-                        </TableRow>
-                      </TableHead>
-                      <TableBody>
-                        <TableRow>
-                          <TableCell align="center" style={{ color: "#E50058", fontSize: '16px' }}>
-                            <b>{attainment.ut}</b>
-                          </TableCell>
-                          <TableCell align="center" style={{ color: "#E50058", fontSize: '16px' }}>
-                            <b>{attainment.sppu}</b>
-                          </TableCell>
-                          <TableCell align="center" style={{ color: "#E50058", fontSize: '16px' }}>
-                            <b>{attainment.total}</b>
-                          </TableCell>
-                        </TableRow>
-                      </TableBody>
-                    </Table>
-                  </TableContainer>
-                </Card>
-                </div>) :
-                null
-              } 
+                    <TableContainer component={Paper}>
+                      <Table>
+                        <TableHead>
+                          <TableRow>
+                            <TableCell
+                              align="center"
+                              style={{ fontSize: "16px" }}
+                            >
+                              UT
+                            </TableCell>
+                            <TableCell
+                              align="center"
+                              style={{ fontSize: "16px" }}
+                            >
+                              SPPU
+                            </TableCell>
+                            <TableCell
+                              align="center"
+                              style={{ fontSize: "16px" }}
+                            >
+                              Total
+                            </TableCell>
+                          </TableRow>
+                        </TableHead>
+                        <TableBody>
+                          <TableRow>
+                            <TableCell
+                              align="center"
+                              style={{ color: "#E50058", fontSize: "16px" }}
+                            >
+                              <b>{attainment.ut}</b>
+                            </TableCell>
+                            <TableCell
+                              align="center"
+                              style={{ color: "#E50058", fontSize: "16px" }}
+                            >
+                              <b>{attainment.sppu}</b>
+                            </TableCell>
+                            <TableCell
+                              align="center"
+                              style={{ color: "#E50058", fontSize: "16px" }}
+                            >
+                              <b>{attainment.total}</b>
+                            </TableCell>
+                          </TableRow>
+                        </TableBody>
+                      </Table>
+                    </TableContainer>
+                  </Card>
+                </div>
+              ) : null}
               <Grid>
                 <Button
                   variant="contained"
                   color="primary"
                   style={{ margin: "2% 2% 0% 0%" }}
                   onClick={handleCalculate}
-                  disabled={!targetBool || !totalBool || !submittedBool || attainment}
+                  disabled={
+                    !targetBool || !totalBool || !submittedBool || attainment
+                  }
                 >
                   Calculate Attainment
                 </Button>
               </Grid>
-              </div>
-            </PDF>
-            <Dialog
-              open={totalModal}
-              onClose={handleTotalModal}
-              BackdropProps={{
-                classes: {
-                  root: classes.backDrop,
-                },
-              }}
-            >
-              <DialogTitle id="alert-dialog-title">
-                Are you sure you want to save the total marks? This step is
-                irreversible.
-              </DialogTitle>
-              <DialogActions>
-                <Button onClick={handleTotalModal} color="primary">
-                  No
-                </Button>
-                <Button onClick={handleTotal} color="primary" autoFocus>
-                  Yes
-                </Button>
-              </DialogActions>
-            </Dialog>
-            <Dialog
-              open={targetModal}
-              onClose={handleTargetModal}
-              BackdropProps={{
-                classes: {
-                  root: classes.backDrop,
-                },
-              }}
-            >
-              <DialogTitle id="alert-dialog-title">
-                Are you sure you want to save the target attainment? This step is
-                irreversible.
-              </DialogTitle>
-              <DialogActions>
-                <Button onClick={handleTargetModal} color="primary">
-                  No
-                </Button>
-                <Button onClick={handleTarget} color="primary" autoFocus>
-                  Yes
-                </Button>
-              </DialogActions>
-            </Dialog>
-          </Grid>) : 
-          null
-      }
+            </div>
+          </PDF>
+          <Dialog
+            open={totalModal}
+            onClose={handleTotalModal}
+            BackdropProps={{
+              classes: {
+                root: classes.backDrop,
+              },
+            }}
+          >
+            <DialogTitle id="alert-dialog-title">
+              Are you sure you want to save the total marks? This step is
+              irreversible.
+            </DialogTitle>
+            <DialogActions>
+              <Button onClick={handleTotalModal} color="primary">
+                No
+              </Button>
+              <Button onClick={handleTotal} color="primary" autoFocus>
+                Yes
+              </Button>
+            </DialogActions>
+          </Dialog>
+          <Dialog
+            open={targetModal}
+            onClose={handleTargetModal}
+            BackdropProps={{
+              classes: {
+                root: classes.backDrop,
+              },
+            }}
+          >
+            <DialogTitle id="alert-dialog-title">
+              Are you sure you want to save the target attainment? This step is
+              irreversible.
+            </DialogTitle>
+            <DialogActions>
+              <Button onClick={handleTargetModal} color="primary">
+                No
+              </Button>
+              <Button onClick={handleTarget} color="primary" autoFocus>
+                Yes
+              </Button>
+            </DialogActions>
+          </Dialog>
+        </Grid>
+      ) : null}
     </div>
   );
 }

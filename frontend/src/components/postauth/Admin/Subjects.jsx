@@ -186,7 +186,8 @@ export default function Subjects() {
       .then((res) => {
         let newAllSubjects = [...allSubjects];
         newAllSubjects = allSubjects.filter(
-          (subject) => subject.subId !== subId
+          (subject) =>
+            !(subject.subId === subId && subject.acadYear === acadYear)
         );
         setAllSubjects(newAllSubjects);
         enqueueSnackbar("Deleted!", { variant: "success" });
@@ -397,11 +398,15 @@ export default function Subjects() {
                 />
                 <ListItemSecondaryAction>
                   <Tooltip title="View">
-                    <IconButton edge="end" color="secondary" onClick={() => {
-                       history.push(
-                        `/home/admin/subjects/${subject.subId}/${subject.acadYear}`
-                      );
-                    }}>
+                    <IconButton
+                      edge="end"
+                      color="secondary"
+                      onClick={() => {
+                        history.push(
+                          `/home/admin/subjects/${subject.subId}/${subject.acadYear}`
+                        );
+                      }}
+                    >
                       <RiEye2Line />
                     </IconButton>
                   </Tooltip>
