@@ -4,6 +4,7 @@ const finalModel = require('../models/finalModel');
 const { authenticate, authenticateAdmin } = require('../globals');
 
 router.use(function (req, res, next) {
+    res.header("Access-Control-Allow-Origin", "*");
     res.header("Access-Control-Allow-Methods", "PUT, OPTIONS, GET, POST, DELETE");
     res.header(
       "Access-Control-Allow-Headers",
