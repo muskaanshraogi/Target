@@ -68,6 +68,7 @@ export default function Subject(props) {
     )
       .then((res) => {
         let data = res.data.data[0];
+        console.log(data);
         setSubject({
           subId: data.subId,
           subName: data.subName,
