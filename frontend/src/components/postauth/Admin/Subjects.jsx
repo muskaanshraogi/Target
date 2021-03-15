@@ -397,7 +397,11 @@ export default function Subjects() {
                 />
                 <ListItemSecondaryAction>
                   <Tooltip title="View">
-                    <IconButton edge="end" color="secondary" onClick={() => {}}>
+                    <IconButton edge="end" color="secondary" onClick={() => {
+                       history.push(
+                        `/home/admin/subjects/${subject.subId}/${subject.acadYear}`
+                      );
+                    }}>
                       <RiEye2Line />
                     </IconButton>
                   </Tooltip>

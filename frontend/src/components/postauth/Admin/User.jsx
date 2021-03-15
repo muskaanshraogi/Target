@@ -181,6 +181,7 @@ import {
                 { admin ? "Remove Admin" : "Make Admin" }
               </Button>
             </Grid>
+            { user[0].subId ?
             <Grid item spacing={2} style={{ marginTop: '1%' }}>
                 <Typography variant="h5" style={{ color: '#193B55' }}>
                     <b>Subjects:</b>
@@ -225,7 +226,15 @@ import {
                     </TableBody>
                     </Table>
                 </TableContainer>
+            </Grid> :
+            <Grid item spacing={2} style={{ marginTop: '1%' }}>
+              <Paper>
+                <Typography variant="h5" style={{ color: '#193B55', padding: '1%' }}>
+                    <b>No subjects assigned yet</b>
+                </Typography>
+              </Paper>
             </Grid>
+            }
             <Dialog
               open={open}
               onClose={handleOpen}

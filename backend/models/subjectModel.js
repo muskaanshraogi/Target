@@ -183,13 +183,13 @@ const getTarget = (subId, acadYear, callback) => {
 
 const getSubjectDetails = (subId, acadYear, callback) => {
   db.query(
-    "SELECT subject.subId, subject.subName, subject.year, subject.acadYear, faculty.role_id, faculty.division, staff.firstName, staff.lastName, staff.reg_id FROM subject JOIN faculty JOIN staff ON subject.subId=faculty.subId AND subject.acadYear=faculty.acadYear AND faculty.reg_id=staff.reg_id WHERE subject.subId=? AND subject.acadYear=?",
+    "SELECT subject.subId, subject.subName, subject.year, subject.acadYear, faculty.role_id, faculty.division, staff.firstName, staff.lastName, staff.reg_id FROM subject LEFT OUTER JOIN faculty ON subject.subId=faculty.subId AND subject.acadYear=faculty.acadYear LEFT OUTER JOIN staff ON faculty.reg_id=staff.reg_id WHERE subject.subId=? AND subject.acadYear=?",
     [subId, acadYear],
     (err, res) => {
       if (err) {
         return callback(err, 500, null);
       } else {
-        return callback(null, 200, res);
+          return callback(null, 200, res);
       }
     }
   );
