@@ -33,31 +33,31 @@ Calculation of termwork, internal scores and attainment is one of the more essen
 **Login and registration:**
 
 <p float="left">
-    <img src="screenshots/1.PNG" alt="1.PNG" width="700" height="300">
-    <img src="screenshots/2.PNG" alt="2.PNG" width="700" height="300">
+    <img src="screenshots/1.PNG" alt="1.PNG" width="700" height="400">
+    <img src="screenshots/2.PNG" alt="2.PNG" width="700" height="400">
 </p>
 
 **Admin Interface:**
 <p float="left">
-    <img src="screenshots/3.PNG" alt="3.PNG" width="700" height="300">
-    <img src="screenshots/4.PNG" alt="4.PNG" width="700" height="300">
+    <img src="screenshots/3.PNG" alt="3.PNG" width="700" height="400">
+    <img src="screenshots/4.PNG" alt="4.PNG" width="700" height="400">
 </p>
 
 <p float="left">
-    <img src="screenshots/5.PNG" alt="5.PNG" width="700" height="300">
-    <img src="screenshots/6.PNG" alt="6.PNG" width="700" height="300">
+    <img src="screenshots/5.PNG" alt="5.PNG" width="700" height="400">
+    <img src="screenshots/6.PNG" alt="6.PNG" width="700" height="400">
 </p>
 
 **Teacher Interface:**
 
 <p float="left">
-    <img src="screenshots/7.PNG" alt="7.PNG" width="700" height="300">
-    <img src="screenshots/8.PNG" alt="8.PNG" width="700" height="300">
+    <img src="screenshots/7.PNG" alt="7.PNG" width="700" height="400">
+    <img src="screenshots/8.PNG" alt="8.PNG" width="700" height="400">
 </p>
 
 **Coordinator Interface:**
 
 <p float="left">
-    <img src="screenshots/9.PNG" alt="9.PNG" width="700" height="300">
-    <img src="screenshots/10.PNG" alt="10.PNG" width="700" height="300">
+    <img src="screenshots/9.PNG" alt="9.PNG" width="700" height="400">
+    <img src="screenshots/10.PNG" alt="10.PNG" width="700" height="400">
 </p>
