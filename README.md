@@ -1,6 +1,6 @@
 # Target
 
-## Automatic NBA CO Attainment Calculator 
+## Automatic CO Attainment Calculator 
 
 Calculation of termwork, internal scores and attainment is one of the more essential parts of the working of any institute. Trying to automate this process is what our project focuses on. We have created an extremely intuitive portal which makes it easier for the staff members to communicate with their respective subject heads and keep a track of individual student assessment. We used MySQL as the database backend along with NodeJS and ExpressJS. React was used to make a clean interface.
 
