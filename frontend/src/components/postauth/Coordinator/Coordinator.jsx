@@ -12,6 +12,8 @@ import {
   Button,
   makeStyles,
   TableContainer,
+  Typography,
+  CircularProgress,
 } from "@material-ui/core";
 import { useHistory } from "react-router";
 import Axios from "axios";
@@ -29,13 +31,18 @@ const useStyles = makeStyles((theme) => ({
     color: "#193B55",
     fontWeight: "bold",
   },
+  loading: {
+    marginTop: "2%",
+    marginLeft: "50%",
+  },
 }));
 
 export default function Coordinator() {
   const classes = useStyles();
   const history = useHistory();
 
-  const [subjects, setSubjects] = useState([]);
+  const [subjects, setSubjects] = useState(null);
+  const [loading, setLoading] = useState(true);
 
   const checkCoordinator = () => {
     Axios.get(
@@ -50,6 +57,7 @@ export default function Coordinator() {
       }
     ).then((res) => {
       setSubjects(res.data.data);
+      setLoading(false);
     });
   };
 
@@ -64,67 +72,79 @@ export default function Coordinator() {
 
   return (
     <Grid container item spacing={1}>
-      {subjects.length > 0 ? (
-        <Grid container item direction="column" xs={12} md={12} spacing={0}>
-          <Card>
-            <CardHeader
-              title="My Subjects"
-              titleTypographyProps={{ variant: "h4" }}
-            />
-            <TableContainer component={Paper}>
-              <Table aria-label="caption table">
-                <TableHead>
-                  <TableRow>
-                    <TableCell align="center" className={classes.title}>
-                      Subject ID
-                    </TableCell>
-                    <TableCell align="center" className={classes.title}>
-                      Name
-                    </TableCell>
-                    <TableCell align="center" className={classes.title}>
-                      Year
-                    </TableCell>
-                    <TableCell align="center" className={classes.title}>
-                      Academic Year
-                    </TableCell>
-                  </TableRow>
-                </TableHead>
-                <TableBody>
-                  {subjects.map((subject, index) => (
-                    <TableRow key={subject.subId}>
-                      <TableCell align="center" className={classes.text}>
-                        {subject.subId}
-                      </TableCell>
-                      <TableCell align="center" className={classes.text}>
-                        <Button
-                          color="primary"
-                          className={classes.button}
-                          onClick={handleClick}
-                          value={`${subject.subId},${subject.acadYear}`}
-                        >
-                          <b>{subject.subName}</b>
-                        </Button>
-                      </TableCell>
-                      <TableCell align="center" className={classes.text}>
-                        {subject.year}
-                      </TableCell>
-                      <TableCell align="center" className={classes.text}>
-                        {subject.acadYear}
-                      </TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            </TableContainer>
-          </Card>
-        </Grid>
+      {loading ? (
+        <>
+          <CircularProgress color="secondary" className={classes.loading} />
+        </>
       ) : (
-        <Card>
-          <CardHeader
-            title={`You are not a coordinator`}
-            className={classes.card}
-          />
-        </Card>
+        <>
+          {subjects.length > 0 ? (
+            <Grid container item direction="column" xs={12} md={12} spacing={0}>
+              <Card>
+                <CardHeader
+                  title="My Subjects"
+                  titleTypographyProps={{ variant: "h4" }}
+                />
+                <TableContainer component={Paper}>
+                  <Table aria-label="caption table">
+                    <TableHead>
+                      <TableRow>
+                        <TableCell align="center" className={classes.title}>
+                          Subject ID
+                        </TableCell>
+                        <TableCell align="center" className={classes.title}>
+                          Name
+                        </TableCell>
+                        <TableCell align="center" className={classes.title}>
+                          Year
+                        </TableCell>
+                        <TableCell align="center" className={classes.title}>
+                          Academic Year
+                        </TableCell>
+                      </TableRow>
+                    </TableHead>
+                    <TableBody>
+                      {subjects.map((subject, index) => (
+                        <TableRow key={subject.subId}>
+                          <TableCell align="center" className={classes.text}>
+                            {subject.subId}
+                          </TableCell>
+                          <TableCell align="center" className={classes.text}>
+                            <Button
+                              color="primary"
+                              className={classes.button}
+                              onClick={handleClick}
+                              value={`${subject.subId},${subject.acadYear}`}
+                            >
+                              <b>{subject.subName}</b>
+                            </Button>
+                          </TableCell>
+                          <TableCell align="center" className={classes.text}>
+                            {subject.year}
+                          </TableCell>
+                          <TableCell align="center" className={classes.text}>
+                            {subject.acadYear}
+                          </TableCell>
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                  </Table>
+                </TableContainer>
+              </Card>
+            </Grid>
+          ) : (
+            <Grid item spacing={2} xs={12} style={{ marginTop: "1%" }}>
+              <Paper>
+                <Typography
+                  variant="h5"
+                  style={{ color: "#193B55", padding: "1%" }}
+                >
+                  <b>You are not a coordinator of any subject</b>
+                </Typography>
+              </Paper>
+            </Grid>
+          )}
+        </>
       )}
     </Grid>
   );

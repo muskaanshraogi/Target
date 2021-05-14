@@ -22,6 +22,7 @@ import {
   Button,
   Tooltip,
   Checkbox,
+  CircularProgress,
 } from "@material-ui/core";
 import DeleteIcon from "@material-ui/icons/Delete";
 import { RiEye2Line } from "react-icons/ri";
@@ -65,6 +66,10 @@ const useStyles = makeStyles((theme) => ({
     backdropFilter: "blur(3px)",
     backgroundColor: "rgba(69,69,69,0.9)",
   },
+  loading: {
+    marginTop: "2%",
+    marginLeft: "50%",
+  },
 }));
 
 export default function AllUsers() {
@@ -74,8 +79,9 @@ export default function AllUsers() {
   const { enqueueSnackbar } = useSnackbar();
 
   const [open, setOpen] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [teacher, setTeacher] = useState("");
-  const [allUsers, setAllUsers] = useState([]);
+  const [allUsers, setAllUsers] = useState(null);
   const [subjects, setSubjects] = useState([]);
   const [addSubjects, setAddSubjects] = useState([
     {
@@ -216,14 +222,17 @@ export default function AllUsers() {
         "Content-Type": "application/json",
         Authorization: `Bearer ${sessionStorage.getItem("usertoken")}`,
       },
-    }).then((res) => setAllUsers(res.data.data));
+    }).then((res) => {
+      setAllUsers(res.data.data);
+      setLoading(false);
+    });
   }, [enqueueSnackbar]);
 
   return (
     <>
       <Card style={{ width: "100%" }}>
         <Typography variant="h5" className={classes.header}>
-          Teacher - Subject Relation
+          Assign Subjects to Teachers
         </Typography>
         <form onSubmit={handleSubmit}>
           {addSubjects.map((subject, index) => (
@@ -246,11 +255,12 @@ export default function AllUsers() {
                   onChange={handleChange}
                   fullWidth
                 >
-                  {allUsers.map((staff, index) => (
-                    <MenuItem key={index} value={`${staff.reg_id}`}>
-                      {staff.reg_id} - {staff.firstName} {staff.lastName}
-                    </MenuItem>
-                  ))}
+                  {allUsers &&
+                    allUsers.map((staff, index) => (
+                      <MenuItem key={index} value={`${staff.reg_id}`}>
+                        {staff.reg_id} - {staff.firstName} {staff.lastName}
+                      </MenuItem>
+                    ))}
                 </Select>
               </Grid>
               <Grid
@@ -353,125 +363,136 @@ export default function AllUsers() {
           )}
         </form>
       </Card>
-      <Card className={classes.cardhead}>
-        <Typography variant="h5" className={classes.header}>
-          Staff List
-        </Typography>
-      </Card>
-      <Card className={classes.card}>
-        <List className={classes.list}>
-          {allUsers.slice(0, allUsers.length / 2 + 1).map((user, index) => (
-            <ListItem id={index} key={index} className={classes.listItem}>
-              <ListItemAvatar>
-                <Avatar className={classes.avatar}>
-                  {user.firstName.charAt(0)}
-                  {user.lastName.charAt(0)}
-                </Avatar>
-              </ListItemAvatar>
-              <ListItemText
-                primary={
-                  <Typography variant="h6" color="textPrimary">
-                    {user.firstName} {user.lastName}
-                  </Typography>
-                }
-                secondary={
-                  <React.Fragment>
-                    <Typography variant="body1" color="textPrimary">
-                      {user.reg_id}
-                    </Typography>
-                    <Typography variant="body2" color="textSecondary">
-                      {user.email}
-                    </Typography>
-                  </React.Fragment>
-                }
-              />
-              <ListItemSecondaryAction>
-                <Tooltip title="View">
-                  <IconButton
-                    edge="end"
-                    color="secondary"
-                    onClick={() => {
-                      history.push(`/home/admin/staff/${user.reg_id}`);
-                    }}
-                  >
-                    <RiEye2Line />
-                  </IconButton>
-                </Tooltip>
-                <Tooltip title="Delete">
-                  <IconButton
-                    edge="end"
-                    color="primary"
-                    onClick={() => {
-                      setOpen(true);
-                      setTeacher(user.reg_id);
-                    }}
-                  >
-                    <DeleteIcon />
-                  </IconButton>
-                </Tooltip>
-              </ListItemSecondaryAction>
-            </ListItem>
-          ))}
-        </List>
-      </Card>
-      <Card className={classes.card2}>
-        <List className={classes.list}>
-          {allUsers
-            .slice(allUsers.length / 2 + 1, allUsers.length)
-            .map((user, index) => (
-              <ListItem id={index} key={index} className={classes.listItem}>
-                <ListItemAvatar>
-                  <Avatar className={classes.avatar}>
-                    {user.firstName.charAt(0)}
-                    {user.lastName.charAt(0)}
-                  </Avatar>
-                </ListItemAvatar>
-                <ListItemText
-                  primary={
-                    <Typography variant="h6" color="textPrimary">
-                      {user.firstName} {user.lastName}
-                    </Typography>
-                  }
-                  secondary={
-                    <React.Fragment>
-                      <Typography variant="body1" color="textPrimary">
-                        {user.reg_id}
+      {loading ? (
+        <>
+          <CircularProgress color="secondary" className={classes.loading} />
+        </>
+      ) : (
+        <>
+          <Card className={classes.cardhead}>
+            <Typography variant="h5" className={classes.header}>
+              {allUsers.length
+                ? "Staff List"
+                : "No Staff Members Registered Yet"}
+            </Typography>
+          </Card>
+          <Card className={classes.card}>
+            <List className={classes.list}>
+              {allUsers.slice(0, allUsers.length / 2 + 1).map((user, index) => (
+                <ListItem id={index} key={index} className={classes.listItem}>
+                  <ListItemAvatar>
+                    <Avatar className={classes.avatar}>
+                      {user.firstName.charAt(0)}
+                      {user.lastName.charAt(0)}
+                    </Avatar>
+                  </ListItemAvatar>
+                  <ListItemText
+                    primary={
+                      <Typography variant="h6" color="textPrimary">
+                        {user.firstName} {user.lastName}
                       </Typography>
-                      <Typography variant="body2" color="textSecondary">
-                        {user.email}
-                      </Typography>
-                    </React.Fragment>
-                  }
-                />
-                <ListItemSecondaryAction>
-                  <Tooltip title="View">
-                    <IconButton
-                      edge="end"
-                      color="secondary"
-                      onClick={() => {
-                        history.push(`/home/admin/staff/${user.reg_id}`);
-                      }}
-                    >
-                      <RiEye2Line />
-                    </IconButton>
-                  </Tooltip>
-                  <Tooltip title="Delete">
-                    <IconButton
-                      edge="end"
-                      color="primary"
-                      onClick={() => {
-                        setOpen(true);
-                        setTeacher(user.reg_id);
-                      }}
-                    >
-                      <DeleteIcon />
-                    </IconButton>
-                  </Tooltip>
-                </ListItemSecondaryAction>
-              </ListItem>
-            ))}
-        </List>
-      </Card>
+                    }
+                    secondary={
+                      <React.Fragment>
+                        <Typography variant="body1" color="textPrimary">
+                          {user.reg_id}
+                        </Typography>
+                        <Typography variant="body2" color="textSecondary">
+                          {user.email}
+                        </Typography>
+                      </React.Fragment>
+                    }
+                  />
+                  <ListItemSecondaryAction>
+                    <Tooltip title="View">
+                      <IconButton
+                        edge="end"
+                        color="secondary"
+                        onClick={() => {
+                          history.push(`/home/admin/staff/${user.reg_id}`);
+                        }}
+                      >
+                        <RiEye2Line />
+                      </IconButton>
+                    </Tooltip>
+                    <Tooltip title="Delete">
+                      <IconButton
+                        edge="end"
+                        color="primary"
+                        onClick={() => {
+                          setOpen(true);
+                          setTeacher(user.reg_id);
+                        }}
+                      >
+                        <DeleteIcon />
+                      </IconButton>
+                    </Tooltip>
+                  </ListItemSecondaryAction>
+                </ListItem>
+              ))}
+            </List>
+          </Card>
+
+          <Card className={classes.card2}>
+            <List className={classes.list}>
+              {allUsers
+                .slice(allUsers.length / 2 + 1, allUsers.length)
+                .map((user, index) => (
+                  <ListItem id={index} key={index} className={classes.listItem}>
+                    <ListItemAvatar>
+                      <Avatar className={classes.avatar}>
+                        {user.firstName.charAt(0)}
+                        {user.lastName.charAt(0)}
+                      </Avatar>
+                    </ListItemAvatar>
+                    <ListItemText
+                      primary={
+                        <Typography variant="h6" color="textPrimary">
+                          {user.firstName} {user.lastName}
+                        </Typography>
+                      }
+                      secondary={
+                        <React.Fragment>
+                          <Typography variant="body1" color="textPrimary">
+                            {user.reg_id}
+                          </Typography>
+                          <Typography variant="body2" color="textSecondary">
+                            {user.email}
+                          </Typography>
+                        </React.Fragment>
+                      }
+                    />
+                    <ListItemSecondaryAction>
+                      <Tooltip title="View">
+                        <IconButton
+                          edge="end"
+                          color="secondary"
+                          onClick={() => {
+                            history.push(`/home/admin/staff/${user.reg_id}`);
+                          }}
+                        >
+                          <RiEye2Line />
+                        </IconButton>
+                      </Tooltip>
+                      <Tooltip title="Delete">
+                        <IconButton
+                          edge="end"
+                          color="primary"
+                          onClick={() => {
+                            setOpen(true);
+                            setTeacher(user.reg_id);
+                          }}
+                        >
+                          <DeleteIcon />
+                        </IconButton>
+                      </Tooltip>
+                    </ListItemSecondaryAction>
+                  </ListItem>
+                ))}
+            </List>
+          </Card>
+        </>
+      )}
       <Dialog
         open={open}
         onClose={() => setOpen(false)}

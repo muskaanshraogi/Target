@@ -15,6 +15,7 @@ import {
   TableHead,
   TableBody,
   Table,
+  CircularProgress,
 } from "@material-ui/core";
 import { BiArrowBack } from "react-icons/bi";
 import Axios from "axios";
@@ -41,6 +42,10 @@ const useStyles = makeStyles((theme) => ({
   text: {
     fontSize: "16px",
   },
+  loading: {
+    marginTop: "2%",
+    marginLeft: "50%",
+  },
 }));
 
 export default function User(props) {
@@ -51,6 +56,7 @@ export default function User(props) {
 
   const [user, setUser] = useState(null);
   const [open, setOpen] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [openDelete, setOpenDelete] = useState(false);
   const [admin, setAdmin] = useState(false);
   const [value, setValue] = useState(null);
@@ -121,6 +127,7 @@ export default function User(props) {
       .then((res) => {
         setUser(res.data.data);
         setAdmin(res.data.data[0].is_admin);
+        setLoading(false);
       })
       .catch((err) => {
         enqueueSnackbar("Could not fetch user", { variant: "error" });
@@ -176,95 +183,104 @@ export default function User(props) {
               color="primary"
               variant="outlined"
               onClick={handleOpen}
-              style={{ marginTop: "1%" }}
+              style={{ marginTop: "2%", marginLeft: "0.5%" }}
             >
               {admin ? "Remove Admin" : "Make Admin"}
             </Button>
           </Grid>
-          {user[0].subId ? (
-            <Grid item spacing={2} style={{ marginTop: "1%" }}>
-              <Typography variant="h5" style={{ color: "#193B55" }}>
-                <b>Subjects:</b>
-              </Typography>
-              <TableContainer component={Paper}>
-                <Table aria-label="caption table">
-                  <TableHead>
-                    <TableRow>
-                      <TableCell align="center" className={classes.title}>
-                        ID
-                      </TableCell>
-                      <TableCell align="center" className={classes.title}>
-                        Subject
-                      </TableCell>
-                      <TableCell align="center" className={classes.title}>
-                        Year
-                      </TableCell>
-                      <TableCell align="center" className={classes.title}>
-                        Division
-                      </TableCell>
-                      <TableCell align="center" className={classes.title}>
-                        Role
-                      </TableCell>
-                      <TableCell align="center" className={classes.title}>
-                        Academic Year
-                      </TableCell>
-                      <TableCell align="center" className={classes.title}>
-                        {" "}
-                      </TableCell>
-                    </TableRow>
-                  </TableHead>
-                  <TableBody>
-                    {user.map((subject, index) => (
-                      <TableRow key={subject.subId}>
-                        <TableCell align="center" className={classes.text}>
-                          {subject.subId}
-                        </TableCell>
-                        <TableCell align="center" className={classes.text}>
-                          {subject.subName}
-                        </TableCell>
-                        <TableCell align="center" className={classes.text}>
-                          {subject.year}
-                        </TableCell>
-                        <TableCell align="center" className={classes.text}>
-                          {subject.division}
-                        </TableCell>
-                        <TableCell align="center" className={classes.text}>
-                          {subject.roleName.split(" ")[1]}
-                        </TableCell>
-                        <TableCell align="center" className={classes.text}>
-                          {subject.acadYear}
-                        </TableCell>
-                        <TableCell align="center" className={classes.text}>
-                          <Button
-                            value={`${subject.subName} ${subject.division} ${subject.acadYear}`}
-                            variant="outlined"
-                            color="secondary"
-                            onClick={(e) => {
-                              setOpenDelete(!openDelete);
-                              setValue(e.currentTarget.value);
-                            }}
-                          >
-                            Delete
-                          </Button>
-                        </TableCell>
-                      </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
-              </TableContainer>
-            </Grid>
+          {loading ? (
+            <>
+              <CircularProgress color="secondary" className={classes.loading} />
+            </>
           ) : (
-            <Grid item spacing={2} style={{ marginTop: "1%" }}>
-              <Paper>
-                <Typography
-                  variant="h5"
-                  style={{ color: "#193B55", padding: "1%" }}
-                >
-                  <b>No subjects assigned yet</b>
-                </Typography>
-              </Paper>
-            </Grid>
+            <>
+              {user[0].subId ? (
+                <Grid item spacing={2} style={{ marginTop: "1%" }}>
+                  <Typography variant="h5" style={{ color: "#193B55" }}>
+                    <b>Subjects:</b>
+                  </Typography>
+                  <TableContainer component={Paper}>
+                    <Table aria-label="caption table">
+                      <TableHead>
+                        <TableRow>
+                          <TableCell align="center" className={classes.title}>
+                            ID
+                          </TableCell>
+                          <TableCell align="center" className={classes.title}>
+                            Subject
+                          </TableCell>
+                          <TableCell align="center" className={classes.title}>
+                            Year
+                          </TableCell>
+                          <TableCell align="center" className={classes.title}>
+                            Division
+                          </TableCell>
+                          <TableCell align="center" className={classes.title}>
+                            Role
+                          </TableCell>
+                          <TableCell align="center" className={classes.title}>
+                            Academic Year
+                          </TableCell>
+                          <TableCell align="center" className={classes.title}>
+                            {" "}
+                          </TableCell>
+                        </TableRow>
+                      </TableHead>
+                      <TableBody>
+                        {user.map((subject, index) => (
+                          <TableRow key={subject.subId}>
+                            <TableCell align="center" className={classes.text}>
+                              {subject.subId}
+                            </TableCell>
+                            <TableCell align="center" className={classes.text}>
+                              {subject.subName}
+                            </TableCell>
+                            <TableCell align="center" className={classes.text}>
+                              {subject.year}
+                            </TableCell>
+                            <TableCell align="center" className={classes.text}>
+                              {subject.division}
+                            </TableCell>
+                            <TableCell align="center" className={classes.text}>
+                              {subject.roleName.split(" ")[1]}
+                            </TableCell>
+                            <TableCell align="center" className={classes.text}>
+                              {subject.acadYear}
+                            </TableCell>
+                            <TableCell align="center" className={classes.text}>
+                              <Button
+                                value={`${subject.subName} ${subject.division} ${subject.acadYear}`}
+                                variant="outlined"
+                                color="secondary"
+                                onClick={(e) => {
+                                  setOpenDelete(!openDelete);
+                                  setValue(e.currentTarget.value);
+                                }}
+                              >
+                                Delete
+                              </Button>
+                            </TableCell>
+                          </TableRow>
+                        ))}
+                      </TableBody>
+                    </Table>
+                  </TableContainer>
+                </Grid>
+              ) : (
+                <Grid item spacing={2} style={{ marginTop: "1%" }}>
+                  <Paper>
+                    <Typography
+                      variant="h5"
+                      style={{ color: "#193B55", padding: "1%" }}
+                    >
+                      <b>No subjects assigned yet</b>
+                    </Typography>
+                  </Paper>
+                </Grid>
+              )}
+            </>
           )}
+
           <Dialog
             open={open}
             onClose={handleOpen}

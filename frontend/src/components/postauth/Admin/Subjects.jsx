@@ -18,6 +18,7 @@ import {
   makeStyles,
   colors,
   Tooltip,
+  CircularProgress,
 } from "@material-ui/core";
 import DeleteIcon from "@material-ui/icons/Delete";
 import { useSnackbar } from "notistack";
@@ -59,6 +60,10 @@ const useStyles = makeStyles((theme) => ({
     backdropFilter: "blur(3px)",
     backgroundColor: "rgba(69,69,69,0.9)",
   },
+  loading: {
+    marginTop: "2%",
+    marginLeft: "50%",
+  },
 }));
 
 export default function Subjects() {
@@ -66,7 +71,8 @@ export default function Subjects() {
   const history = useHistory();
   const { enqueueSnackbar } = useSnackbar();
 
-  const [allSubjects, setAllSubjects] = useState([]);
+  const [allSubjects, setAllSubjects] = useState(null);
+  const [loading, setLoading] = useState(true);
   const [open, setOpen] = useState(false);
   const [subject, setSubject] = useState("");
   const [acadYear, setAcadYear] = useState("");
@@ -204,14 +210,17 @@ export default function Subjects() {
         "Content-Type": "application/json",
         Authorization: `Bearer ${sessionStorage.getItem("usertoken")}`,
       },
-    }).then((res) => setAllSubjects(res.data.data));
+    }).then((res) => {
+      setAllSubjects(res.data.data);
+      setLoading(false);
+    });
   }, [enqueueSnackbar]);
 
   return (
     <Grid item>
       <Card style={{ width: "100%" }}>
         <Typography variant="h5" className={classes.header}>
-          New Subject(s)
+          Add New Subject(s)
         </Typography>
         <form onSubmit={handleSubmit}>
           {addSubjects.map((subject, index) => (
@@ -299,135 +308,144 @@ export default function Subjects() {
           )}
         </form>
       </Card>
-      <Card className={classes.cardhead}>
-        <Typography variant="h5" className={classes.header}>
-          Subjects List
-        </Typography>
-      </Card>
-      <Card className={classes.card}>
-        <List dense className={classes.list}>
-          {allSubjects
-            .slice(0, allSubjects.length / 2 + 1)
-            .map((subject, index) => (
-              <ListItem
-                id={subject.subId}
-                key={index}
-                className={classes.listItem}
-              >
-                <ListItemText
-                  primary={
-                    <Typography variant="h6" color="secondary">
-                      <b>{subject.subName}</b>
-                    </Typography>
-                  }
-                  secondary={
-                    <React.Fragment>
-                      <Typography variant="body1" color="primary">
-                        {subject.subId}
-                      </Typography>
-                      <Typography variant="body2" color="textSecondary">
-                        Year : {subject.year}
-                      </Typography>
-                      <Typography variant="body2" color="textSecondary">
-                        Academic Year : {subject.acadYear}
-                      </Typography>
-                    </React.Fragment>
-                  }
-                />
-                <ListItemSecondaryAction>
-                  <Tooltip title="View">
-                    <IconButton
-                      edge="end"
-                      color="secondary"
-                      onClick={() => {
-                        history.push(
-                          `/home/admin/subjects/${subject.subId}/${subject.acadYear}`
-                        );
-                      }}
-                    >
-                      <RiEye2Line />
-                    </IconButton>
-                  </Tooltip>
-                  <Tooltip title="Delete">
-                    <IconButton
-                      edge="end"
-                      aria-label="delete"
-                      onClick={() => {
-                        setOpen(true);
-                        setSubject(subject.subId);
-                        setAcadYear(subject.acadYear);
-                      }}
-                    >
-                      <DeleteIcon />
-                    </IconButton>
-                  </Tooltip>
-                </ListItemSecondaryAction>
-              </ListItem>
-            ))}
-        </List>
-      </Card>
-      <Card className={classes.card2}>
-        <List dense className={classes.list}>
-          {allSubjects
-            .slice(allSubjects.length / 2 + 1, allSubjects.length)
-            .map((subject, index) => (
-              <ListItem
-                id={subject.subId}
-                key={index}
-                className={classes.listItem}
-              >
-                <ListItemText
-                  primary={
-                    <Typography variant="h6" color="secondary">
-                      <b>{subject.subName}</b>
-                    </Typography>
-                  }
-                  secondary={
-                    <React.Fragment>
-                      <Typography variant="body1" color="primary">
-                        {subject.subId}
-                      </Typography>
-                      <Typography variant="body2" color="textSecondary">
-                        Year : {subject.year}
-                      </Typography>
-                      <Typography variant="body2" color="textSecondary">
-                        Academic Year : {subject.acadYear}
-                      </Typography>
-                    </React.Fragment>
-                  }
-                />
-                <ListItemSecondaryAction>
-                  <Tooltip title="View">
-                    <IconButton
-                      edge="end"
-                      color="secondary"
-                      onClick={() => {
-                        history.push(
-                          `/home/admin/subjects/${subject.subId}/${subject.acadYear}`
-                        );
-                      }}
-                    >
-                      <RiEye2Line />
-                    </IconButton>
-                  </Tooltip>
-                  <Tooltip title="Delete">
-                    <IconButton
-                      edge="end"
-                      aria-label="delete"
-                      onClick={() => {
-                        setOpen(true);
-                        setSubject(subject.subId);
-                        setAcadYear(subject.acadYear);
-                      }}
-                    >
-                      <DeleteIcon />
-                    </IconButton>
-                  </Tooltip>
-                </ListItemSecondaryAction>
-              </ListItem>
-            ))}
-        </List>
-      </Card>
+      {loading ? (
+        <>
+          <CircularProgress color="secondary" className={classes.loading} />
+        </>
+      ) : (
+        <>
+          <Card className={classes.cardhead}>
+            <Typography variant="h5" className={classes.header}>
+              {allSubjects.length ? "Subject List" : "No Subjects Added Yet"}
+            </Typography>
+          </Card>
+          <Card className={classes.card}>
+            <List dense className={classes.list}>
+              {allSubjects
+                .slice(0, allSubjects.length / 2 + 1)
+                .map((subject, index) => (
+                  <ListItem
+                    id={subject.subId}
+                    key={index}
+                    className={classes.listItem}
+                  >
+                    <ListItemText
+                      primary={
+                        <Typography variant="h6" color="secondary">
+                          <b>{subject.subName}</b>
+                        </Typography>
+                      }
+                      secondary={
+                        <React.Fragment>
+                          <Typography variant="body1" color="primary">
+                            {subject.subId}
+                          </Typography>
+                          <Typography variant="body2" color="textSecondary">
+                            Year : {subject.year}
+                          </Typography>
+                          <Typography variant="body2" color="textSecondary">
+                            Academic Year : {subject.acadYear}
+                          </Typography>
+                        </React.Fragment>
+                      }
+                    />
+                    <ListItemSecondaryAction>
+                      <Tooltip title="View">
+                        <IconButton
+                          edge="end"
+                          color="secondary"
+                          onClick={() => {
+                            history.push(
+                              `/home/admin/subjects/${subject.subId}/${subject.acadYear}`
+                            );
+                          }}
+                        >
+                          <RiEye2Line />
+                        </IconButton>
+                      </Tooltip>
+                      <Tooltip title="Delete">
+                        <IconButton
+                          edge="end"
+                          aria-label="delete"
+                          onClick={() => {
+                            setOpen(true);
+                            setSubject(subject.subId);
+                            setAcadYear(subject.acadYear);
+                          }}
+                        >
+                          <DeleteIcon />
+                        </IconButton>
+                      </Tooltip>
+                    </ListItemSecondaryAction>
+                  </ListItem>
+                ))}
+            </List>
+          </Card>
+          <Card className={classes.card2}>
+            <List dense className={classes.list}>
+              {allSubjects
+                .slice(allSubjects.length / 2 + 1, allSubjects.length)
+                .map((subject, index) => (
+                  <ListItem
+                    id={subject.subId}
+                    key={index}
+                    className={classes.listItem}
+                  >
+                    <ListItemText
+                      primary={
+                        <Typography variant="h6" color="secondary">
+                          <b>{subject.subName}</b>
+                        </Typography>
+                      }
+                      secondary={
+                        <React.Fragment>
+                          <Typography variant="body1" color="primary">
+                            {subject.subId}
+                          </Typography>
+                          <Typography variant="body2" color="textSecondary">
+                            Year : {subject.year}
+                          </Typography>
+                          <Typography variant="body2" color="textSecondary">
+                            Academic Year : {subject.acadYear}
+                          </Typography>
+                        </React.Fragment>
+                      }
+                    />
+                    <ListItemSecondaryAction>
+                      <Tooltip title="View">
+                        <IconButton
+                          edge="end"
+                          color="secondary"
+                          onClick={() => {
+                            history.push(
+                              `/home/admin/subjects/${subject.subId}/${subject.acadYear}`
+                            );
+                          }}
+                        >
+                          <RiEye2Line />
+                        </IconButton>
+                      </Tooltip>
+                      <Tooltip title="Delete">
+                        <IconButton
+                          edge="end"
+                          aria-label="delete"
+                          onClick={() => {
+                            setOpen(true);
+                            setSubject(subject.subId);
+                            setAcadYear(subject.acadYear);
+                          }}
+                        >
+                          <DeleteIcon />
+                        </IconButton>
+                      </Tooltip>
+                    </ListItemSecondaryAction>
+                  </ListItem>
+                ))}
+            </List>
+          </Card>
+        </>
+      )}
+
       <Dialog
         open={open}
         onClose={() => setOpen(false)}
