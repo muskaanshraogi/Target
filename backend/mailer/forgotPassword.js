@@ -68,7 +68,7 @@ const mailer = (email, username, token) => {
                   We have received a password reset request for your Target account.
                   <br><br><br>
                   Follow
-                  <a href="http://localhost:3000/reset_password/${token}" target="_blank" rel="noopener noreferrer"
+                  <a href="https://www.targetsolutions.tk/reset_password/${token}" target="_blank" rel="noopener noreferrer"
                     style="color: #4285F4; text-decoration: none; background-color: transparent;">this link</a>
                   to reset your password.
                   <br><br><br>
