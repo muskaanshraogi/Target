@@ -5,7 +5,7 @@ const OAuth2 = google.auth.OAuth2;
 
 dotenv.config()
 
-const mailer = (email, username) => {
+const mailer = (email, username, token) => {
     const oauth2Client = new OAuth2(
         "899017535404-i7macjals7j8bj95qtgnhqcetbk5h1rd.apps.googleusercontent.com",
         "LcohwztQMS6hxq3-CuZFN063", 
@@ -68,10 +68,12 @@ const mailer = (email, username) => {
                   We have received a password reset request for your Target account.
                   <br><br><br>
                   Follow
-                  <a href="https://www.targetsolutions.tk/reset_password/${email}" target="_blank" rel="noopener noreferrer"
+                  <a href="http://localhost:3000/reset_password/${token}" target="_blank" rel="noopener noreferrer"
                     style="color: #4285F4; text-decoration: none; background-color: transparent;">this link</a>
                   to reset your password.
                   <br><br><br>
+                  This link is valid for 20 minutes.
+                  <br>
                   <small style="color: red">
                     Please ignore this email if the request was not made by you.
                   </small>

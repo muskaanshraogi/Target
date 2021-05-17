@@ -1,5 +1,6 @@
 const bcrypt = require('bcryptjs')
 const db = require('./../dbConnection')
+const crypto = require('crypto')
 const { mailer } = require('./../mailer/forgotPassword')
 const { generateToken } = require('../globals')
 
@@ -12,7 +13,7 @@ const registerTeacher = (teacher, callback) => {
             else {
                 let password = hash
                 db.query(
-                    "INSERT INTO staff VALUES(?, ?, ?, ?, ?, ?)",
+                    "INSERT INTO staff(firstName, lastName, reg_id, email, is_admin, password) VALUES(?, ?, ?, ?, ?, ?)",
                     [teacher.firstName, teacher.lastName, teacher.reg_id, teacher.email, teacher.is_admin, password], 
                     (err, data) => {
                         if(err) {
@@ -174,13 +175,33 @@ const requestPassword = (email, callback) => {
             else {
                 if(res.length)
                 {
-                    mailer(email, res[0].firstName + " " + res[0].lastName)
-                    .then((res) => {
-                        return callback(null, 200, true);
+                    crypto.randomBytes(20, function(err, buffer) {
+                        if(err) {
+                            return callback(err, 500, null) 
+                        }
+                        else {
+                            let token = buffer.toString('hex')
+                            let expiry = Date.now() + 1200000
+                            db.query(
+                                "UPDATE staff SET token=?, expiry=? WHERE email=?",
+                                [token, expiry, email],
+                                (err, data) => {
+                                    if(err) {
+                                        return callback(err, 400, null)
+                                    }
+                                    else {
+                                        mailer(email, res[0].firstName + " " + res[0].lastName, token)
+                                        .then((res) => {
+                                            return callback(null, 200, true);
+                                        })
+                                        .catch((err) => {
+                                            return callback(err, 500, null);
+                                        });
+                                    }
+                                }
+                            )
+                        }
                     })
-                    .catch((err) => {
-                        return callback(err, 500, null);
-                    });
                 }
                 else
                 {
@@ -192,28 +213,43 @@ const requestPassword = (email, callback) => {
 };
 
 const resetPassword = (details, callback) => {
-    console.log(details)
-    bcrypt.genSalt(10, (err, salt) => {
-        bcrypt.hash(details.newpassword, salt, (err, hash) => {
+    db.query(
+        "SELECT * FROM staff WHERE token=?",
+        [details.token],
+        (err, res) => {
             if(err) {
-                return callback(err, 500, null)
+                return callback(err, 400, null)
             }
             else {
-                let password = hash
-                db.query(
-                    "UPDATE staff SET password=? WHERE email=?",
-                    [password, details.email], 
-                    (err, data) => {
-                        if(err) {
-                            return callback(err, 400, null)
-                        }
-                        else {
-                            return callback(null, 200, data)
-                        }
+                if(res.length && res[0].expiry >= Date.now()) {
+                    bcrypt.genSalt(10, (err, salt) => {
+                        bcrypt.hash(details.newpassword, salt, (err, hash) => {
+                            if(err) {
+                                return callback(err, 500, null)
+                            }
+                            else {
+                                let password = hash
+                                db.query(
+                                    "UPDATE staff SET password=? WHERE token=?",
+                                    [password, details.token], 
+                                    (err, data) => {
+                                        if(err) {
+                                            return callback(err, 400, null)
+                                        }
+                                        else {
+                                            return callback(null, 200, data)
+                                        }
+                                    })
+                            }
+                        })
                     })
+                }
+                else {
+                    return callback("Invalid token", 500, null)
+                }
             }
-        })
-    })
+        }
+    )
 };
 
 module.exports = {

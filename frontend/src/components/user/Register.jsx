@@ -132,7 +132,7 @@ export default function Register() {
       enqueueSnackbar("1 Phone numer is mandatory!", { variant: "error" });
       return;
     }
-    Axios.post(`${process.env.REACT_APP_HOST}api/staff/register`, details, {
+    Axios.post(`${process.env.REACT_APP_HOST}/api/staff/register`, details, {
       headers: {
         "Content-Type": "application/json",
       },
@@ -144,6 +144,7 @@ export default function Register() {
         history.push("/home");
       })
       .catch((err) => {
+        console.log(err)
         enqueueSnackbar("Already Registered!", { variant: "error" });
       });
   };

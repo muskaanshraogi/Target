@@ -108,6 +108,7 @@ router.get("/request/reset/:email", (req, res, next) => {
 router.post("/reset", (req, res, next) => {
   staffModel.resetPassword(req.body.details, (err, status, data) => {
     if (err) {
+      console.log(err)
       delete err.sql;
       res.status(status).send({ err: err, data: null });
     } else {

@@ -13,7 +13,7 @@ export default function Routes() {
         <Route exact path="/" component={Login} />
         <Route path="/reset" component={Reset} />
         <Route path="/reset_ack" component={ResetAck} />
-        <Route exact path="/reset_password/:email" component={ResetPassword} />>
+        <Route path="/reset_password/:token" component={ResetPassword} />
         <Route path="/register" component={Register} />
         <Route path="/home" component={Landing} />
       </Switch>

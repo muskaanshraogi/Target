@@ -68,7 +68,7 @@ export default function ResetPassword(props) {
   const { enqueueSnackbar } = useSnackbar();
 
   const [details, setDetails] = useState({
-    email: props.match.params.email,
+    token: props.match.params.token,
     newpassword: "",
     confirmpassword: "",
   });
