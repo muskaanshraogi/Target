@@ -1,5 +1,6 @@
 const bcrypt = require('bcryptjs')
 const db = require('./../dbConnection')
+const { mailer } = require('./../mailer/forgotPassword')
 const { generateToken } = require('../globals')
 
 const registerTeacher = (teacher, callback) => {
@@ -162,6 +163,59 @@ const adminStatus = (status, reg_id, callback) => {
     )
 }
 
+const requestPassword = (email, callback) => {
+    db.query(
+        "SELECT * FROM staff WHERE email=?",
+        [email],
+        (err, res) => {
+            if(err) {
+                return callback(err, 500, null)
+            }
+            else {
+                if(res.length)
+                {
+                    mailer(email, res[0].firstName + " " + res[0].lastName)
+                    .then((res) => {
+                        return callback(null, 200, true);
+                    })
+                    .catch((err) => {
+                        return callback(err, 500, null);
+                    });
+                }
+                else
+                {
+                    return callback('Invalid email', 500, null)
+                }
+            }
+        }
+    )
+};
+
+const resetPassword = (details, callback) => {
+    console.log(details)
+    bcrypt.genSalt(10, (err, salt) => {
+        bcrypt.hash(details.newpassword, salt, (err, hash) => {
+            if(err) {
+                return callback(err, 500, null)
+            }
+            else {
+                let password = hash
+                db.query(
+                    "UPDATE staff SET password=? WHERE email=?",
+                    [password, details.email], 
+                    (err, data) => {
+                        if(err) {
+                            return callback(err, 400, null)
+                        }
+                        else {
+                            return callback(null, 200, data)
+                        }
+                    })
+            }
+        })
+    })
+};
+
 module.exports = {
     registerTeacher,
     loginTeacher,
@@ -169,5 +223,7 @@ module.exports = {
     deleteTeacher,
     getAllTeachers,
     getTeacherDetails,
-    adminStatus
+    adminStatus,
+    requestPassword,
+    resetPassword
 }

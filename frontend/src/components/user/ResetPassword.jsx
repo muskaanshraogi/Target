@@ -10,7 +10,7 @@ import {
   Grid,
   Avatar,
 } from "@material-ui/core";
-import { FaUserCheck } from "react-icons/fa";
+import { RiLockPasswordFill } from "react-icons/ri";
 import { makeStyles } from "@material-ui/styles";
 import { Link as RRDLink, useHistory } from "react-router-dom";
 import { useSnackbar } from "notistack";
@@ -62,14 +62,15 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-export default function Login() {
+export default function ResetPassword(props) {
   const classes = useStyles();
   const history = useHistory();
   const { enqueueSnackbar } = useSnackbar();
 
   const [details, setDetails] = useState({
-    email: "",
-    password: "",
+    email: props.match.params.email,
+    newpassword: "",
+    confirmpassword: "",
   });
 
   const handleChange = (e) => {
@@ -80,23 +81,28 @@ export default function Login() {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    if (!details.email || !details.password) {
-      enqueueSnackbar("Please fill all fields to login", { variant: "error" });
+
+    console.log(details)
+    if (!details.newpassword || !details.confirmpassword) {
+      enqueueSnackbar("Please fill all fields", { variant: "error" });
       return;
     }
-    Axios.post(`${process.env.REACT_APP_HOST}/api/staff/login`, details, {
+    if (details.newpassword !== details.confirmpassword) {
+      enqueueSnackbar("Passwords do not match", { variant: "error" });
+      return;
+    }
+
+    Axios.post(`${process.env.REACT_APP_HOST}/api/staff/reset`, {details}, {
       headers: {
         "Content-Type": "application/json",
       },
     })
       .then((res) => {
-        sessionStorage.setItem("usertoken", res.data.data.token);
-        sessionStorage.setItem("user", JSON.stringify(res.data.data.user));
-        enqueueSnackbar("Login Successful", { variant: "success" });
-        history.push("/home");
+        enqueueSnackbar("Password Reset", { variant: "success" });
+        history.push("/");
       })
       .catch((err) => {
-        enqueueSnackbar("Invalid credentials", {
+        enqueueSnackbar("Failed to reset password", {
           variant: "error",
         });
       });
@@ -121,7 +127,7 @@ export default function Login() {
         <div className={classes.paper}>
           <Hidden smDown>
             <Avatar className={classes.avatar}>
-              <FaUserCheck />
+              <RiLockPasswordFill />
             </Avatar>
           </Hidden>
           <form className={classes.form} noValidate onSubmit={handleSubmit}>
@@ -130,11 +136,11 @@ export default function Login() {
               margin="normal"
               required
               fullWidth
-              id="email"
-              label="Email Address"
-              name="email"
-              autoComplete="email"
-              autoFocus
+              name="newpassword"
+              label="New Password"
+              type="password"
+              id="newpassword"
+              autoComplete="current-password"
               onChange={handleChange}
             />
             <TextField
@@ -142,10 +148,10 @@ export default function Login() {
               margin="normal"
               required
               fullWidth
-              name="password"
-              label="Password"
+              name="confirmpassword"
+              label="Confirm New Password"
               type="password"
-              id="password"
+              id="confirmpassword"
               autoComplete="current-password"
               onChange={handleChange}
             />
@@ -157,20 +163,8 @@ export default function Login() {
               className={classes.submit}
               onClick={handleSubmit}
             >
-              Login
+              Reset Password
             </Button>
-            <Grid container>
-              <Grid item xs>
-                <Link component={RRDLink} to="/register">
-                  Don't have an account? Sign Up
-                </Link>
-                <div style={{float: 'right'}}>
-                  <Link component={RRDLink} to="/reset">
-                    Forgot password?
-                  </Link>
-                </div>
-              </Grid>
-            </Grid>
           </form>
         </div>
       </Grid>
